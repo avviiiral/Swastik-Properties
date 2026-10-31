@@ -164,7 +164,6 @@ class PropertyAPITests(TestCase):
                 "subcategory": "Residential Plot",
                 "location_name": "Bidkin, Chhatrapati Sambhajinagar",
                 "location_url": MAP_URL,
-                "price": "",
                 "area_value": "",
                 "brochure": make_pdf(),
             },
@@ -174,7 +173,6 @@ class PropertyAPITests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         saved = Property.objects.get(slug="abc-3-signature")
         self.assertEqual(saved.created_by, self.admin)
-        self.assertIsNone(saved.price)
         self.assertIsNone(saved.area_value)
         self.assertEqual(saved.publication_status, Property.PublicationStatus.DRAFT)
         self.assertEqual(saved.latitude, Decimal("19.6565164"))
@@ -271,27 +269,25 @@ class PropertyAPITests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
 
-    def test_public_list_filters_minimum_and_maximum_price(self):
-        budget_property = self.create_property(
-            "Budget property",
-            Property.PublicationStatus.PUBLISHED,
+    def test_admin_property_api_ignores_and_never_returns_price_fields(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post(
+            "/api/v1/properties/",
+            {
+                "name": "No price property",
+                "location_url": MAP_URL,
+                "price": "12500000",
+                "currency": "INR",
+                "brochure": make_pdf("no-price.pdf"),
+            },
+            format="multipart",
         )
-        premium_property = self.create_property(
-            "Premium property",
-            Property.PublicationStatus.PUBLISHED,
-        )
-        Property.objects.filter(pk=budget_property.pk).update(price=Decimal("2500000"))
-        Property.objects.filter(pk=premium_property.pk).update(price=Decimal("9500000"))
-
-        response = self.client.get("/api/v1/properties/?price_min=2000000&price_max=5000000")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.data["count"], 1)
-        self.assertEqual(response.data["results"][0]["slug"], budget_property.slug)
-
-    def test_public_list_rejects_invalid_price_range(self):
-        response = self.client.get("/api/v1/properties/?price_min=9000000&price_max=1000000")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertNotIn("price", response.data)
+        self.assertNotIn("currency", response.data)
+        saved = Property.objects.get(slug="no-price-property")
+        self.assertFalse(hasattr(saved, "price"))
+        self.assertFalse(hasattr(saved, "currency"))
 
 
 class PropertyModelFileTests(TestCase):

@@ -41,13 +41,6 @@ class PropertyImageSerializer(serializers.ModelSerializer):
 
 
 class PropertySerializer(serializers.ModelSerializer):
-    price = EmptyStringAsNullDecimalField(
-        max_digits=14,
-        decimal_places=2,
-        min_value=0,
-        required=False,
-        allow_null=True,
-    )
     area_value = EmptyStringAsNullDecimalField(
         max_digits=12,
         decimal_places=2,
@@ -82,8 +75,6 @@ class PropertySerializer(serializers.ModelSerializer):
             "category",
             "subcategory",
             "listing_type",
-            "price",
-            "currency",
             "area_value",
             "area_unit",
             "location_name",
@@ -143,10 +134,6 @@ class PropertySerializer(serializers.ModelSerializer):
                 {"locality": "Select an active locality."}
             )
 
-        price = attrs.get("price", getattr(self.instance, "price", None))
-        if price is not None and price < Decimal("0"):
-            raise serializers.ValidationError({"price": "Price cannot be negative."})
-
         area = attrs.get("area_value", getattr(self.instance, "area_value", None))
         if area is not None and area < Decimal("0"):
             raise serializers.ValidationError(
@@ -169,9 +156,3 @@ class PropertySerializer(serializers.ModelSerializer):
                 attrs["longitude"] = Decimal(str(extracted_longitude))
 
         return attrs
-
-
-class PublicPropertySerializer(PropertySerializer):
-    """Public representation intentionally excludes all monetary fields."""
-    class Meta(PropertySerializer.Meta):
-        fields = tuple(field for field in PropertySerializer.Meta.fields if field not in ("price", "currency"))

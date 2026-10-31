@@ -36,8 +36,6 @@ export interface Property {
   category: PropertyCategory | '';
   subcategory: string;
   listing_type: ListingType | '';
-  price: string | null;
-  currency: string;
   area_value: string | null;
   area_unit: string;
   location_name: string;

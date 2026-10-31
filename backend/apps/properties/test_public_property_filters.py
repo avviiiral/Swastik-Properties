@@ -46,10 +46,7 @@ class PublicPropertyFilterTests(TestCase):
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["name"], "Land Plot")
 
-    def test_public_api_never_exposes_price_fields(self):
-        property_obj = Property.objects.filter(publication_status="PUBLISHED").first()
-        property_obj.price = "12500000.00"
-        property_obj.save(update_fields=("price",))
+    def test_public_api_has_no_price_or_currency_fields(self):
         response = self.client.get("/api/v1/properties/")
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("price", response.data["results"][0])

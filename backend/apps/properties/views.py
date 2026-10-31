@@ -14,7 +14,7 @@ from apps.accounts.models import User
 from apps.accounts.permissions import IsAdminOrSuperAdmin
 
 from .models import Property, PropertyImage
-from .serializers import PropertyImageSerializer, PropertySerializer, PublicPropertySerializer
+from .serializers import PropertyImageSerializer, PropertySerializer
 
 
 class PropertyViewSet(viewsets.ModelViewSet):
@@ -37,13 +37,6 @@ class PropertyViewSet(viewsets.ModelViewSet):
     ordering_fields = ("created_at", "updated_at", "name", "area_value")
     ordering = ("-created_at",)
     http_method_names = ("get", "post", "patch", "put", "delete", "head", "options")
-
-    def get_serializer_class(self):
-        user = self.request.user
-        is_admin = user.is_authenticated and user.is_active and user.role in (User.Role.ADMIN, User.Role.SUPER_ADMIN)
-        if self.action in ('list', 'retrieve') and not is_admin:
-            return PublicPropertySerializer
-        return PropertySerializer
 
     def get_permissions(self):
         if self.action in ("list", "retrieve"):

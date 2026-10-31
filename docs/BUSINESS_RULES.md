@@ -22,7 +22,7 @@
 
 ## Properties
 
-- Property prices may be stored and managed by administrators but must never be returned by anonymous/public property APIs or displayed on public website pages. Public property discovery uses location, category, listing purpose, availability and area instead.
+- Property prices are not collected, stored, managed, accepted or displayed anywhere in the property catalogue, Admin interface, APIs or public website. Public property discovery uses location, category, listing purpose, availability and area instead.
 
 - Administrators can add, update and permanently delete properties.
 - Property publication and agent-assignment rules are encoded in the property domain.
