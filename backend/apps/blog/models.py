@@ -7,7 +7,7 @@ from django.utils.text import slugify
 import nh3
 from .validators import validate_blog_cover
 ALLOWED_HTML_TAGS={"h1","h2","h3","h4","p","ul","ol","li","a","blockquote","img","strong","em","b","i","code","pre","br","hr","figure","figcaption"}
-ALLOWED_HTML_ATTRIBUTES={"a":{"href","title","target","rel"},"img":{"src","alt","title","width","height","loading"}}
+ALLOWED_HTML_ATTRIBUTES={"a":{"href","title","target"},"img":{"src","alt","title","width","height","loading"}}
 ALLOWED_URL_SCHEMES={"http","https","mailto"}
 def blog_cover_upload_to(instance,filename):
  suffix=Path(filename).suffix.lower()
