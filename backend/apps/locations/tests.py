@@ -52,9 +52,17 @@ class PublicLocationAPITests(APITestCase):
             district=self.district,
             name="Nagpur",
         )
+        self.other_city = City.objects.create(
+            district=self.other_district,
+            name="Mapusa",
+        )
         self.locality = Locality.objects.create(
             city=self.city,
             name="Civil Lines",
+        )
+        self.other_locality = Locality.objects.create(
+            city=self.other_city,
+            name="Assagao",
         )
 
     def test_state_lookup_is_public(self):
@@ -74,15 +82,33 @@ class PublicLocationAPITests(APITestCase):
         self.assertEqual(response.data["results"][0]["name"], "Nagpur")
         self.assertEqual(response.data["results"][0]["state_name"], "Maharashtra")
 
-    def test_cities_can_be_filtered_by_district(self):
-        response = self.client.get(
-            "/api/v1/locations/cities/",
-            {"district": self.district.id},
-        )
+    def test_cities_can_be_filtered_by_district_or_state(self):
+        for params in ({"district": self.district.id}, {"state": self.state.id}):
+            response = self.client.get(
+                "/api/v1/locations/cities/",
+                params,
+            )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["results"][0]["name"], "Nagpur")
-        self.assertEqual(response.data["results"][0]["state_name"], "Maharashtra")
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data["count"], 1)
+            self.assertEqual(response.data["results"][0]["name"], "Nagpur")
+            self.assertEqual(response.data["results"][0]["state_name"], "Maharashtra")
+
+    def test_localities_can_be_filtered_by_city_district_or_state(self):
+        filter_params = (
+            {"city": self.city.id},
+            {"district": self.district.id},
+            {"state": self.state.id},
+        )
+        for params in filter_params:
+            response = self.client.get(
+                "/api/v1/locations/localities/",
+                params,
+            )
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data["count"], 1)
+            self.assertEqual(response.data["results"][0]["name"], "Civil Lines")
 
     def test_localities_include_the_full_parent_path(self):
         response = self.client.get(
@@ -109,7 +135,8 @@ class PublicLocationAPITests(APITestCase):
 
         response = self.client.get("/api/v1/locations/localities/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["count"], 0)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["name"], "Assagao")
 
     def test_public_location_endpoints_are_read_only(self):
         response = self.client.post(
