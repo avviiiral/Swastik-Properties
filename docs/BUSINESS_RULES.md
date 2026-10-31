@@ -15,7 +15,17 @@
 
 ## Forms and submissions
 
-- All agreed website forms must be captured by the backend.
+The website will support the following agreed form categories:
+
+1. General Enquiry
+2. Property Enquiry
+3. Buy Requirement
+4. Rent Requirement
+5. Sell Property
+6. Property Listing
+
+- All agreed forms must be captured by the backend.
+- All form submissions must be downloadable by administrators.
 - Public intake endpoints must validate submitted data and attachments.
 - Only administrators may access submission records and downloadable exports.
 - Form-specific fields and validation rules will be defined from the approved project requirements.
