@@ -55,7 +55,7 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
               <a class="contact-action" [href]="'tel:' + contact().contact_number"><span>Call us</span><b>↗</b></a>
               <a class="contact-action" [href]="emailUrl(property()!)"><span>Email</span><b>↗</b></a>
             </div>
-            <form class="enquiry-form" (ngSubmit)="submitEnquiry()" #enquiryForm="ngForm">
+            <form class="enquiry-form" (ngSubmit)="submitEnquiry(enquiryFormElement)" #enquiryForm="ngForm" #enquiryFormElement>
               <label>Your name<input type="text" name="enquiryName" [(ngModel)]="enquiryName" required minlength="2" maxlength="120" autocomplete="name" placeholder="Full name"></label>
               <label>Email address<input type="email" name="enquiryEmail" [(ngModel)]="enquiryEmail" required maxlength="254" autocomplete="email" placeholder="you@example.com"></label>
               <label>Phone number<input type="tel" name="enquiryPhone" [(ngModel)]="enquiryPhone" required minlength="10" maxlength="20" autocomplete="tel" placeholder="+91"></label>
@@ -63,7 +63,7 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
               <label class="enquiry-consent"><input type="checkbox" name="enquiryConsent" [(ngModel)]="enquiryConsent" required><span>I agree that Swastik Properties may contact me about this property enquiry.</span></label>
               @if (enquiryError()) { <p class="form-feedback error" role="alert">{{enquiryError()}}</p> }
               @if (enquirySuccess()) { <p class="form-feedback success" role="status">Thank you. Your enquiry has been received. Our team will contact you.</p> }
-              <button class="enquiry-submit" type="submit" [disabled]="enquirySending() || !enquiryForm.valid">{{enquirySending() ? 'Sending…' : 'Send property enquiry'}} <b>↗</b></button>
+              <button class="enquiry-submit" type="submit" [disabled]="enquirySending()">{{enquirySending() ? 'Sending…' : 'Send property enquiry'}} <b>↗</b></button>
               <small class="privacy-note">Your details will only be used to respond to this property enquiry.</small>
             </form>
           </section>
@@ -152,27 +152,43 @@ export class PropertyDetailComponent implements OnInit {
     const body = 'Hello Swastik Properties,\n\nI am interested in ' + p.name + ' (' + p.property_reference + '). Please share more details.\n\nThank you.';
     return 'mailto:' + this.contact().email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   }
-  submitEnquiry(): void {
+  submitEnquiry(formElement: HTMLFormElement): void {
     const p = this.property();
     if (!p || this.enquirySending()) return;
+
+    // Read the actual controls on submit. This also captures browser-autofilled
+    // values even when the browser has not synchronized them into ngModel yet.
+    const formData = new FormData(formElement);
+    const name = String(formData.get('enquiryName') || '').trim();
+    const email = String(formData.get('enquiryEmail') || '').trim();
+    const phone = String(formData.get('enquiryPhone') || '').trim();
+    const message = String(formData.get('enquiryMessage') || '').trim();
+    const consent = formData.get('enquiryConsent') === 'on';
+
+    if (!name || !email || !phone || !message || !consent) {
+      this.enquiryError.set('Please complete all fields and agree to be contacted before submitting.');
+      return;
+    }
+
     this.enquirySending.set(true);
     this.enquirySuccess.set(false);
     this.enquiryError.set('');
     this.enquiryApi.submitLead({
       enquiry_type: 'PROPERTY_ENQUIRY',
       property_slug: p.slug,
-      name: this.enquiryName.trim(),
-      email: this.enquiryEmail.trim(),
-      phone: this.enquiryPhone.trim(),
-      message: this.enquiryMessage.trim(),
+      name,
+      email,
+      phone,
+      message,
       details: { property_reference: p.property_reference },
       source_path: '/properties/' + p.slug,
-      consent: this.enquiryConsent,
+      consent,
       website: '',
     }).subscribe({
       next: () => {
         this.enquirySending.set(false);
         this.enquirySuccess.set(true);
+        formElement.reset();
         this.enquiryName = '';
         this.enquiryEmail = '';
         this.enquiryPhone = '';
@@ -181,7 +197,9 @@ export class PropertyDetailComponent implements OnInit {
       },
       error: error => {
         this.enquirySending.set(false);
-        this.enquiryError.set(error?.error?.detail || 'We could not send your enquiry. Please try again or contact us directly.');
+        const data = error?.error;
+        const message = data?.detail || data?.message || Object.values(data || {}).flat().join(' ') || 'We could not send your enquiry. Please try again or contact us directly.';
+        this.enquiryError.set(message);
       }
     });
   }
