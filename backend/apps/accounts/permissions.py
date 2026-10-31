@@ -1,48 +1,29 @@
 from rest_framework.permissions import BasePermission
-
 from .models import User
 
+class RolePermission(BasePermission):
+    allowed_roles=()
+    message="Your account role does not permit this operation."
+    def has_permission(self,request,view):
+        user=request.user
+        return bool(user and user.is_authenticated and user.is_active and user.role in self.allowed_roles)
 
-class IsSuperAdmin(BasePermission):
-    """Allow only users assigned the Super Admin application role."""
+class IsSuperAdmin(RolePermission):
+    message="Super Admin access is required."
+    allowed_roles=(User.Role.SUPER_ADMIN,)
 
-    message = "Super Admin access is required."
+class IsAdminOrSuperAdmin(RolePermission):
+    message="Administrator access is required."
+    allowed_roles=(User.Role.ADMIN,User.Role.SUPER_ADMIN)
 
-    def has_permission(self, request, view):
-        user = request.user
-        return bool(
-            user
-            and user.is_authenticated
-            and user.is_active
-            and user.role == User.Role.SUPER_ADMIN
-        )
+class IsBlogManager(RolePermission):
+    message="Blog Editor or Super Admin access is required."
+    allowed_roles=(User.Role.EDITOR,User.Role.SUPER_ADMIN)
 
+class IsUserManager(RolePermission):
+    message="User management access is required."
+    allowed_roles=(User.Role.ADMIN,User.Role.SUPER_ADMIN)
 
-class IsAdminOrSuperAdmin(BasePermission):
-    """Allow administrators and Super Admins."""
-
-    message = "Administrator access is required."
-
-    def has_permission(self, request, view):
-        user = request.user
-        return bool(
-            user
-            and user.is_authenticated
-            and user.is_active
-            and user.role in (User.Role.ADMIN, User.Role.SUPER_ADMIN)
-        )
-
-
-class IsAgent(BasePermission):
-    """Allow only users assigned the Agent application role."""
-
-    message = "Agent access is required."
-
-    def has_permission(self, request, view):
-        user = request.user
-        return bool(
-            user
-            and user.is_authenticated
-            and user.is_active
-            and user.role == User.Role.AGENT
-        )
+class IsAgent(RolePermission):
+    message="Agent access is required."
+    allowed_roles=(User.Role.AGENT,)
