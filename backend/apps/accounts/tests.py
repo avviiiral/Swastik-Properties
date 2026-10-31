@@ -110,17 +110,29 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(response.data["role"], User.Role.AGENT)
         self.assertNotIn("password", response.data)
 
-    def test_refresh_endpoint_returns_rotated_tokens(self):
+    def test_refresh_rotates_refresh_token_and_revokes_previous_token(self):
         login_response = self.login(self.admin.email)
+        old_refresh = login_response.data["refresh"]
+
         response = self.client.post(
             "/api/v1/auth/token/refresh/",
-            {"refresh": login_response.data["refresh"]},
+            {"refresh": old_refresh},
+            format="json",
+        )
+        old_token_response = self.client.post(
+            "/api/v1/auth/token/refresh/",
+            {"refresh": old_refresh},
             format="json",
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("access", response.data)
         self.assertIn("refresh", response.data)
+        self.assertNotEqual(response.data["refresh"], old_refresh)
+        self.assertEqual(
+            old_token_response.status_code,
+            status.HTTP_401_UNAUTHORIZED,
+        )
 
     def test_logout_blacklists_refresh_token(self):
         login_response = self.login(self.admin.email)
@@ -248,6 +260,17 @@ class AuthenticationAPITests(APITestCase):
         response = self.client.get(f"/api/v1/auth/users/{self.admin.id}/")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_admin_cannot_promote_agent_to_admin(self):
+        self.authenticate_as(self.admin)
+
+        response = self.client.patch(
+            f"/api/v1/auth/users/{self.agent.id}/",
+            {"role": User.Role.ADMIN},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_super_admin_can_retrieve_admin_account(self):
         self.authenticate_as(self.super_admin)
