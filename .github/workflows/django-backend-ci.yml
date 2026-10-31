@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - "feature/**"
+      - "fix/**"
   pull_request:
     branches:
       - main
@@ -47,4 +48,4 @@ jobs:
 
       - name: Run account, location and property tests
         working-directory: backend
-        run: python manage.py test apps.accounts apps.locations apps.properties apps.blog
+        run: python manage.py test apps.accounts apps.locations apps.properties apps.blog apps.submissions

@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - "feature/**"
+      - "fix/**"
     paths:
       - "frontend/web-app/**"
       - ".github/workflows/public-website-ci.yml"
