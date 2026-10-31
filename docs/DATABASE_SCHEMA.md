@@ -9,14 +9,14 @@ This document will be expanded with the finalized ER diagram before domain migra
 | Field | Purpose |
 |---|---|
 | id | Primary key inherited from Django |
-| username | Django login identifier |
-| email | Required unique email |
+| email | Required unique email and authentication identifier |
+| username | Required unique account/display identifier |
 | role | SUPER_ADMIN, ADMIN or AGENT |
 | is_active | Account activation |
 | is_staff | Django admin-site access |
 | is_superuser | Django permission bypass |
 
-Django's standard authentication fields and password hashing are retained through AbstractUser.
+Django's standard authentication fields and password hashing are retained through AbstractUser. Email is the login identifier; username remains required but is not used to authenticate.
 
 ## Domain model planning
 
