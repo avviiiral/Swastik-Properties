@@ -10,4 +10,16 @@ export class SiteSeo {
     this.title.setTitle(title);
     this.meta.updateTag({ name: 'description', content: description });
   }
+
+  setCanonical(path: string): void {
+    if (typeof document === 'undefined') return;
+    const href = new URL(path, document.baseURI).toString();
+    let link = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
+    }
+    link.href = href;
+  }
 }
