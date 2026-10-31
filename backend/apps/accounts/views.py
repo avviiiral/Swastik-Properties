@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -63,6 +64,14 @@ class UserListCreateView(UserManagementQuerysetMixin, ListCreateAPIView):
 
 class UserDetailView(UserManagementQuerysetMixin, RetrieveUpdateAPIView):
     permission_classes = (IsUserManager,)
+
+    def get_object(self):
+        if (
+            self.request.user.role == User.Role.ADMIN
+            and str(self.kwargs["pk"]) == str(self.request.user.pk)
+        ):
+            raise PermissionDenied("Admins cannot modify their own account.")
+        return super().get_object()
     http_method_names = ("get", "patch", "delete", "head", "options")
     def get_serializer_class(self):
         return UserUpdateSerializer if self.request.method == "PATCH" else UserReadSerializer
