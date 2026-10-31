@@ -238,8 +238,8 @@ class AuthenticationAPITests(APITestCase):
         self.assertFalse(created_user.is_staff)
         self.assertFalse(created_user.is_superuser)
 
-    def test_api_cannot_create_super_admin_account(self):
-        self.authenticate_as(self.super_admin)
+    def test_admin_cannot_create_super_admin_account(self):
+        self.authenticate_as(self.admin)
 
         response = self.client.post(
             "/api/v1/auth/users/",
