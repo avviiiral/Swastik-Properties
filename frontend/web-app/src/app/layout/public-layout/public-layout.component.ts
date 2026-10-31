@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SWASTIK_CONTACT } from '../../core/config/business-contact';
 
@@ -45,5 +47,6 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
 export class PublicLayoutComponent {
   readonly year=new Date().getFullYear();readonly contact=SWASTIK_CONTACT;
   readonly menuOpen=signal(false);readonly scrolled=signal(false);
-  constructor(){if(typeof window!=='undefined'){const update=()=>this.scrolled.set(window.scrollY>12);update();window.addEventListener('scroll',update,{passive:true});}}
+  private readonly platformId=inject(PLATFORM_ID);
+  constructor(){if(isPlatformBrowser(this.platformId)){const update=()=>this.scrolled.set(window.scrollY>12);update();window.addEventListener('scroll',update,{passive:true});}}
 }
