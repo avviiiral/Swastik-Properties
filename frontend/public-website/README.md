@@ -7,7 +7,7 @@ A separate Angular SSR website for visitors browsing published property listings
 - Property catalogue with search, category and listing-purpose filters.
 - Paginated property results and individual property detail pages.
 - Brochure and Google Maps links from the backend property record.
-- Server-side rendering, dynamic property titles/descriptions, robots.txt and a starter sitemap.
+- Server-side rendering, dynamic property titles/descriptions and a robots.txt policy. A domain-specific sitemap is left for deployment configuration.
 - No Admin sign-in, CMS or access to unpublished inventory.
 
 ## Run locally (Windows PowerShell)
