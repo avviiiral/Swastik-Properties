@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard } from './admin/core/admin.guard';
+import { adminGuard, workspaceGuard } from './admin/core/admin.guard';
 import { LoginComponent } from './admin/features/auth/login.component';
 import { PropertiesComponent as AdminPropertiesComponent } from './admin/features/properties/properties.component';
 import { AdminLayoutComponent } from './admin/layout/admin-layout.component';
@@ -21,6 +21,7 @@ export const appRoutes: Routes = [
   {path:'blog/:slug',component:BlogDetailComponent}
  ]},
  {path:'admin/login',component:LoginComponent,title:'Workspace Sign In | Swastik Properties'},
+ {path:'admin',pathMatch:'full',canActivate:[workspaceGuard],component:LoginComponent},
  {path:'admin/forbidden',loadComponent:()=>import('./admin/features/forbidden/forbidden.component').then(m=>m.ForbiddenComponent),title:'Access Denied | Swastik Properties'},
  {path:'admin',component:AdminLayoutComponent,canActivate:[adminGuard],children:[
   {path:'',pathMatch:'full',loadComponent:()=>import('./admin/features/dashboard/dashboard.component').then(m=>m.DashboardComponent),data:{roles:['ADMIN','SUPER_ADMIN']}},
