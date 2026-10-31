@@ -14,7 +14,7 @@ class ManageBlogPostSerializer(serializers.ModelSerializer):
  tags=serializers.JSONField(required=False)
  class Meta:
   model=BlogPost;fields=("id","title","slug","excerpt","content","cover_image","category","tags","status","published_at","author","seo_title","seo_description","reading_time","created_at","updated_at")
-  read_only_fields=("id","published_at","author","reading_time","created_at","updated_at")
+  read_only_fields=("id","slug","published_at","author","reading_time","created_at","updated_at")
  def to_internal_value(self,data):
   # FormData sends tags as a JSON array string; accept it while preserving JSON API lists.
   mutable=data.copy() if hasattr(data,"copy") else data
