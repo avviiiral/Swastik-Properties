@@ -192,6 +192,25 @@ class PropertyAPITests(TestCase):
         self.assertEqual(draft.approved_by, self.admin)
         self.assertIsNotNone(draft.published_at)
 
+    def test_admin_can_replace_brochure_and_old_file_is_removed(self):
+        property_obj = self.create_property("Replace brochure", Property.PublicationStatus.DRAFT)
+        old_name = property_obj.brochure.name
+        storage = property_obj.brochure.storage
+        self.client.force_authenticate(user=self.admin)
+
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.patch(
+                f"/api/v1/properties/{property_obj.slug}/",
+                {"brochure": make_pdf("updated-brochure.pdf")},
+                format="multipart",
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        property_obj.refresh_from_db()
+        self.assertNotEqual(property_obj.brochure.name, old_name)
+        self.assertFalse(storage.exists(old_name))
+        self.assertTrue(storage.exists(property_obj.brochure.name))
+
     def test_admin_can_permanently_delete_property_and_brochure(self):
         property_obj = self.create_property(
             "Delete me",

@@ -72,7 +72,7 @@ Supported publication statuses: DRAFT, PENDING_REVIEW, CHANGES_REQUESTED, APPROV
 
 Availability is separate from publication status: AVAILABLE, SOLD, RENTED, LEASED or UNAVAILABLE.
 
-Public catalogue responses contain only PUBLISHED properties. Admin and Super Admin requests can access all publication states. Property deletion is permanent and its media file is cleaned up after the database transaction commits.
+Public catalogue responses contain only PUBLISHED properties. Admin and Super Admin requests can access all publication states. Property deletion is permanent.
 
 ### Example property payload (multipart/form-data)
 
@@ -83,12 +83,10 @@ Public catalogue responses contain only PUBLISHED properties. Admin and Super Ad
 | category | LAND |
 | subcategory | Residential Plot |
 | location_name | Bidkin, Chhatrapati Sambhajinagar |
-| location_url | Google Maps URL supplied for the project |
+| location_url | https://www.google.com/maps/place/... |
 | brochure | 3 Singneture Brochure Dt. 20 07 26.pdf |
 
-Public list supports filtering by category, listing_type and availability_status, text search via ?search= and ordering via ?ordering=.
-
-The exact brochure URL is returned by the API after upload; the backend stores the original PDF and does not parse or rewrite its contents.
+The exact brochure URL is returned by the API after upload; the backend does not parse or rewrite the brochure contents.
 
 ## API documentation
 

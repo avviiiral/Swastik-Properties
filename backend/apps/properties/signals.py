@@ -1,7 +1,6 @@
 from django.db import transaction
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
-from django.core.files.storage import default_storage
 
 from .models import Property
 
@@ -19,7 +18,7 @@ def delete_replaced_brochure(sender, instance, **kwargs):
     )
     new_name = getattr(instance.brochure, "name", None)
     if old_name and old_name != new_name:
-        storage = instance.brochure.storage if instance.brochure else default_storage
+        storage = sender._meta.get_field("brochure").storage
         transaction.on_commit(lambda: storage.delete(old_name))
 
 

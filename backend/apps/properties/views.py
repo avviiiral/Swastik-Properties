@@ -1,4 +1,3 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from rest_framework import filters, viewsets
 from rest_framework.permissions import AllowAny
@@ -15,16 +14,7 @@ class PropertyViewSet(viewsets.ModelViewSet):
 
     serializer_class = PropertySerializer
     lookup_field = "slug"
-    filter_backends = (
-        DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    )
-    filterset_fields = (
-        "category",
-        "listing_type",
-        "availability_status",
-    )
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     search_fields = (
         "name",
         "description",
@@ -62,6 +52,16 @@ class PropertyViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(
                 publication_status=Property.PublicationStatus.PUBLISHED
             )
+
+        for field in (
+            "category",
+            "listing_type",
+            "availability_status",
+            "publication_status",
+        ):
+            value = self.request.query_params.get(field)
+            if value and is_admin:
+                queryset = queryset.filter(**{field: value})
 
         return queryset
 
