@@ -261,6 +261,33 @@ class AuthenticationAPITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_admin_can_list_editor_and_agent_accounts(self):
+        editor = User.objects.create_user(
+            username="blog-editor", email="editor@swastik.example",
+            password=self.password, role=User.Role.EDITOR,
+        )
+        self.authenticate_as(self.admin)
+        response = self.client.get("/api/v1/auth/users/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            {item["role"] for item in response.data["results"]},
+            {User.Role.AGENT, User.Role.EDITOR},
+        )
+
+    def test_admin_can_create_editor_account(self):
+        self.authenticate_as(self.admin)
+        response = self.client.post(
+            "/api/v1/auth/users/",
+            {
+                "username": "new-editor",
+                "email": "new-editor@swastik.example",
+                "password": self.password,
+                "role": User.Role.EDITOR,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     def test_admin_cannot_promote_agent_to_admin(self):
         self.authenticate_as(self.admin)
 
