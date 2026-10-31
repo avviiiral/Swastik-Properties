@@ -2,6 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.permissions import AllowAny
 
+from .filters import CityFilter, LocalityFilter
 from .models import City, District, Locality, State
 from .serializers import (
     CitySerializer,
@@ -43,7 +44,7 @@ class CityViewSet(PublicLocationViewSet):
         district__state__is_active=True,
     ).select_related("district", "district__state")
     serializer_class = CitySerializer
-    filterset_fields = ("district", "district__state")
+    filterset_class = CityFilter
 
 
 class LocalityViewSet(PublicLocationViewSet):
@@ -58,8 +59,4 @@ class LocalityViewSet(PublicLocationViewSet):
         "city__district__state",
     )
     serializer_class = LocalitySerializer
-    filterset_fields = (
-        "city",
-        "city__district",
-        "city__district__state",
-    )
+    filterset_class = LocalityFilter
