@@ -6,13 +6,13 @@ on:
       - main
       - "feature/**"
     paths:
-      - "frontend/public-website/**"
+      - "frontend/web-app/**"
       - ".github/workflows/public-website-ci.yml"
   pull_request:
     branches:
       - main
     paths:
-      - "frontend/public-website/**"
+      - "frontend/web-app/**"
       - ".github/workflows/public-website-ci.yml"
 
 permissions:
@@ -29,10 +29,10 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: frontend/public-website/package.json
+          cache-dependency-path: frontend/web-app/package.json
       - name: Install unified frontend dependencies
-        working-directory: frontend/public-website
+        working-directory: frontend/web-app
         run: npm install --no-audit --no-fund
       - name: Build unified Angular SSR application
-        working-directory: frontend/public-website
+        working-directory: frontend/web-app
         run: npm run build
