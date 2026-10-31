@@ -83,7 +83,10 @@ class UserActivationView(APIView):
     permission_classes = (IsUserManager,)
     def post(self, request, pk):
         with transaction.atomic():
-            target = get_object_or_404(User.objects.select_for_update(), pk=pk)
+            target_queryset = User.objects.select_for_update()
+            if request.user.role == User.Role.ADMIN:
+                target_queryset = target_queryset.filter(role__in=(User.Role.EDITOR, User.Role.AGENT))
+            target = get_object_or_404(target_queryset, pk=pk)
             if request.user.pk == target.pk:
                 return Response({"detail": "You cannot change your own active status."}, status=status.HTTP_400_BAD_REQUEST)
             if request.user.role == User.Role.ADMIN and target.role not in (User.Role.EDITOR, User.Role.AGENT):
