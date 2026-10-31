@@ -9,3 +9,12 @@ export const adminGuard: CanActivateFn = (route) => {
   if (!auth.user() || !auth.accessToken) return router.createUrlTree(['/admin/login']);
   return auth.hasRole(...roles) ? true : router.createUrlTree(['/admin/forbidden']);
 };
+
+export const workspaceGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (!auth.user() || !auth.accessToken) return router.createUrlTree(['/admin/login']);
+  if (auth.hasRole('EDITOR')) return router.createUrlTree(['/admin/blog']);
+  if (auth.hasRole('ADMIN', 'SUPER_ADMIN')) return router.createUrlTree(['/admin']);
+  return router.createUrlTree(['/admin/forbidden']);
+};
