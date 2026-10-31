@@ -10,6 +10,32 @@ export interface PropertyEnquiryPayload {
   message: string;
 }
 
+export interface BusinessContactSettings {
+  whatsapp_number: string;
+  contact_number: string;
+  email: string;
+  updated_at?: string;
+}
+
+export interface PropertyEnquiryRecord {
+  id: number;
+  property_name: string;
+  property_reference: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  status: 'NEW' | 'CONTACTED' | 'CLOSED';
+  created_at: string;
+}
+
+export interface PropertyEnquiryPage {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: PropertyEnquiryRecord[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class PropertyEnquiryApi {
   private readonly http = inject(HttpClient);
@@ -20,5 +46,29 @@ export class PropertyEnquiryApi {
       this.base + '/submissions/property-enquiry/',
       payload
     );
+  }
+
+  getContactSettings() {
+    return this.http.get<BusinessContactSettings>(this.base + '/submissions/contact-settings/');
+  }
+
+  updateContactSettings(payload: Pick<BusinessContactSettings, 'whatsapp_number' | 'contact_number' | 'email'>) {
+    return this.http.patch<BusinessContactSettings>(
+      this.base + '/submissions/contact-settings/',
+      payload
+    );
+  }
+
+  listAdminEnquiries(pageSize = 8) {
+    return this.http.get<PropertyEnquiryPage>(
+      this.base + '/submissions/property-enquiries/',
+      { params: { page_size: pageSize } }
+    );
+  }
+
+  exportAdminEnquiries() {
+    return this.http.get(this.base + '/submissions/property-enquiries/export/', {
+      responseType: 'blob'
+    });
   }
 }
