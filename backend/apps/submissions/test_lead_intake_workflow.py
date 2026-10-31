@@ -56,6 +56,13 @@ class LeadIntakeAPITests(TestCase):
             set(enquiry_types),
         )
 
+    def test_public_submission_accepts_a_short_non_empty_message(self):
+        payload = self.payload()
+        payload["message"] = "Hi"
+        response = self.client.post("/api/v1/submissions/leads/", payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(PropertyEnquiry.objects.get().message, "Hi")
+
     def test_public_submission_requires_contact_consent(self):
         payload = self.payload()
         payload["consent"] = False
