@@ -23,6 +23,6 @@ export const workspaceGuard: CanActivateFn = () => {
   const router = inject(Router);
   if (!auth.user() || !auth.accessToken) return router.createUrlTree(['/admin/login']);
   if (auth.hasRole('EDITOR')) return router.createUrlTree(['/admin/blog']);
-  if (auth.hasRole('ADMIN', 'SUPER_ADMIN')) return router.createUrlTree(['/admin/properties']);
+  if (auth.hasRole('ADMIN', 'SUPER_ADMIN')) return router.createUrlTree(['/admin/overview']);
   return router.createUrlTree(['/admin/forbidden']);
 };
