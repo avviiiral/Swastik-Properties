@@ -6,7 +6,30 @@ from .models import Property
 from .validators import extract_google_maps_coordinates, validate_google_maps_url
 
 
+class EmptyStringAsNullDecimalField(serializers.DecimalField):
+    """Treat blank optional multipart numeric inputs as JSON null values."""
+
+    def to_internal_value(self, data):
+        if data == "":
+            return None
+        return super().to_internal_value(data)
+
+
 class PropertySerializer(serializers.ModelSerializer):
+    price = EmptyStringAsNullDecimalField(
+        max_digits=14,
+        decimal_places=2,
+        min_value=0,
+        required=False,
+        allow_null=True,
+    )
+    area_value = EmptyStringAsNullDecimalField(
+        max_digits=12,
+        decimal_places=2,
+        min_value=0,
+        required=False,
+        allow_null=True,
+    )
     brochure_url = serializers.SerializerMethodField()
     created_by_email = serializers.EmailField(source="created_by.email", read_only=True)
     approved_by_email = serializers.EmailField(source="approved_by.email", read_only=True)

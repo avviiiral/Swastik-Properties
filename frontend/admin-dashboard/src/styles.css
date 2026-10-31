@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  font-family: 'DM Sans', sans-serif;
+  color: #1f2c2a;
+  background: #f4f6f4;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --ink: #1f2c2a;
+  --muted: #6b7772;
+  --line: #e4e9e5;
+  --surface: #ffffff;
+  --page: #f4f6f4;
+  --green: #203b35;
+  --green-dark: #172b2a;
+  --amber: #d99a42;
+  --danger: #b7463f;
+  --success: #26734d;
+  --shadow: 0 16px 44px rgba(27, 48, 41, 0.08);
+}
+* { box-sizing: border-box; }
+html, body { min-width: 320px; min-height: 100%; margin: 0; }
+body { min-height: 100vh; background: var(--page); }
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: 0.55; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid rgba(217, 154, 66, 0.5); outline-offset: 2px; }
+.page-title, .section-title, .brand-name { font-family: 'Manrope', sans-serif; }
+.muted { color: var(--muted); }
+.field-error { color: var(--danger); font-size: 12px; margin-top: 5px; }
+.alert { border: 1px solid transparent; border-radius: 10px; padding: 11px 13px; font-size: 13px; line-height: 1.5; }
+.alert.error { color: #8b302b; background: #fff0ef; border-color: #f5d5d2; }
+.alert.success { color: #1f6744; background: #edf8f1; border-color: #d2ebda; }
+.btn { display: inline-flex; justify-content: center; align-items: center; gap: 8px; min-height: 40px; padding: 0 15px; border: 1px solid transparent; border-radius: 9px; font-size: 13px; font-weight: 700; transition: background 140ms ease, border-color 140ms ease, transform 140ms ease; }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn-primary { color: #fff; background: var(--green); }
+.btn-primary:hover:not(:disabled) { background: #2d5148; }
+.btn-secondary { color: var(--ink); background: #fff; border-color: #dce3de; }
+.btn-secondary:hover:not(:disabled) { background: #f8faf8; border-color: #c7d1ca; }
+.btn-danger { color: var(--danger); background: #fff; border-color: #efd4d1; }
+.btn-danger:hover:not(:disabled) { background: #fff4f3; }
+.btn-small { min-height: 32px; padding: 0 10px; font-size: 12px; }
+.form-control { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #dce3de; border-radius: 9px; background: #fff; color: var(--ink); font-size: 13px; transition: border-color 140ms ease, box-shadow 140ms ease; }
+.form-control:focus { outline: none; border-color: #9aaf9f; box-shadow: 0 0 0 3px rgba(65, 112, 87, 0.1); }
+.form-control::placeholder { color: #a0aaa4; }
+textarea.form-control { resize: vertical; min-height: 88px; }
+@media (max-width: 700px) { .btn { min-height: 42px; } }

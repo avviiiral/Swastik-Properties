@@ -26,6 +26,15 @@
 - [ ] Add property activity/audit logging.
 - [ ] Implement agent-owned property creation, assignment and approval workflow.
 
+## Admin dashboard
+
+- [x] Create a separate Angular Admin SPA workspace.
+- [x] Add Admin/Super Admin sign-in and JWT refresh handling.
+- [x] Add property listing, search and category filtering.
+- [x] Add property creation/editing with PDF upload and Google Maps link.
+- [x] Add publish/unpublish, availability update and permanent delete actions.
+- [ ] Verify Angular build and CRUD flows locally on Windows.
+
 ## Website forms and submissions
 
 - [ ] Define form-specific submission schemas and validators.
@@ -40,3 +49,4 @@
 - [ ] Publish and review OpenAPI/Swagger documentation.
 - [ ] Add production media storage and delivery configuration.
 - [ ] Add deployment configuration and production security checks.
+- [ ] Build the separate public-facing Angular SSR website.

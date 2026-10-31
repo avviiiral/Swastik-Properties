@@ -164,6 +164,8 @@ class PropertyAPITests(TestCase):
                 "subcategory": "Residential Plot",
                 "location_name": "Bidkin, Chhatrapati Sambhajinagar",
                 "location_url": MAP_URL,
+                "price": "",
+                "area_value": "",
                 "brochure": make_pdf(),
             },
             format="multipart",
@@ -172,6 +174,8 @@ class PropertyAPITests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         saved = Property.objects.get(slug="abc-3-signature")
         self.assertEqual(saved.created_by, self.admin)
+        self.assertIsNone(saved.price)
+        self.assertIsNone(saved.area_value)
         self.assertEqual(saved.publication_status, Property.PublicationStatus.DRAFT)
         self.assertEqual(saved.latitude, Decimal("19.6565164"))
         self.assertIn("brochure_url", response.data)

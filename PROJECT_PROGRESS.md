@@ -1,52 +1,36 @@
 # Swastik Properties — Project Progress
 
-## Current phase
+## Current baseline
 
-Backend Phase 2 — Foundation, authentication and normalized locations.
+- Backend authentication and custom user roles are implemented.
+- Normalized State → District → City → Locality models and read-only lookup APIs are implemented.
+- Property catalogue API supports Admin/Super Admin brochure uploads with a Google Maps link.
+- Property deletion is permanent and uploaded brochure files are cleaned up.
+- Customer submissions, image galleries and category-specific detail tables are not implemented yet.
 
-## Completed
+## Admin dashboard
 
-- Django project created with six domain applications.
-- Custom User model with SUPER_ADMIN, ADMIN and AGENT roles.
-- Email-based JWT authentication, refresh-token rotation and logout revocation.
-- Current-user endpoint and role-limited user-management endpoints.
-- Account and authentication API tests.
-- Normalized State → District → City → Locality models.
-- Public, read-only location lookup APIs with state/district/city filters.
-- Inactive locations and descendants are excluded from public responses.
-- Idempotent seed command for Maharashtra and its 36 districts.
-- Initial accounts and locations migrations added.
-- GitHub Actions workflow checks Django, migrations and backend tests.
+- [x] Create a separate Angular Admin SPA workspace.
+- [x] Add email/password login against the backend JWT endpoint.
+- [x] Restrict dashboard access to Admin and Super Admin roles.
+- [x] Add bearer-token interceptor and refresh-token rotation support.
+- [x] Add property inventory listing, search and category filtering.
+- [x] Add property create/edit form with PDF brochure upload and Google Maps URL.
+- [x] Add publish/unpublish, availability updates and permanent deletion controls.
+- [ ] Verify the Angular installation and production build locally on Windows.
+- [ ] Verify upload, update, publish and delete flows against the local Django server.
 
-## Test results
+## Next backend and frontend slices
 
-- Local account/authentication tests: 20 passed (reported by developer).
-- GitHub Actions backend CI for location-management branch: passed.
-- GitHub CI steps: Django system checks, migration consistency, migrations and account/location tests.
+- [ ] Add property gallery images with a primary image.
+- [ ] Implement Residential, Commercial and Land-specific detail models after exact subtype fields are agreed.
+- [ ] Add property assignment and approval history for Agents.
+- [ ] Implement public forms, Admin-only submission management and exports.
+- [ ] Build the separate public-facing Angular SSR application.
 
-## Pending local verification
+## Security and deployment follow-up
 
-- Apply the locations migration locally.
-- Run `python manage.py seed_maharashtra_locations`.
-- Run account and location tests locally.
-- Reset the initial Super Admin password: the first password creation bypassed Django's password validation. Use a strong, unique password.
-
-## Known decisions and boundaries
-
-- Location REST APIs are read-only and public.
-- Location data maintenance is through Django Admin and the seed command.
-- Initial market data seeds Maharashtra and its 36 districts; cities/localities are added as markets are configured.
-- PostgreSQL remains the target database. SQLite is currently used as a local fallback.
-- No CMS is included.
-- Property deletion must be permanent; customer submissions associated with deleted properties must be retained.
-- Agents must not access customer submissions or exports.
-
-## Next recommended task
-
-Complete local location verification, then implement the Agent profile and assignment model. Finalize the category-specific Residential, Commercial and Land property detail fields before creating property migrations.
-
-## Latest Git state
-
-- Backend/authentication branch: `feature/backend-foundation`
-- Location branch: `feature/location-management`
-- Review: PR #1 is the backend/authentication foundation; PR #2 adds normalized location management and targets the foundation branch.
+- [ ] Configure PostgreSQL verification.
+- [ ] Configure persistent production media storage and reverse proxy routes for /api/ and /media/.
+- [ ] Add a production Content Security Policy and review dashboard token handling.
+- [ ] Complete deployment configuration and production security checks.

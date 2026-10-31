@@ -18,6 +18,11 @@ backend/venv/
 media/
 staticfiles/
 
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
 # Testing
 .pytest_cache/
 .coverage
