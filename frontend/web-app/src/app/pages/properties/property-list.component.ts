@@ -27,10 +27,10 @@ import { PropertyApi } from '../../core/services/property-api.service';
           <select aria-label="Listing purpose" name="listingType" [(ngModel)]="listingType" (ngModelChange)="load(1)">
             <option value="">Buy, rent or lease</option><option value="SALE">For sale</option><option value="RENT">For rent</option><option value="LEASE">For lease</option>
           </select>
-          <input type="text" inputmode="decimal" aria-label="Minimum price" name="minPrice" [(ngModel)]="minPrice" min="0" placeholder="Min price (₹)">
-          <input type="text" inputmode="decimal" aria-label="Maximum price" name="maxPrice" [(ngModel)]="maxPrice" min="0" placeholder="Max price (₹)">
+          <input type="number" inputmode="decimal" aria-label="Minimum area" name="minArea" [(ngModel)]="minArea" min="0" placeholder="Min area">
+          <input type="number" inputmode="decimal" aria-label="Maximum area" name="maxArea" [(ngModel)]="maxArea" min="0" placeholder="Max area">
           <select aria-label="Sort properties" name="ordering" [(ngModel)]="ordering" (ngModelChange)="load(1)">
-            <option value="-created_at">Newest first</option><option value="price">Price: low to high</option><option value="-price">Price: high to low</option><option value="name">Name: A to Z</option>
+            <option value="-created_at">Newest first</option><option value="name">Name: A to Z</option><option value="-area_value">Largest area</option><option value="area_value">Smallest area</option>
           </select>
           <button type="button" class="reset" (click)="reset()">Reset</button>
           <button type="button" class="search-btn" (click)="load(1)">Search</button>
@@ -52,7 +52,7 @@ import { PropertyApi } from '../../core/services/property-api.service';
                 }
                 <small [class.unavailable]="p.availability_status!=='AVAILABLE'">{{p.availability_status.replace('_',' ')}}</small>
               </div>
-              <div class="card-body"><div class="kind">{{p.listing_type || 'PROPERTY'}} · {{p.subcategory || categoryName(p.category)}}</div><h3>{{p.name}}</h3><p>⌖ &nbsp;{{location(p)}}</p><div class="card-bottom"><strong>{{price(p)}}</strong><span>View details <b>↗</b></span></div></div>
+              <div class="card-body"><div class="kind">{{p.listing_type || 'PROPERTY'}} · {{p.subcategory || categoryName(p.category)}}</div><h3>{{p.name}}</h3><p>⌖ &nbsp;{{location(p)}}</p><div class="card-bottom"><strong>{{area(p)}}</strong><span>Request details <b>↗</b></span></div></div>
             </a>
           }
         </div>
@@ -93,8 +93,8 @@ export class PropertyListComponent implements OnInit {
   search = '';
   category = '';
   listingType = '';
-  minPrice = '';
-  maxPrice = '';
+  minArea = '';
+  maxArea = '';
   ordering = '-created_at';
 
   ngOnInit(): void {
@@ -109,17 +109,17 @@ export class PropertyListComponent implements OnInit {
   load(nextPage = this.page()): void {
     this.loading.set(true);
     this.error.set(false);
-    this.api.list({search:this.search,category:this.category,listing_type:this.listingType,price_min:this.minPrice,price_max:this.maxPrice,ordering:this.ordering,page:nextPage}).subscribe({
+    this.api.list({search:this.search,category:this.category,listing_type:this.listingType,area_min:this.minArea,area_max:this.maxArea,ordering:this.ordering,page:nextPage}).subscribe({
       next: data => {this.items.set(data.results);this.count.set(data.count);this.page.set(nextPage);this.loading.set(false);},
       error: () => {this.error.set(true);this.loading.set(false);}
     });
   }
-  reset(): void {this.search='';this.category='';this.listingType='';this.minPrice='';this.maxPrice='';this.ordering='-created_at';this.load(1);}
+  reset(): void {this.search='';this.category='';this.listingType='';this.minArea='';this.maxArea='';this.ordering='-created_at';this.load(1);}
   totalPages(): number {return Math.max(1,Math.ceil(this.count()/this.pageSize));}
   categoryName(value: string): string {return ({RESIDENTIAL:'Residential',COMMERCIAL:'Commercial',LAND:'Land & plots'} as Record<string,string>)[value] ?? 'Property';}
   primaryImage(property: Property): PropertyImage | null {
     return property.images?.find((image) => image.is_primary) ?? property.images?.[0] ?? null;
   }
   location(p: Property): string {return [p.location_name||p.locality_name,p.city_name,p.district_name,p.state_name].filter((v,i,a):v is string=>!!v&&a.indexOf(v)===i).join(', ')||'Maharashtra';}
-  price(p: Property): string {if(!p.price||!Number.isFinite(Number(p.price)))return 'Price on request';return new Intl.NumberFormat('en-IN',{style:'currency',currency:p.currency||'INR',maximumFractionDigits:0}).format(Number(p.price));}
+  area(p: Property): string {if(!p.area_value)return 'Area on request';const units:Record<string,string>={SQ_FT:'sq. ft.',SQ_M:'sq. m.',ACRE:'acre',GUNTHA:'guntha'};return p.area_value+' '+(units[p.area_unit]||p.area_unit);}
 }

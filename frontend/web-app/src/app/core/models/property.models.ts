@@ -19,8 +19,6 @@ export interface Property {
   category: string;
   subcategory: string;
   listing_type: string;
-  price: string | null;
-  currency: string;
   area_value: string | null;
   area_unit: string;
   location_name: string;

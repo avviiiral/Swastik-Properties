@@ -169,3 +169,9 @@ class PropertySerializer(serializers.ModelSerializer):
                 attrs["longitude"] = Decimal(str(extracted_longitude))
 
         return attrs
+
+
+class PublicPropertySerializer(PropertySerializer):
+    """Public representation intentionally excludes all monetary fields."""
+    class Meta(PropertySerializer.Meta):
+        fields = tuple(field for field in PropertySerializer.Meta.fields if field not in ("price", "currency"))

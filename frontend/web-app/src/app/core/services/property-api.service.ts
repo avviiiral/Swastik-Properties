@@ -8,8 +8,8 @@ export interface PropertyFilters {
   search?: string;
   category?: string;
   listing_type?: string;
-  price_min?: string;
-  price_max?: string;
+  area_min?: string;
+  area_max?: string;
   ordering?: string;
   page?: number;
 }
@@ -24,8 +24,8 @@ export class PropertyApi {
     if (filters.search?.trim()) params = params.set('search', filters.search.trim());
     if (filters.category) params = params.set('category', filters.category);
     if (filters.listing_type) params = params.set('listing_type', filters.listing_type);
-    if (filters.price_min) params = params.set('price_min', filters.price_min);
-    if (filters.price_max) params = params.set('price_max', filters.price_max);
+    if (filters.area_min) params = params.set('area_min', filters.area_min);
+    if (filters.area_max) params = params.set('area_max', filters.area_max);
     if (filters.ordering) params = params.set('ordering', filters.ordering);
     if (filters.page) params = params.set('page', filters.page);
     return this.http.get<PropertyPage>(this.base + '/properties/', {

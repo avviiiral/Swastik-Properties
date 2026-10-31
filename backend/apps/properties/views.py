@@ -14,7 +14,7 @@ from apps.accounts.models import User
 from apps.accounts.permissions import IsAdminOrSuperAdmin
 
 from .models import Property, PropertyImage
-from .serializers import PropertyImageSerializer, PropertySerializer
+from .serializers import PropertyImageSerializer, PropertySerializer, PublicPropertySerializer
 
 
 class PropertyViewSet(viewsets.ModelViewSet):
@@ -34,9 +34,16 @@ class PropertyViewSet(viewsets.ModelViewSet):
         "locality__city__name",
         "locality__city__district__name",
     )
-    ordering_fields = ("created_at", "updated_at", "name", "price", "area_value")
+    ordering_fields = ("created_at", "updated_at", "name", "area_value")
     ordering = ("-created_at",)
     http_method_names = ("get", "post", "patch", "put", "delete", "head", "options")
+
+    def get_serializer_class(self):
+        user = self.request.user
+        is_admin = user.is_authenticated and user.is_active and user.role in (User.Role.ADMIN, User.Role.SUPER_ADMIN)
+        if self.action in ('list', 'retrieve') and not is_admin:
+            return PublicPropertySerializer
+        return PropertySerializer
 
     def get_permissions(self):
         if self.action in ("list", "retrieve"):
@@ -79,25 +86,25 @@ class PropertyViewSet(viewsets.ModelViewSet):
             if publication_status:
                 queryset = queryset.filter(publication_status=publication_status)
 
-        price_min = self.request.query_params.get("price_min")
-        price_max = self.request.query_params.get("price_max")
+        area_min = self.request.query_params.get("area_min")
+        area_max = self.request.query_params.get("area_max")
         try:
-            minimum = Decimal(price_min) if price_min not in (None, "") else None
-            maximum = Decimal(price_max) if price_max not in (None, "") else None
+            minimum_area = Decimal(area_min) if area_min not in (None, "") else None
+            maximum_area = Decimal(area_max) if area_max not in (None, "") else None
         except (InvalidOperation, TypeError, ValueError):
-            raise ValidationError({"price": "Enter a valid numeric price range."})
-        if (minimum is not None and not minimum.is_finite()) or (maximum is not None and not maximum.is_finite()):
-            raise ValidationError({"price": "Enter finite numeric price values."})
-        if minimum is not None and minimum < 0:
-            raise ValidationError({"price_min": "Minimum price cannot be negative."})
-        if maximum is not None and maximum < 0:
-            raise ValidationError({"price_max": "Maximum price cannot be negative."})
-        if minimum is not None and maximum is not None and minimum > maximum:
-            raise ValidationError({"price": "Minimum price cannot exceed maximum price."})
-        if minimum is not None:
-            queryset = queryset.filter(price__gte=minimum)
-        if maximum is not None:
-            queryset = queryset.filter(price__lte=maximum)
+            raise ValidationError({"area": "Enter a valid numeric area range."})
+        if (minimum_area is not None and not minimum_area.is_finite()) or (maximum_area is not None and not maximum_area.is_finite()):
+            raise ValidationError({"area": "Enter finite area values."})
+        if minimum_area is not None and minimum_area < 0:
+            raise ValidationError({"area_min": "Minimum area cannot be negative."})
+        if maximum_area is not None and maximum_area < 0:
+            raise ValidationError({"area_max": "Maximum area cannot be negative."})
+        if minimum_area is not None and maximum_area is not None and minimum_area > maximum_area:
+            raise ValidationError({"area": "Minimum area cannot exceed maximum area."})
+        if minimum_area is not None:
+            queryset = queryset.filter(area_value__gte=minimum_area)
+        if maximum_area is not None:
+            queryset = queryset.filter(area_value__lte=maximum_area)
 
         return queryset
 
