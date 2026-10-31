@@ -67,15 +67,15 @@ All location endpoints are public, read-only and return only active records. Ina
 |---|---|---|---|
 | GET | `/api/v1/locations/states/` | `search`, `ordering`, `page` | List active states |
 | GET | `/api/v1/locations/districts/` | `state`, `search`, `ordering`, `page` | List districts; filter by state ID |
-| GET | `/api/v1/locations/cities/` | `district`, `district__state`, `search`, `ordering`, `page` | List cities; filter by district or state ID |
-| GET | `/api/v1/locations/localities/` | `city`, `city__district`, `city__district__state`, `search`, `ordering`, `page` | List localities; filter by city, district or state ID |
+| GET | `/api/v1/locations/cities/` | `district`, `state`, `search`, `ordering`, `page` | List cities; filter by district or state ID |
+| GET | `/api/v1/locations/localities/` | `city`, `district`, `state`, `search`, `ordering`, `page` | List localities; filter by city, district or state ID |
 
 ### Example location lookup sequence
 
 1. GET `/api/v1/locations/states/`
 2. GET `/api/v1/locations/districts/?state=1`
-3. GET `/api/v1/locations/cities/?district=12`
-4. GET `/api/v1/locations/localities/?city=85`
+3. GET `/api/v1/locations/cities/?district=12` (or `?state=1`)
+4. GET `/api/v1/locations/localities/?city=85` (or `?district=12` / `?state=1`)
 
 Location responses include the parent IDs and names needed to display a complete location path.
 
