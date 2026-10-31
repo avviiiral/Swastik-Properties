@@ -1,18 +1,20 @@
-# Admin Dashboard — Frontend Foundation
+# Admin Workspace — Unified Frontend
 
 ## Scope
 
-The Admin Dashboard is a separate Angular single-page application for operational administration. It is not a CMS and does not contain page editing, homepage content editing or a page builder.
+The Admin workspace is part of the single Angular application at `frontend/web-app`. It is used for operational administration only; it is not a CMS and does not contain page editing, homepage content editing or a page builder.
 
-Application path: frontend/admin-dashboard/
+Admin routes:
+- `/admin/login` — administrator sign-in.
+- `/admin/properties` — property inventory and management.
 
 ## Technology
 
-- Angular 22 standalone application.
-- Angular Router and Reactive Forms.
-- Angular HttpClient with a functional JWT interceptor.
-- Separate frontend project; it does not share Django templates.
-- Development proxy for Django API and uploaded media.
+- Angular 22 standalone components and Angular Router.
+- Reactive Forms and Angular HttpClient.
+- Functional JWT interceptor with refresh-token rotation.
+- Admin routes use client rendering because the current authentication flow uses browser session storage.
+- Public and Admin routes share one Angular build and development server.
 
 ## Authentication
 
@@ -20,51 +22,47 @@ Application path: frontend/admin-dashboard/
 - Access and refresh tokens are stored in browser session storage for the current tab/session.
 - The interceptor attaches the access token to protected API requests.
 - On an API 401 response, the interceptor attempts a refresh request; SimpleJWT refresh rotation is supported.
-- Only ADMIN and SUPER_ADMIN application roles can enter the dashboard.
+- Only ADMIN and SUPER_ADMIN application roles can enter the Admin workspace.
 - Logout calls POST /api/v1/auth/logout/ and clears the local session.
 
 Session storage is still accessible to JavaScript in the page. Production deployment must apply a strong Content Security Policy, avoid unsafe third-party scripts, enforce HTTPS, and consider a backend-for-frontend with HttpOnly cookies if the threat model requires stronger token isolation.
 
-## Property management screen
+## Property management page
 
-The first dashboard module provides:
-
-- Paginated property inventory.
-- Search by property name/reference/location.
-- Category filtering.
+The Admin property page provides:
+- Paginated property inventory, search and category filtering.
 - Create/edit property forms.
-- Required name, Google Maps link and PDF brochure on create.
-- Optional developer, category/subcategory, listing type, INR price, area/unit, location label/address and description.
-- Replace brochure when editing.
-- Save as Draft or publish.
-- Change availability status independently.
-- Open the Google Maps link and uploaded brochure.
-- Permanently delete a property after browser confirmation.
+- PDF brochure upload and replacement.
+- Multiple JPG/JPEG/PNG/WEBP property photos, primary-image selection and photo removal.
+- Publish/unpublish and availability updates.
+- Google Maps links and brochure access.
+- Permanent property deletion, including uploaded brochures and property images.
 
-The frontend performs basic PDF extension and size checks. The Django API remains authoritative and validates the HTTPS Google Maps URL, PDF signature and 25 MB maximum file size.
+The Django API remains authoritative for input validation and authorization.
 
 ## Local development
 
-From repository root:
+From repository root, start Django:
 
 ```powershell
 cd backend
+.\venv\Scripts\Activate.ps1
 python manage.py runserver
 ```
 
-In a second terminal:
+In a second terminal, start the single frontend:
 
 ```powershell
-cd frontend/admin-dashboard
-npm install
-npm start
+cd frontend/web-app
+npm.cmd install
+npm.cmd start
 ```
 
-Open http://localhost:4200. The development proxy routes /api and /media to Django on 127.0.0.1:8000.
+Open http://localhost:4200. Public pages and Admin routes are served by the same process.
 
 ## Production routing
 
-The production web server should serve the compiled static application and forward:
+The production web server should serve the Angular SSR application and forward:
 - /api/ to Django.
 - /media/ to the configured persistent media storage.
 

@@ -9,7 +9,7 @@ from rest_framework.test import APIClient
 
 from apps.accounts.models import User
 
-from .models import Property
+from .models import Property, PropertyImage
 from .validators import extract_google_maps_coordinates, validate_google_maps_url
 
 
@@ -277,3 +277,167 @@ class PropertyModelFileTests(TestCase):
         field = Property._meta.get_field("brochure")
         self.assertFalse(field.blank)
         self.assertFalse(field.null)
+
+
+def make_property_image(name="property-photo.jpg", color=(40, 120, 80)):
+    from io import BytesIO
+
+    from PIL import Image
+
+    buffer = BytesIO()
+    Image.new("RGB", (32, 24), color).save(buffer, format="JPEG")
+    return SimpleUploadedFile(
+        name,
+        buffer.getvalue(),
+        content_type="image/jpeg",
+    )
+
+
+class PropertyImageAPITests(TestCase):
+    def setUp(self):
+        self.admin = make_user("image-admin@example.com", User.Role.ADMIN)
+        self.client = APIClient()
+        self.media_dir = TemporaryDirectory()
+        self.override = override_settings(MEDIA_ROOT=self.media_dir.name)
+        self.override.enable()
+        self.property = Property.objects.create(
+            name="Photo Gallery Property",
+            location_url=MAP_URL,
+            brochure=make_pdf("photo-gallery.pdf"),
+        )
+
+    def tearDown(self):
+        self.override.disable()
+        self.media_dir.cleanup()
+
+    def image_url(self):
+        return f"/api/v1/properties/{self.property.slug}/images/"
+
+    def test_admin_can_upload_multiple_property_images_and_first_is_primary(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post(
+            self.image_url(),
+            {
+                "images": [
+                    make_property_image("front.jpg"),
+                    make_property_image("lobby.jpg", color=(90, 80, 40)),
+                ]
+            },
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(len(response.data), 2)
+        self.assertTrue(response.data[0]["is_primary"])
+        self.assertFalse(response.data[1]["is_primary"])
+        self.assertEqual(self.property.images.count(), 2)
+
+    def test_public_can_read_photos_only_for_published_properties(self):
+        self.client.force_authenticate(user=self.admin)
+        upload = self.client.post(
+            self.image_url(),
+            {"images": [make_property_image("public-photo.jpg")]},
+            format="multipart",
+        )
+        self.assertEqual(upload.status_code, status.HTTP_201_CREATED, upload.data)
+        self.client.force_authenticate(user=None)
+
+        hidden_response = self.client.get(self.image_url())
+        self.assertEqual(hidden_response.status_code, status.HTTP_404_NOT_FOUND)
+
+        self.property.publication_status = Property.PublicationStatus.PUBLISHED
+        self.property.save()
+        public_response = self.client.get(self.image_url())
+
+        self.assertEqual(public_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(public_response.data), 1)
+        self.assertIn("/media/properties/", public_response.data[0]["image_url"])
+        self.assertTrue(public_response.data[0]["is_primary"])
+
+        property_response = self.client.get(
+            f"/api/v1/properties/{self.property.slug}/"
+        )
+        self.assertEqual(property_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(property_response.data["images"]), 1)
+        self.assertTrue(property_response.data["images"][0]["is_primary"])
+
+    def test_agent_cannot_upload_property_images(self):
+        agent = make_user("image-agent@example.com", User.Role.AGENT)
+        self.client.force_authenticate(user=agent)
+        response = self.client.post(
+            self.image_url(),
+            {"images": [make_property_image()]},
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_invalid_image_content_is_rejected(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post(
+            self.image_url(),
+            {
+                "images": [
+                    SimpleUploadedFile(
+                        "not-an-image.jpg",
+                        b"this is not an image",
+                        content_type="image/jpeg",
+                    )
+                ]
+            },
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_admin_can_change_primary_image_and_delete_image(self):
+        self.client.force_authenticate(user=self.admin)
+        uploaded = self.client.post(
+            self.image_url(),
+            {
+                "images": [
+                    make_property_image("primary.jpg"),
+                    make_property_image("secondary.jpg", color=(120, 40, 80)),
+                ]
+            },
+            format="multipart",
+        )
+        self.assertEqual(uploaded.status_code, status.HTTP_201_CREATED, uploaded.data)
+        first_id, second_id = [item["id"] for item in uploaded.data]
+
+        change_response = self.client.patch(
+            f"{self.image_url()}{second_id}/",
+            {"is_primary": True},
+            format="json",
+        )
+        self.assertEqual(change_response.status_code, status.HTTP_200_OK)
+        self.assertTrue(change_response.data["is_primary"])
+        self.assertFalse(PropertyImage.objects.get(pk=first_id).is_primary)
+
+        image = PropertyImage.objects.get(pk=second_id)
+        storage = image.image.storage
+        filename = image.image.name
+        with self.captureOnCommitCallbacks(execute=True):
+            delete_response = self.client.delete(f"{self.image_url()}{second_id}/")
+
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(storage.exists(filename))
+        self.assertTrue(PropertyImage.objects.get(pk=first_id).is_primary)
+
+    def test_permanent_property_deletion_removes_all_photo_files(self):
+        self.client.force_authenticate(user=self.admin)
+        uploaded = self.client.post(
+            self.image_url(),
+            {"images": [make_property_image("delete-photo.jpg")]},
+            format="multipart",
+        )
+        self.assertEqual(uploaded.status_code, status.HTTP_201_CREATED, uploaded.data)
+        image = self.property.images.get()
+        storage = image.image.storage
+        filename = image.image.name
+
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.delete(
+                f"/api/v1/properties/{self.property.slug}/"
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(storage.exists(filename))

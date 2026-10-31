@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from rest_framework import serializers
 
-from .models import Property
+from .models import Property, PropertyImage
 from .validators import extract_google_maps_coordinates, validate_google_maps_url
 
 
@@ -13,6 +13,31 @@ class EmptyStringAsNullDecimalField(serializers.DecimalField):
         if data == "":
             return None
         return super().to_internal_value(data)
+
+
+class PropertyImageSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PropertyImage
+        fields = (
+            "id",
+            "image",
+            "image_url",
+            "caption",
+            "alt_text",
+            "is_primary",
+            "sort_order",
+            "created_at",
+        )
+        read_only_fields = ("id", "image_url", "created_at")
+
+    def get_image_url(self, obj):
+        if not obj.image:
+            return None
+        request = self.context.get("request")
+        url = obj.image.url
+        return request.build_absolute_uri(url) if request else url
 
 
 class PropertySerializer(serializers.ModelSerializer):
@@ -31,6 +56,7 @@ class PropertySerializer(serializers.ModelSerializer):
         allow_null=True,
     )
     brochure_url = serializers.SerializerMethodField()
+    images = PropertyImageSerializer(many=True, read_only=True)
     created_by_email = serializers.EmailField(source="created_by.email", read_only=True)
     approved_by_email = serializers.EmailField(source="approved_by.email", read_only=True)
     locality_name = serializers.CharField(source="locality.name", read_only=True)
@@ -72,6 +98,7 @@ class PropertySerializer(serializers.ModelSerializer):
             "longitude",
             "brochure",
             "brochure_url",
+            "images",
             "publication_status",
             "availability_status",
             "created_by",

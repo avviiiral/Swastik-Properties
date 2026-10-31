@@ -1,10 +1,18 @@
 from django.contrib import admin
 
-from .models import Property
+from .models import Property, PropertyImage
+
+
+class PropertyImageInline(admin.TabularInline):
+    model = PropertyImage
+    extra = 0
+    fields = ("image", "caption", "alt_text", "is_primary", "sort_order")
+    ordering = ("sort_order", "created_at")
 
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
+    inlines = (PropertyImageInline,)
     list_display = (
         "property_reference",
         "name",
@@ -97,3 +105,4 @@ class PropertyAdmin(admin.ModelAdmin):
         ) and not obj.approved_by_id:
             obj.approved_by = request.user
         super().save_model(request, obj, form, change)
+
