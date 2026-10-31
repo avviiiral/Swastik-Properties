@@ -31,3 +31,24 @@ class PropertyEnquiry(models.Model):
 
     def __str__(self):
         return f"{self.property_reference or self.property_name} — {self.name}"
+
+
+class BusinessContactSettings(models.Model):
+    """Single public contact profile managed by administrators."""
+
+    whatsapp_number = models.CharField(max_length=20, default="+919403129403")
+    contact_number = models.CharField(max_length=20, default="+919403129403")
+    email = models.EmailField(default="sangramspawar@gmail.com")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Business contact settings"
+        verbose_name_plural = "Business contact settings"
+
+    def __str__(self):
+        return "Swastik Properties contact details"
+
+    @classmethod
+    def get_settings(cls):
+        settings, _ = cls.objects.get_or_create(pk=1)
+        return settings
