@@ -30,10 +30,26 @@ class BusinessContactSettingsSerializer(serializers.ModelSerializer):
 
 
 class PropertyEnquiryAdminSerializer(serializers.ModelSerializer):
+    enquiry_type_label = serializers.CharField(
+        source="get_enquiry_type_display", read_only=True
+    )
+
     class Meta:
         model = PropertyEnquiry
         fields = (
-            "id", "property_name", "property_reference", "name",
-            "email", "phone", "message", "status", "created_at",
+            "id", "enquiry_type", "enquiry_type_label", "property_name",
+            "property_reference", "name", "email", "phone", "message",
+            "details", "source_path", "consented_at", "status", "admin_notes",
+            "created_at", "updated_at",
         )
-        read_only_fields = fields
+        read_only_fields = (
+            "id", "enquiry_type", "enquiry_type_label", "property_name",
+            "property_reference", "name", "email", "phone", "message",
+            "details", "source_path", "consented_at", "created_at", "updated_at",
+        )
+
+
+class PropertyEnquiryUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PropertyEnquiry
+        fields = ("status", "admin_notes")

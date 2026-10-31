@@ -22,7 +22,7 @@ import {
       <div class="stats">
         <article><span>Published properties</span><strong>{{published()}}</strong><small>Currently visible in the catalogue</small></article>
         <article><span>Total listed records</span><strong>{{total()}}</strong><small>Across all listing statuses</small></article>
-        <article><span>Property enquiries</span><strong>{{enquiryCount()}}</strong><small>Submissions received from the website</small></article>
+        <article><span>Website enquiries</span><strong>{{enquiryCount()}}</strong><small>Submissions received from the website</small></article>
       </div>
 
       <section class="panel contact-settings" aria-labelledby="contact-settings-heading">
@@ -44,8 +44,8 @@ import {
 
       <section class="panel enquiries" aria-labelledby="enquiries-heading">
         <div class="panel-heading enquiries-heading">
-          <div><div class="eyebrow">LEAD MANAGEMENT</div><h2 id="enquiries-heading">Property enquiries</h2><p>Recent messages submitted from individual property pages.</p></div>
-          <button class="export-button" type="button" (click)="downloadEnquiries()" [disabled]="exporting() || enquiryCount()===0">{{exporting() ? 'Preparing…' : 'Download CSV'}} <b>↓</b></button>
+          <div><div class="eyebrow">LEAD MANAGEMENT</div><h2 id="enquiries-heading">Property enquiries</h2><p>Recent messages from every website form.</p></div>
+          <a class="all-leads" routerLink="/admin/leads">View all enquiries ↗</a><button class="export-button" type="button" (click)="downloadEnquiries()" [disabled]="exporting() || enquiryCount()===0">{{exporting() ? 'Preparing…' : 'Download CSV'}} <b>↓</b></button>
         </div>
         @if(enquiryError()){<p class="feedback error" role="alert">{{enquiryError()}}</p>}
         @if(enquiriesLoading()){<div class="empty-state">Loading property enquiries…</div>}
@@ -53,12 +53,13 @@ import {
         @else {
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Enquiry</th><th>Property</th><th>Contact details</th><th>Received</th><th>Status</th></tr></thead>
+              <thead><tr><th>Enquiry</th><th>Form type</th><th>Property</th><th>Contact details</th><th>Received</th><th>Status</th></tr></thead>
               <tbody>
                 @for(item of enquiries(); track item.id){
                   <tr>
                     <td><strong>{{item.name}}</strong><small>{{item.message}}</small></td>
-                    <td><strong>{{item.property_name}}</strong><small>{{item.property_reference || 'No reference'}}</small></td>
+                    <td><strong>{{item.enquiry_type_label}}</strong><small>{{item.source_path || 'Website form'}}</small></td>
+                    <td><strong>{{item.property_name || '—'}}</strong><small>{{item.property_reference || 'No property reference'}}</small></td>
                     <td><a [href]="'mailto:'+item.email">{{item.email}}</a><a [href]="'tel:'+item.phone">{{item.phone}}</a></td>
                     <td>{{item.created_at | date:'dd MMM yyyy, h:mm a'}}</td>
                     <td><span class="status" [class.new]="item.status==='NEW'">{{item.status}}</span></td>
@@ -80,7 +81,7 @@ import {
     .panel{padding:24px;background:#fff;border:1px solid #e3e8e2;margin:18px 0}.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}.panel-heading h2{margin:8px 0 5px;color:#1d3b32;font:600 23px var(--font-display);letter-spacing:-.03em}.panel-heading p{margin:0;color:#78847c;font-size:11px;line-height:1.6}.settings-mark{padding:7px 9px;background:#f3f4ee;color:#8c795d;font-size:8px;font-weight:700;letter-spacing:.12em;white-space:nowrap}
     .contact-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.contact-fields label{display:grid;gap:7px;color:#3a5044;font-size:11px;font-weight:700}.contact-fields label small{color:#89938b;font-size:9px;font-weight:400}.contact-fields input{width:100%;min-width:0;min-height:42px;padding:0 11px;border:1px solid #dce4dc;border-radius:0;background:#fcfcf9;color:#294237;font:400 12px 'DM Sans',sans-serif}.contact-fields input:focus{outline:2px solid rgba(184,140,85,.3);border-color:#ad895c}
     .form-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;padding-top:16px;border-top:1px solid #edf0eb}.form-footer>span{color:#89938b;font-size:10px}.form-footer button,.export-button{min-height:39px;padding:0 13px;border:0;background:#23463b;color:white;font-size:10px;font-weight:700;cursor:pointer}.form-footer button b,.export-button b{margin-left:12px;color:#d4b17b}.form-footer button:disabled,.export-button:disabled{opacity:.55;cursor:not-allowed}
-    .feedback{margin:14px 0 0;padding:10px 12px;font-size:11px}.feedback.error{background:#fff1ef;color:#973b34}.feedback.success{background:#edf6ef;color:#276344}.enquiries-heading{align-items:center}.export-button{white-space:nowrap}.table-wrap{width:100%;overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left}th{padding:11px 12px;background:#f7f8f4;color:#859087;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}td{padding:14px 12px;border-bottom:1px solid #edf0eb;color:#6e7b72;font-size:10px;vertical-align:top}td strong,td small,td a{display:block}td strong{max-width:200px;color:#2b4338;font-size:11px;font-weight:700}td small{max-width:230px;margin-top:5px;color:#879189;line-height:1.5;overflow-wrap:anywhere}td a{margin:0 0 5px;color:#426453;text-decoration:none;white-space:nowrap}.status{display:inline-block;padding:5px 7px;background:#f1f3ee;color:#7c887f;font-size:8px;font-weight:700;letter-spacing:.08em}.status.new{background:#fbf2e4;color:#946b32}.empty-state{padding:28px 16px;background:#f8f9f5;color:#829087;text-align:center;font-size:11px;line-height:1.7}.table-footer{padding-top:12px;color:#8b958d;font-size:10px}.actions{margin-top:25px}.actions a{color:#8f6a3e;font-size:11px;font-weight:700;text-decoration:none}
+    .feedback{margin:14px 0 0;padding:10px 12px;font-size:11px}.feedback.error{background:#fff1ef;color:#973b34}.feedback.success{background:#edf6ef;color:#276344}.enquiries-heading{align-items:center}.export-button{white-space:nowrap}.all-leads{color:#426453;text-decoration:none;font-size:10px;font-weight:700;white-space:nowrap}.table-wrap{width:100%;overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left}th{padding:11px 12px;background:#f7f8f4;color:#859087;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}td{padding:14px 12px;border-bottom:1px solid #edf0eb;color:#6e7b72;font-size:10px;vertical-align:top}td strong,td small,td a{display:block}td strong{max-width:200px;color:#2b4338;font-size:11px;font-weight:700}td small{max-width:230px;margin-top:5px;color:#879189;line-height:1.5;overflow-wrap:anywhere}td a{margin:0 0 5px;color:#426453;text-decoration:none;white-space:nowrap}.status{display:inline-block;padding:5px 7px;background:#f1f3ee;color:#7c887f;font-size:8px;font-weight:700;letter-spacing:.08em}.status.new{background:#fbf2e4;color:#946b32}.empty-state{padding:28px 16px;background:#f8f9f5;color:#829087;text-align:center;font-size:11px;line-height:1.7}.table-footer{padding-top:12px;color:#8b958d;font-size:10px}.actions{margin-top:25px}.actions a{color:#8f6a3e;font-size:11px;font-weight:700;text-decoration:none}
     @media(max-width:800px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.contact-fields{grid-template-columns:1fr 1fr}.contact-fields label:last-child{grid-column:1/-1}}
     @media(max-width:560px){.dashboard h1{font-size:38px}.stats{grid-template-columns:1fr;gap:9px;margin:22px 0}.stats article{padding:16px}.stats strong{margin:8px 0;font-size:31px}.panel{padding:16px}.panel-heading,.enquiries-heading{align-items:flex-start;flex-direction:column}.contact-fields{grid-template-columns:1fr}.contact-fields label:last-child{grid-column:auto}.form-footer{align-items:flex-start;flex-direction:column}.form-footer button{width:100%}}
   `]

@@ -53,6 +53,7 @@ Open http://localhost:4200. The development proxy forwards /api and /media to Dj
 | /properties | Published property catalogue | Everyone |
 | /properties/{slug} | Published property details | Everyone |
 | /about | About Swastik | Everyone |
+| /contact | General, property, buy, rent, sell and listing enquiries | Everyone |
 | /blog | Published Blog posts | Everyone |
 | /blog/{slug} | Published Blog article | Everyone |
 | /admin/login | Workspace sign-in | Admin, Super Admin, Editor |
@@ -102,6 +103,10 @@ Property APIs:
 - PATCH/DELETE /api/v1/properties/{slug}/images/{image_id}/
 
 Location APIs:
+- POST /api/v1/submissions/leads/ — public intake for all six website form types.
+- GET /api/v1/submissions/property-enquiries/ — administrator-only lead inbox with type, status and search filters.
+- PATCH /api/v1/submissions/property-enquiries/{id}/ — administrator-only status and internal notes update.
+- GET /api/v1/submissions/property-enquiries/export/ — administrator-only CSV export of all lead fields and filters.
 - GET /api/v1/locations/states/
 - GET /api/v1/locations/districts/?state={id}
 - GET /api/v1/locations/cities/?district={id}

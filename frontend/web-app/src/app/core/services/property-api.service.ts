@@ -4,16 +4,29 @@ import { API_BASE_URL } from '../api-base-url.token';
 import { SKIP_ADMIN_AUTH } from '../auth-context';
 import { Property, PropertyPage } from '../models/property.models';
 
+export interface PropertyFilters {
+  search?: string;
+  category?: string;
+  listing_type?: string;
+  price_min?: string;
+  price_max?: string;
+  ordering?: string;
+  page?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PropertyApi {
   private readonly http = inject(HttpClient);
   private readonly base = inject(API_BASE_URL);
 
-  list(filters: { search?: string; category?: string; listing_type?: string; page?: number } = {}) {
+  list(filters: PropertyFilters = {}) {
     let params = new HttpParams();
     if (filters.search?.trim()) params = params.set('search', filters.search.trim());
     if (filters.category) params = params.set('category', filters.category);
     if (filters.listing_type) params = params.set('listing_type', filters.listing_type);
+    if (filters.price_min) params = params.set('price_min', filters.price_min);
+    if (filters.price_max) params = params.set('price_max', filters.price_max);
+    if (filters.ordering) params = params.set('ordering', filters.ordering);
     if (filters.page) params = params.set('page', filters.page);
     return this.http.get<PropertyPage>(this.base + '/properties/', {
       params,
@@ -21,12 +34,6 @@ export class PropertyApi {
     });
   }
 
-  /**
-   * Authenticated inventory query for Admin dashboards.
-   * Unlike list(), this deliberately does not set SKIP_ADMIN_AUTH so the
-   * request interceptor sends the Admin JWT and the API can expose workflow
-   * fields such as publication_status.
-   */
   listAdmin(filters: {
     search?: string;
     category?: string;

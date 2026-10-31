@@ -271,6 +271,28 @@ class PropertyAPITests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
 
+    def test_public_list_filters_minimum_and_maximum_price(self):
+        budget_property = self.create_property(
+            "Budget property",
+            Property.PublicationStatus.PUBLISHED,
+        )
+        premium_property = self.create_property(
+            "Premium property",
+            Property.PublicationStatus.PUBLISHED,
+        )
+        Property.objects.filter(pk=budget_property.pk).update(price=Decimal("2500000"))
+        Property.objects.filter(pk=premium_property.pk).update(price=Decimal("9500000"))
+
+        response = self.client.get("/api/v1/properties/?price_min=2000000&price_max=5000000")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["slug"], budget_property.slug)
+
+    def test_public_list_rejects_invalid_price_range(self):
+        response = self.client.get("/api/v1/properties/?price_min=9000000&price_max=1000000")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class PropertyModelFileTests(TestCase):
     def test_brochure_is_required_by_model_field(self):

@@ -7,6 +7,7 @@ The Admin workspace is part of the single Angular application at `frontend/web-a
 Admin routes:
 - `/admin/login` — administrator sign-in.
 - `/admin/properties` — property inventory and management.
+- `/admin/leads` — all website enquiries and requirements, with filters, private follow-up notes, status updates and CSV export.
 
 ## Technology
 
@@ -37,6 +38,10 @@ The Admin property page provides:
 - Publish/unpublish and availability updates.
 - Google Maps links and brochure access.
 - Permanent property deletion, including uploaded brochures and property images.
+
+## Lead management
+
+The `/admin/leads` workspace is available only to ADMIN and SUPER_ADMIN. It can filter by form type, status and free-text search; review contact details and structured form answers; update the NEW → CONTACTED → QUALIFIED → CLOSED workflow (or mark SPAM); and save private internal notes. The export follows the current filters and includes the structured form payload. Agents cannot view or export customer submissions.
 
 The Django API remains authoritative for input validation and authorization.
 

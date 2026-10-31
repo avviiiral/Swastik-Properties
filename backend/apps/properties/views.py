@@ -1,8 +1,11 @@
+from decimal import Decimal, InvalidOperation
+
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -27,6 +30,9 @@ class PropertyViewSet(viewsets.ModelViewSet):
         "location_name",
         "full_address",
         "property_reference",
+        "locality__name",
+        "locality__city__name",
+        "locality__city__district__name",
     )
     ordering_fields = ("created_at", "updated_at", "name", "price", "area_value")
     ordering = ("-created_at",)
@@ -72,6 +78,26 @@ class PropertyViewSet(viewsets.ModelViewSet):
             publication_status = self.request.query_params.get("publication_status")
             if publication_status:
                 queryset = queryset.filter(publication_status=publication_status)
+
+        price_min = self.request.query_params.get("price_min")
+        price_max = self.request.query_params.get("price_max")
+        try:
+            minimum = Decimal(price_min) if price_min not in (None, "") else None
+            maximum = Decimal(price_max) if price_max not in (None, "") else None
+        except (InvalidOperation, TypeError, ValueError):
+            raise ValidationError({"price": "Enter a valid numeric price range."})
+        if (minimum is not None and not minimum.is_finite()) or (maximum is not None and not maximum.is_finite()):
+            raise ValidationError({"price": "Enter finite numeric price values."})
+        if minimum is not None and minimum < 0:
+            raise ValidationError({"price_min": "Minimum price cannot be negative."})
+        if maximum is not None and maximum < 0:
+            raise ValidationError({"price_max": "Maximum price cannot be negative."})
+        if minimum is not None and maximum is not None and minimum > maximum:
+            raise ValidationError({"price": "Minimum price cannot exceed maximum price."})
+        if minimum is not None:
+            queryset = queryset.filter(price__gte=minimum)
+        if maximum is not None:
+            queryset = queryset.filter(price__lte=maximum)
 
         return queryset
 
