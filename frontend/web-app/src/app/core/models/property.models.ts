@@ -19,6 +19,9 @@ export interface Property {
   category: string;
   subcategory: string;
   listing_type: string;
+  /** Admin-only values; the public API deliberately omits both fields. */
+  price?: string | null;
+  currency?: string;
   area_value: string | null;
   area_unit: string;
   location_name: string;
