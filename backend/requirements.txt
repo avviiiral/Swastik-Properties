@@ -1,0 +1,11 @@
+Django==5.2.18
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+django-filter
+django-environ
+psycopg[binary]
+Pillow
+drf-spectacular
+pytest
+pytest-django
