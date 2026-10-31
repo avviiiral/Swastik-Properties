@@ -1,95 +1,99 @@
 # Swastik Properties — API Specification
 
-Base URL prefix: `/api/v1/`
+Base URL prefix: /api/v1/
 
 ## Conventions
 
 - JSON request and response bodies unless an endpoint returns a file.
+- Property create/update endpoints accept multipart/form-data to support brochure upload.
 - JWT Bearer authentication for protected endpoints.
 - Access tokens expire after 15 minutes.
 - Refresh tokens expire after 7 days and are rotated on refresh.
 - Page-number pagination, default page size 20.
 - Protected API endpoints require authentication by default.
-- Location lookup endpoints are explicitly public and read-only.
 
 ## Authentication endpoints
 
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
-| POST | `/api/v1/auth/login/` | Public, throttled | Authenticate with email and password; returns access token, refresh token and user details |
-| POST | `/api/v1/auth/token/refresh/` | Public, refresh token required | Rotate refresh token and issue a new access token |
-| POST | `/api/v1/auth/logout/` | Authenticated | Blacklist the supplied refresh token belonging to the authenticated user |
-| GET | `/api/v1/auth/me/` | Authenticated | Return the current user's safe profile |
-
-### Login request
-
-```json
-{
-  "email": "agent@swastik.example",
-  "password": "your-password"
-}
-```
-
-Successful login returns `access`, `refresh` and a `user` object containing the user's id, username, email, name, role, active status and join date. Passwords and password hashes are never returned.
-
-### Logout request
-
-```json
-{
-  "refresh": "<refresh-token>"
-}
-```
-
-The refresh token must belong to the user authenticated by the access token. Successful logout returns HTTP 205 and blacklists that refresh token. The client must discard both tokens.
+| POST | /api/v1/auth/login/ | Public, throttled | Authenticate with email and password; returns access token, refresh token and user details |
+| POST | /api/v1/auth/token/refresh/ | Public, refresh token required | Rotate refresh token and issue a new access token |
+| POST | /api/v1/auth/logout/ | Authenticated | Blacklist the supplied refresh token belonging to the authenticated user |
+| GET | /api/v1/auth/me/ | Authenticated | Return the current user's safe profile |
 
 ## User administration endpoints
 
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
-| GET | `/api/v1/auth/users/` | Admin / Super Admin | List manageable accounts |
-| POST | `/api/v1/auth/users/` | Admin / Super Admin | Create a manageable account |
-| GET | `/api/v1/auth/users/{id}/` | Admin / Super Admin | Retrieve a manageable account |
-| PATCH | `/api/v1/auth/users/{id}/` | Admin / Super Admin | Update account details, role or active status |
+| GET | /api/v1/auth/users/ | Admin / Super Admin | List manageable accounts |
+| POST | /api/v1/auth/users/ | Admin / Super Admin | Create a manageable account |
+| GET | /api/v1/auth/users/{id}/ | Admin / Super Admin | Retrieve a manageable account |
+| PATCH | /api/v1/auth/users/{id}/ | Admin / Super Admin | Update account details, role or active status |
 
-### Account-management boundaries
+Admins can manage Agent accounts only. Super Admins can manage Admin and Agent accounts. Super Admin accounts are created through the trusted Django management command. User API deletion is not available; accounts are deactivated with is_active=false.
 
-- Admins can list, create, retrieve and update Agent accounts only.
-- Super Admins can manage Admin and Agent accounts.
-- Super Admin accounts are excluded from this API and are created through the trusted Django management command.
-- The API does not expose hard deletion of users; use `is_active=false` to deactivate an account.
-- Agents cannot access user-management endpoints.
+## Location lookup endpoints
 
-## Public location lookup endpoints
+All endpoints are public, read-only and return active locations.
 
-All location endpoints are public, read-only and return only active records. Inactive parents suppress their descendants.
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | /api/v1/locations/states/ | List states |
+| GET | /api/v1/locations/districts/?state={id} | List districts |
+| GET | /api/v1/locations/cities/?district={id} or ?state={id} | List cities |
+| GET | /api/v1/locations/localities/?city={id} or ?district={id} or ?state={id} | List localities |
 
-| Method | Endpoint | Query parameters | Purpose |
+## Property catalogue and brochure upload
+
+| Method | Endpoint | Access | Purpose |
 |---|---|---|---|
-| GET | `/api/v1/locations/states/` | `search`, `ordering`, `page` | List active states |
-| GET | `/api/v1/locations/districts/` | `state`, `search`, `ordering`, `page` | List districts; filter by state ID |
-| GET | `/api/v1/locations/cities/` | `district`, `state`, `search`, `ordering`, `page` | List cities; filter by district or state ID |
-| GET | `/api/v1/locations/localities/` | `city`, `district`, `state`, `search`, `ordering`, `page` | List localities; filter by city, district or state ID |
+| GET | /api/v1/properties/ | Public | List published property/project entries |
+| GET | /api/v1/properties/{slug}/ | Public | View a published property/project |
+| POST | /api/v1/properties/ | Admin / Super Admin | Create a property and upload its PDF brochure |
+| PATCH | /api/v1/properties/{slug}/ | Admin / Super Admin | Update details, replace brochure or change publication status |
+| PUT | /api/v1/properties/{slug}/ | Admin / Super Admin | Replace editable property fields and brochure |
+| DELETE | /api/v1/properties/{slug}/ | Admin / Super Admin | Permanently delete the property and its brochure file |
 
-### Example location lookup sequence
+### Property upload request
 
-1. GET `/api/v1/locations/states/`
-2. GET `/api/v1/locations/districts/?state=1`
-3. GET `/api/v1/locations/cities/?district=12` (or `?state=1`)
-4. GET `/api/v1/locations/localities/?city=85` (or `?district=12` / `?state=1`)
+Send multipart/form-data. Minimum required fields:
 
-Location responses include the parent IDs and names needed to display a complete location path.
+- name
+- location_url (HTTPS Google Maps URL)
+- brochure (PDF file, maximum 25 MB)
 
-Location records are maintained by trusted administrators through Django Admin and the seed management command. The public REST API does not expose location create, update or delete actions.
+Optional fields include description, developer_name, category, subcategory, listing_type, price, area_value, area_unit, location_name, full_address and locality.
+
+Google Maps place coordinates are extracted from supported URL formats when they are embedded in the supplied link. Coordinates can also be provided explicitly.
+
+The brochure is validated by extension, file size and PDF signature. The API returns brochure_url for viewing/downloading the uploaded document. Property uploads are created as DRAFT by default; an Admin or Super Admin can publish them by setting publication_status to PUBLISHED.
+
+Supported publication statuses: DRAFT, PENDING_REVIEW, CHANGES_REQUESTED, APPROVED, PUBLISHED, REJECTED and ARCHIVED.
+
+Availability is separate from publication status: AVAILABLE, SOLD, RENTED, LEASED or UNAVAILABLE.
+
+Public catalogue responses contain only PUBLISHED properties. Admin and Super Admin requests can access all publication states. Property deletion is permanent.
+
+### Example property payload (multipart/form-data)
+
+| Field | Example |
+|---|---|
+| name | ABC 3 Signature |
+| developer_name | ABC Group |
+| category | LAND |
+| subcategory | Residential Plot |
+| location_name | Bidkin, Chhatrapati Sambhajinagar |
+| location_url | https://www.google.com/maps/place/... |
+| brochure | 3 Singneture Brochure Dt. 20 07 26.pdf |
+
+The exact brochure URL is returned by the API after upload; the backend does not parse or rewrite the brochure contents.
 
 ## API documentation
 
-- OpenAPI schema: `/api/schema/`
-- Swagger UI: `/api/docs/`
+- OpenAPI schema: /api/schema/
+- Swagger UI: /api/docs/
 
 ## Planned API domains
 
-- `/api/v1/properties/` — public property catalogue and protected administration.
-- `/api/v1/agents/` — agent business profiles and assignments.
-- `/api/v1/submissions/` — public form intake and administrator-only review/export.
-
-Future endpoint request/response schemas and validation rules will be documented as each domain is implemented.
+- /api/v1/agents/ — agent business profiles and property assignments.
+- /api/v1/submissions/ — public form intake and administrator-only review/export.
