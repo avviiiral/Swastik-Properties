@@ -49,4 +49,9 @@
 - [ ] Publish and review OpenAPI/Swagger documentation.
 - [ ] Add production media storage and delivery configuration.
 - [ ] Add deployment configuration and production security checks.
-- [x] Build the separate public-facing Angular SSR website with homepage, property search/filtering, detail routes and public-only API access.\n- [ ] Connect customer enquiry forms when the submissions API is implemented.\n- [ ] Generate a dynamic sitemap for published property detail routes.
+- [x] Build the public-facing Angular SSR website with homepage, property search/filtering, detail routes and public-only API access.
+- [x] Integrate Admin login, JWT refresh and property management under protected `/admin` routes in the same Angular app.
+- [x] Ensure public property HTTP requests do not inherit the Admin JWT.
+- [x] Use one frontend development server and a unified Angular SSR build for public and Admin routes.
+- [ ] Connect customer enquiry forms when the submissions API is implemented.
+- [ ] Generate a dynamic sitemap for published property detail routes.
