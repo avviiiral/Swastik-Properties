@@ -12,9 +12,10 @@
 - [x] Implement current-user endpoint.
 - [x] Implement role-based user-management API boundaries.
 - [x] Add authentication and authorization API tests.
+- [x] Add GitHub Actions backend CI workflow.
 - [ ] Validate the authentication changes locally and push test results.
+- [ ] Confirm CI workflow passes.
 - [ ] Configure local PostgreSQL database and verify all migrations against PostgreSQL.
-- [ ] Add CI checks.
 
 ## Domain development
 
