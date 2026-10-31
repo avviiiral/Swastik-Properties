@@ -10,6 +10,7 @@ Base URL prefix: `/api/v1/`
 - Refresh tokens expire after 7 days and are rotated on refresh.
 - Page-number pagination, default page size 20.
 - Protected API endpoints require authentication by default.
+- Location lookup endpoints are explicitly public and read-only.
 
 ## Authentication endpoints
 
@@ -58,6 +59,28 @@ The refresh token must belong to the user authenticated by the access token. Suc
 - The API does not expose hard deletion of users; use `is_active=false` to deactivate an account.
 - Agents cannot access user-management endpoints.
 
+## Public location lookup endpoints
+
+All location endpoints are public, read-only and return only active records. Inactive parents suppress their descendants.
+
+| Method | Endpoint | Query parameters | Purpose |
+|---|---|---|---|
+| GET | `/api/v1/locations/states/` | `search`, `ordering`, `page` | List active states |
+| GET | `/api/v1/locations/districts/` | `state`, `search`, `ordering`, `page` | List districts; filter by state ID |
+| GET | `/api/v1/locations/cities/` | `district`, `district__state`, `search`, `ordering`, `page` | List cities; filter by district or state ID |
+| GET | `/api/v1/locations/localities/` | `city`, `city__district`, `city__district__state`, `search`, `ordering`, `page` | List localities; filter by city, district or state ID |
+
+### Example location lookup sequence
+
+1. GET `/api/v1/locations/states/`
+2. GET `/api/v1/locations/districts/?state=1`
+3. GET `/api/v1/locations/cities/?district=12`
+4. GET `/api/v1/locations/localities/?city=85`
+
+Location responses include the parent IDs and names needed to display a complete location path.
+
+Location records are maintained by trusted administrators through Django Admin and the seed management command. The public REST API does not expose location create, update or delete actions.
+
 ## API documentation
 
 - OpenAPI schema: `/api/schema/`
@@ -66,7 +89,6 @@ The refresh token must belong to the user authenticated by the access token. Suc
 ## Planned API domains
 
 - `/api/v1/properties/` — public property catalogue and protected administration.
-- `/api/v1/locations/` — location lookup data.
 - `/api/v1/agents/` — agent business profiles and assignments.
 - `/api/v1/submissions/` — public form intake and administrator-only review/export.
 
