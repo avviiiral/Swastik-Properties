@@ -1,0 +1,39 @@
+<div class="admin-shell">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/properties" aria-label="Swastik Properties dashboard home">
+      <span class="brand-symbol">S</span>
+      <span class="brand-text"><strong>SWASTIK</strong><small>PROPERTIES</small></span>
+    </a>
+    <div class="nav-caption">WORKSPACE</div>
+    <nav class="side-nav" aria-label="Main navigation">
+      <a routerLink="/properties" routerLinkActive="active">
+        <span class="nav-icon">▦</span><span>Properties</span>
+      </a>
+    </nav>
+    <a class="public-site-link" href="/">View public website ↗</a>
+    <div class="sidebar-note">
+      <span class="note-mark">i</span>
+      <div><strong>Property operations</strong><p>Manage listings, locations and brochures from one place.</p></div>
+    </div>
+    <div class="sidebar-bottom"><span>SWASTIK PROPERTIES</span><small>ADMIN WORKSPACE</small></div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div>
+        <span class="topbar-kicker">SWASTIK PROPERTIES</span>
+        <span class="topbar-divider">/</span>
+        <span class="topbar-section">Administration</span>
+      </div>
+      <div class="account-area">
+        <div class="avatar">{{ displayName.charAt(0).toUpperCase() }}</div>
+        <div class="account-copy">
+          <strong>{{ displayName }}</strong>
+          <small>{{ auth.user()?.role === 'SUPER_ADMIN' ? 'Super Admin' : 'Admin' }}</small>
+        </div>
+        <button class="signout" type="button" (click)="signOut()" [disabled]="signingOut()">Sign out</button>
+      </div>
+    </header>
+    <main class="content-area"><router-outlet /></main>
+  </div>
+</div>

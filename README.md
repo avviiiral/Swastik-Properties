@@ -1,13 +1,13 @@
 # Swastik Properties
 
-Swastik Properties is a real-estate listing and enquiry platform with a separate public website, administration dashboard and Django REST API.
+Swastik Properties is a real-estate listing and enquiry platform. One Angular SSR frontend serves both the public website and the protected Admin workspace, backed by a Django REST API.
 
 ## Technology
 
 - Backend: Python 3.12, Django 5.2, Django REST Framework.
 - Database: PostgreSQL target; SQLite local fallback.
 - Authentication: SimpleJWT with refresh-token rotation and revocation.
-- Admin dashboard: Angular 22 standalone SPA.
+- Frontend: one Angular 22 SSR application for public and Admin routes.
 - API documentation: drf-spectacular OpenAPI/Swagger.
 
 ## Local setup (Windows PowerShell)
@@ -42,27 +42,45 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### Admin dashboard
+### Unified frontend (Public + Admin)
 
 In a second terminal, from the repository root:
 
 ```powershell
-cd frontend/admin-dashboard
-npm install
-npm start
+cd frontend/public-website
+npm.cmd install
+npm.cmd start
 ```
 
-Open http://localhost:4200. The development proxy forwards /api and /media requests to Django at http://127.0.0.1:8000.
+Open http://localhost:4200. The Angular development proxy forwards `/api` and `/media` to Django at http://127.0.0.1:8000.
 
-Sign in with a user whose application role is ADMIN or SUPER_ADMIN. Agent accounts cannot access the Admin Dashboard.
+Both experiences are served by this single frontend process:
 
-Build static files with:
+| Route | Purpose | Access |
+|---|---|---|
+| `/` | Public homepage | Everyone |
+| `/properties` | Public property catalogue | Everyone; published listings only |
+| `/properties/{slug}` | Public property details | Everyone; published listings only |
+| `/admin/login` | Admin sign-in | Admin / Super Admin credentials |
+| `/admin/properties` | Property management | Authenticated Admin / Super Admin only |
+
+The public website contains an Admin link in its navigation and footer. Agents cannot access the Admin workspace. Public property API requests explicitly bypass any Admin JWT stored in the browser, preserving the published-only public view even while an Admin is signed in.
+
+Build the unified application with:
 
 ```powershell
-npm run build
+npm.cmd run build
 ```
 
-Output: frontend/admin-dashboard/dist/admin-dashboard.
+Run the production SSR server with:
+
+```powershell
+$env:BACKEND_API_URL = "https://your-api-host/api/v1"
+$env:PORT = "4000"
+npm.cmd run serve:ssr
+```
+
+The former `frontend/admin-dashboard` workspace is retained temporarily for reference. Do not start it separately; all active public and Admin UI development belongs in `frontend/public-website`.
 
 ## Authentication API
 

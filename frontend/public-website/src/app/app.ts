@@ -1,11 +1,10 @@
-import { HttpClient, HttpParams, provideHttpClient, withFetch } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   Injectable,
-  InjectionToken,
   OnInit,
   inject,
   signal
@@ -14,11 +13,13 @@ import { FormsModule } from '@angular/forms';
 import { Meta, Title, provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet, Routes, provideRouter, withInMemoryScrolling } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL', {
-  providedIn: 'root',
-  factory: () => '/api/v1'
-});
+import { API_BASE_URL } from './core/api-base-url.token';
+import { SKIP_ADMIN_AUTH } from './core/auth-context';
+import { adminGuard } from './admin/core/admin.guard';
+import { authInterceptor } from './admin/core/auth.interceptor';
+import { LoginComponent } from './admin/features/auth/login.component';
+import { PropertiesComponent as AdminPropertiesComponent } from './admin/features/properties/properties.component';
+import { AdminLayoutComponent } from './admin/layout/admin-layout.component';
 
 export interface Property {
   id: number;
@@ -64,11 +65,11 @@ export class PropertyApi {
     if (filters.category) params = params.set('category', filters.category);
     if (filters.listing_type) params = params.set('listing_type', filters.listing_type);
     if (filters.page) params = params.set('page', filters.page);
-    return this.http.get<PropertyPage>(this.base + '/properties/', { params });
+    return this.http.get<PropertyPage>(this.base + '/properties/', { params, context: new HttpContext().set(SKIP_ADMIN_AUTH, true) });
   }
 
   detail(slug: string) {
-    return this.http.get<Property>(this.base + '/properties/' + encodeURIComponent(slug) + '/');
+    return this.http.get<Property>(this.base + '/properties/' + encodeURIComponent(slug) + '/', { context: new HttpContext().set(SKIP_ADMIN_AUTH, true) });
   }
 }
 
@@ -86,6 +87,15 @@ export class SiteSeo {
 @Component({
   selector: 'sp-root',
   standalone: true,
+  imports: [RouterOutlet],
+  template: '<router-outlet />',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class AppComponent {}
+
+@Component({
+  selector: 'sp-public-layout',
+  standalone: true,
   imports: [RouterLink, RouterLinkActive, RouterOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -100,6 +110,7 @@ export class SiteSeo {
             <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
             <a routerLink="/properties" routerLinkActive="active">Properties</a>
             <a href="#about">About</a>
+            <a routerLink="/admin/login">Admin</a>
           </nav>
           <a class="header-cta" routerLink="/properties">Explore properties <span>↗</span></a>
         </div>
@@ -120,6 +131,7 @@ export class SiteSeo {
             <a routerLink="/properties" [queryParams]="{category:'RESIDENTIAL'}">Residential</a>
             <a routerLink="/properties" [queryParams]="{category:'COMMERCIAL'}">Commercial</a>
             <a routerLink="/properties" [queryParams]="{category:'LAND'}">Land &amp; plots</a>
+            <a routerLink="/admin/login">Admin sign-in</a>
           </div>
           <div class="footer-note">
             <span class="footer-label">A note from Swastik</span>
@@ -147,7 +159,7 @@ export class SiteSeo {
     @media(max-width:720px){.header-inner{width:calc(100% - 34px);height:68px;gap:12px}.desktop-nav{display:none}.header-cta{margin-left:auto;min-height:39px;padding:0 11px;font-size:11px}.footer-main{width:calc(100% - 38px);padding:42px 0 34px;grid-template-columns:1fr 1fr;gap:32px 24px}.footer-brand,.footer-note{grid-column:1/-1}.footer-bottom{width:calc(100% - 38px);gap:10px;flex-wrap:wrap;padding:15px 0}}
   `]
 })
-export class AppComponent {
+export class PublicLayoutComponent {
   readonly year = new Date().getFullYear();
 }
 
@@ -478,16 +490,32 @@ export class PropertyDetailComponent implements OnInit {
 }
 
 export const appRoutes: Routes = [
-  {path:'',component:HomeComponent,title:'Swastik Properties | Find your place in Maharashtra'},
-  {path:'properties',component:PropertyListComponent,title:'Explore Properties | Swastik Properties'},
-  {path:'properties/:slug',component:PropertyDetailComponent},
-  {path:'**',redirectTo:''}
+  {
+    path: '',
+    component: PublicLayoutComponent,
+    children: [
+      { path: '', pathMatch: 'full', component: HomeComponent, title: 'Swastik Properties | Find your place in Maharashtra' },
+      { path: 'properties', component: PropertyListComponent, title: 'Explore Properties | Swastik Properties' },
+      { path: 'properties/:slug', component: PropertyDetailComponent }
+    ]
+  },
+  { path: 'admin/login', component: LoginComponent, title: 'Admin Sign In | Swastik Properties' },
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [adminGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'properties' },
+      { path: 'properties', component: AdminPropertiesComponent, title: 'Property Management | Swastik Properties' }
+    ]
+  },
+  { path: '**', redirectTo: '' }
 ];
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes,withInMemoryScrolling({scrollPositionRestoration:'top'})),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideClientHydration(withHttpTransferCacheOptions({includePostRequests:false}))
   ]
 };

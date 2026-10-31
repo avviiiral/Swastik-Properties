@@ -1,2 +1,20 @@
-:root{color-scheme:light;font-family:'DM Sans',sans-serif;color:#243c33;background:#fafaf7;font-synthesis:none;text-rendering:optimizeLegibility;--ink:#243c33;--muted:#758178;--green:#1b3a33;--gold:#c49b62}
+:root{color-scheme:light;font-family:'DM Sans',sans-serif;color:#243c33;background:#fafaf7;font-synthesis:none;text-rendering:optimizeLegibility;--ink:#243c33;--muted:#758178;--green:#1b3a33;--green-dark:#172b2a;--gold:#c49b62;--line:#e4e9e5;--danger:#b7463f;--success:#26734d;--shadow:0 16px 44px rgba(27,48,41,.08)}
 *{box-sizing:border-box}html{min-width:320px;scroll-behavior:smooth}body{min-width:320px;min-height:100vh;margin:0;background:#fafaf7}button,input,select,textarea{font:inherit}button,a{-webkit-tap-highlight-color:transparent}:focus-visible{outline:3px solid rgba(196,155,98,.55);outline-offset:3px}::selection{color:#fff;background:#426b58}
+
+/* Shared Admin UI primitives — both sections run in this Angular application. */
+.form-control{width:100%;min-height:42px;padding:10px 12px;border:1px solid #dce3de;border-radius:9px;background:#fff;color:#1f2c2a;font-size:13px}
+.form-control:focus{outline:none;border-color:#9aaf9f;box-shadow:0 0 0 3px rgba(65,112,87,.1)}
+textarea.form-control{resize:vertical;min-height:88px}
+.field-error{color:var(--danger);font-size:12px;margin-top:5px}
+.alert{border:1px solid transparent;border-radius:10px;padding:11px 13px;font-size:13px;line-height:1.5}
+.alert.error{color:#8b302b;background:#fff0ef;border-color:#f5d5d2}
+.alert.success{color:#1f6744;background:#edf8f1;border-color:#d2ebda}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;min-height:40px;padding:0 15px;border:1px solid transparent;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer}
+.btn:disabled{cursor:not-allowed;opacity:.55}
+.btn-primary{color:#fff;background:var(--green)}
+.btn-primary:hover:not(:disabled){background:#2d5148}
+.btn-secondary{color:var(--ink);background:#fff;border-color:#dce3de}
+.btn-secondary:hover:not(:disabled){background:#f8faf8;border-color:#c7d1ca}
+.btn-danger{color:var(--danger);background:#fff;border-color:#efd4d1}
+.btn-small{min-height:32px;padding:0 10px;font-size:12px}
+@media(max-width:700px){.btn{min-height:42px}}

@@ -48,25 +48,3 @@ jobs:
       - name: Run account, location and property tests
         working-directory: backend
         run: python manage.py test apps.accounts apps.locations apps.properties
-
-  admin-dashboard-build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: frontend/admin-dashboard/package.json
-
-      - name: Install dashboard dependencies
-        working-directory: frontend/admin-dashboard
-        run: npm install --no-audit --no-fund
-
-      - name: Build Admin Dashboard
-        working-directory: frontend/admin-dashboard
-        run: npm run build

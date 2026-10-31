@@ -1,9 +1,13 @@
 import { ApplicationConfig, mergeApplicationConfig } from '@angular/core';
 import { provideServerRendering, RenderMode, ServerRoute, withRoutes } from '@angular/ssr';
 
-import { API_BASE_URL, appConfig } from './app';
+import { appConfig } from './app';
+import { API_BASE_URL } from './core/api-base-url.token';
 
-const serverRoutes: ServerRoute[] = [{ path: '**', renderMode: RenderMode.Server }];
+const serverRoutes: ServerRoute[] = [
+  { path: 'admin/**', renderMode: RenderMode.Client },
+  { path: '**', renderMode: RenderMode.Server }
+];
 const serverOnlyConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(withRoutes(serverRoutes)),

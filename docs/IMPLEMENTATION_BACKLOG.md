@@ -26,14 +26,14 @@
 - [ ] Add property activity/audit logging.
 - [ ] Implement agent-owned property creation, assignment and approval workflow.
 
-## Admin dashboard
+## Admin dashboard (integrated into unified frontend)
 
-- [x] Create a separate Angular Admin SPA workspace.
+- [x] Build the initial standalone Angular Admin SPA workspace (superseded by the unified frontend below).
 - [x] Add Admin/Super Admin sign-in and JWT refresh handling.
 - [x] Add property listing, search and category filtering.
 - [x] Add property creation/editing with PDF upload and Google Maps link.
 - [x] Add publish/unpublish, availability update and permanent delete actions.
-- [ ] Verify Angular build and CRUD flows locally on Windows.
+- [ ] Verify unified Angular build and public/Admin navigation and CRUD flows locally on Windows.
 
 ## Website forms and submissions
 
@@ -49,4 +49,9 @@
 - [ ] Publish and review OpenAPI/Swagger documentation.
 - [ ] Add production media storage and delivery configuration.
 - [ ] Add deployment configuration and production security checks.
-- [x] Build the separate public-facing Angular SSR website with homepage, property search/filtering, detail routes and public-only API access.\n- [ ] Connect customer enquiry forms when the submissions API is implemented.\n- [ ] Generate a dynamic sitemap for published property detail routes.
+- [x] Build the public-facing Angular SSR website with homepage, property search/filtering, detail routes and public-only API access.
+- [x] Integrate Admin login, JWT refresh and property management under protected `/admin` routes in the same Angular app.
+- [x] Ensure public property HTTP requests do not inherit the Admin JWT.
+- [x] Use one frontend development server and a unified Angular SSR build for public and Admin routes.
+- [ ] Connect customer enquiry forms when the submissions API is implemented.
+- [ ] Generate a dynamic sitemap for published property detail routes.
