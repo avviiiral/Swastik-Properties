@@ -52,7 +52,7 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
             <p class="contact-intro">Speak with our team or send an enquiry about this specific listing.</p>
             <div class="contact-actions">
               <a class="contact-action whatsapp" [href]="whatsappUrl(property()!)" target="_blank" rel="noopener noreferrer"><span>WhatsApp</span><b>↗</b></a>
-              <a class="contact-action" [href]="'tel:' + contact.phoneHref"><span>Call us</span><b>↗</b></a>
+              <a class="contact-action" [href]="'tel:' + contact().contact_number"><span>Call us</span><b>↗</b></a>
               <a class="contact-action" [href]="emailUrl(property()!)"><span>Email</span><b>↗</b></a>
             </div>
             <form class="enquiry-form" (ngSubmit)="submitEnquiry()" #enquiryForm="ngForm">
@@ -67,7 +67,6 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
             </form>
           </section>
           <div class="address-panel"><span class="aside-label">LOCATION</span><strong>{{property()!.location_name || property()!.locality_name || property()!.city_name || 'Location details'}}</strong><p>{{property()!.full_address || location(property()!)}}</p></div>
-          <div class="disclaimer">Please verify price, availability, approvals and property particulars directly with the seller or developer before proceeding.</div>
           <a class="back" routerLink="/properties">← Back to all properties</a>
         </aside>
       </section>
@@ -86,7 +85,7 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
     .price-panel>strong{display:block;margin-top:11px;color:#254638;font:700 24px 'Manrope',sans-serif;letter-spacing:-.04em}.availability{display:inline-block;margin-top:12px;padding:6px 8px;color:#315d40;background:#edf4ec;font-size:8px;font-weight:700;letter-spacing:.1em}.availability.no{color:#875e3d;background:#f5f0e8}
     hr{height:1px;margin:20px 0 16px;border:0;background:#e8ece7}.primary,.secondary{min-height:42px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;font-size:10px;font-weight:700}.primary{background:#23463b;color:#fff}.primary b{color:#d4b17b;font-size:15px}.secondary{margin-top:8px;border:1px solid #dce5dc;color:#2d4c3e}.secondary b{color:#ae8552;font-size:15px}.no-brochure{font-size:11px;color:#9aa39d}
     .contact-panel{padding:23px;border:1px solid #e2e8e1;background:#fff}.contact-panel h2{margin:11px 0 6px;color:#284438;font:700 18px 'Manrope',sans-serif;letter-spacing:-.03em}.contact-intro{margin:0;color:#7c8980;font-size:11px;line-height:1.7}.contact-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:16px}.contact-action{min-height:39px;padding:0 9px;display:flex;align-items:center;justify-content:space-between;gap:4px;border:1px solid #dce5dc;color:#29483d;text-decoration:none;font-size:10px;font-weight:700}.contact-action b{color:#ad8552}.contact-action.whatsapp{border-color:#d4e5d8;background:#edf5ef;color:#236342}.enquiry-form{display:grid;gap:12px;margin-top:19px;padding-top:17px;border-top:1px solid #e8ece7}.enquiry-form label{display:grid;gap:6px;color:#596a60;font-size:10px;font-weight:700}.enquiry-form input,.enquiry-form textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid #dce4dc;border-radius:0;background:#fcfcf9;color:#263d34;font:400 12px 'DM Sans',sans-serif}.enquiry-form input:focus,.enquiry-form textarea:focus{outline:2px solid rgba(184,140,85,.35);border-color:#ad895c}.enquiry-form textarea{resize:vertical;min-height:85px}.enquiry-submit{min-height:43px;padding:0 13px;display:flex;align-items:center;justify-content:space-between;border:0;background:#23463b;color:#fff;font-size:11px;font-weight:700;cursor:pointer}.enquiry-submit b{color:#d4b17b;font-size:15px}.enquiry-submit:disabled{opacity:.55;cursor:not-allowed}.privacy-note{color:#929b93;font-size:9px;line-height:1.5}.form-feedback{margin:0;padding:10px;font-size:10px;line-height:1.5}.form-feedback.error{background:#fff1ef;color:#973b34}.form-feedback.success{background:#edf6ef;color:#276344}
-    .address-panel strong{display:block;margin-top:11px;color:#2b4338;font:700 15px 'Manrope',sans-serif}.address-panel p{margin:7px 0 0;color:#7c8980;font-size:11px;line-height:1.7}.disclaimer{padding:14px;color:#8a928b;background:#f1f3ed;font-size:10px;line-height:1.7}.back{color:#315344;text-decoration:none;font-size:11px;font-weight:700}
+    .address-panel strong{display:block;margin-top:11px;color:#2b4338;font:700 15px 'Manrope',sans-serif}.address-panel p{margin:7px 0 0;color:#7c8980;font-size:11px;line-height:1.7} .back{color:#315344;text-decoration:none;font-size:11px;font-weight:700}
     @media(max-width:680px){.contact-actions{gap:6px}.contact-action{padding:0 7px;font-size:9px}}
 
     .detail-message{min-height:350px;display:grid;place-items:center;color:#758279;font-size:13px}.not-found{width:min(1220px,calc(100% - 56px));min-height:460px;margin:auto;padding:75px 0}.not-found h1{color:#203e34;font:600 clamp(42px,6vw,64px)/1.08 'Manrope',sans-serif;letter-spacing:-.06em}.not-found h1 em{color:#b78c54;font-style:normal}.not-found p{max-width:430px;color:#748077;font-size:13px;line-height:1.8}.not-found a{display:inline-block;margin-top:14px;padding:13px 16px;background:#23463b;color:white;text-decoration:none;font-size:11px;font-weight:700}
@@ -100,7 +99,11 @@ export class PropertyDetailComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly seo = inject(SiteSeo);
   private readonly enquiryApi = inject(PropertyEnquiryApi);
-  readonly contact = SWASTIK_CONTACT;
+  readonly contact = signal({
+    whatsapp_number: SWASTIK_CONTACT.phoneHref,
+    contact_number: SWASTIK_CONTACT.phoneHref,
+    email: SWASTIK_CONTACT.email,
+  });
   readonly enquirySending = signal(false);
   readonly enquirySuccess = signal(false);
   readonly enquiryError = signal('');
@@ -125,6 +128,10 @@ export class PropertyDetailComponent implements OnInit {
       const slug = params.get('slug');
       if (!slug) {this.property.set(null);this.loading.set(false);return;}
       this.loading.set(true);
+      this.enquiryApi.getContactSettings().subscribe({
+        next: settings => this.contact.set(settings),
+        error: () => undefined,
+      });
       this.api.detail(slug).subscribe({
         next: p => {
           this.property.set(p);this.loading.set(false);
@@ -136,12 +143,12 @@ export class PropertyDetailComponent implements OnInit {
   }
   whatsappUrl(p: Property): string {
     const message = `Hello, I am interested in ${p.name} (Reference: ${p.property_reference}). Please share more details.`;
-    return 'https://wa.me/' + this.contact.phoneHref.replace(/\D/g, '') + '?text=' + encodeURIComponent(message);
+    return 'https://wa.me/' + this.contact().whatsapp_number.replace(/\D/g, '') + '?text=' + encodeURIComponent(message);
   }
   emailUrl(p: Property): string {
     const subject = 'Enquiry about ' + p.name + ' (' + p.property_reference + ')';
     const body = 'Hello Swastik Properties,\n\nI am interested in ' + p.name + ' (' + p.property_reference + '). Please share more details.\n\nThank you.';
-    return 'mailto:' + this.contact.email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    return 'mailto:' + this.contact().email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   }
   submitEnquiry(): void {
     const p = this.property();
