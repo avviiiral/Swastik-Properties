@@ -10,7 +10,7 @@ from .serializers import PublicBlogPostSerializer,ManageBlogPostSerializer
 
 class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
  serializer_class=PublicBlogPostSerializer;lookup_field="slug";permission_classes=(AllowAny,)
- filter_backends=(filters.SearchFilter,);search_fields=("title","excerpt","content","category","tags")
+ filter_backends=(filters.SearchFilter,);search_fields=("title","excerpt","content","category")
  def get_queryset(self):
   qs=BlogPost.objects.filter(status=BlogPost.Status.PUBLISHED).select_related("author")
   category=self.request.query_params.get("category")
@@ -24,6 +24,12 @@ class BlogManagementViewSet(viewsets.ModelViewSet):
  serializer_class=ManageBlogPostSerializer;permission_classes=(IsBlogManager,)
  parser_classes=(JSONParser,MultiPartParser,FormParser)
  queryset=BlogPost.objects.select_related("author").all()
+ def get_queryset(self):
+  qs=super().get_queryset()
+  status_filter=self.request.query_params.get("status")
+  if status_filter in BlogPost.Status.values:
+   qs=qs.filter(status=status_filter)
+  return qs
  def perform_create(self,serializer):serializer.save(author=self.request.user)
  def perform_update(self,serializer):serializer.save()
  @action(detail=True,methods=("post",),url_path="publish")
