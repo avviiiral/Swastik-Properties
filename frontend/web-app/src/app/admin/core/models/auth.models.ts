@@ -1,10 +1,12 @@
+export type AppRole = 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR' | 'AGENT';
+
 export interface AuthUser {
   id: number;
   username: string;
   email: string;
   first_name: string;
   last_name: string;
-  role: 'SUPER_ADMIN' | 'ADMIN' | 'AGENT';
+  role: AppRole;
   is_active: boolean;
   date_joined: string;
 }
@@ -14,8 +16,4 @@ export interface LoginResponse {
   refresh: string;
   user: AuthUser;
 }
-
-export interface RefreshResponse {
-  access: string;
-  refresh?: string;
-}
+export interface RefreshResponse { access: string; refresh?: string; }
