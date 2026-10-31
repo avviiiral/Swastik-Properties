@@ -23,7 +23,7 @@ class BlogPost(models.Model):
  seo_title=models.CharField(max_length=220,blank=True);seo_description=models.CharField(max_length=320,blank=True);reading_time=models.PositiveSmallIntegerField(default=1)
  created_at=models.DateTimeField(auto_now_add=True);updated_at=models.DateTimeField(auto_now=True)
  class Meta:
-  ordering=("-published_at","-created_at");indexes=[models.Index(fields=("status","published_at"))]
+  ordering=("-published_at","-created_at");indexes=[models.Index(fields=("status","published_at"),name="blog_status_published")]
  def save(self,*args,**kwargs):
   if not self.slug:
    base=slugify(self.title)[:220] or "article";candidate=base;index=2
