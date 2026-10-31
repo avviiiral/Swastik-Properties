@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Property } from '../../core/models/property.models';
 import { PropertyApi } from '../../core/services/property-api.service';
 import { SiteSeo } from '../../core/services/site-seo.service';
-import { PropertyEnquiryApi } from '../../core/services/property-enquiry-api.service';
+import { BusinessContactSettings, PropertyEnquiryApi } from '../../core/services/property-enquiry-api.service';
 import { SWASTIK_CONTACT } from '../../core/config/business-contact';
 @Component({
   standalone: true,
@@ -99,7 +99,7 @@ export class PropertyDetailComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly seo = inject(SiteSeo);
   private readonly enquiryApi = inject(PropertyEnquiryApi);
-  readonly contact = signal({
+  readonly contact = signal<BusinessContactSettings>({
     whatsapp_number: SWASTIK_CONTACT.phoneHref,
     contact_number: SWASTIK_CONTACT.phoneHref,
     email: SWASTIK_CONTACT.email,
