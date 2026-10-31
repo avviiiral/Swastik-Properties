@@ -1,39 +1,46 @@
 # Swastik Properties — Project Progress
 
-## Current baseline
+## Existing platform baseline
+- Django 5.2 + DRF backend with JWT login, rotation and blacklist.
+- Custom SUPER_ADMIN, ADMIN and AGENT roles; EDITOR role added in this branch.
+- Maharashtra location hierarchy and public read APIs.
+- Property inventory, publication workflow, brochure uploads and image galleries.
+- One Angular 22 SSR application serves public and Admin routes.
 
-- Backend authentication and custom Super Admin, Admin and Agent roles are implemented.
-- Maharashtra State → District → City → Locality reference data and public lookup APIs are implemented.
-- Property inventory supports Admin/Super Admin creation, editing, publication status, availability, PDF brochures and permanent deletion.
-- Property photo galleries support multi-image uploads, one primary image, public gallery reads and file cleanup on deletion.
-- One Angular SSR application serves the public website and protected Admin workspace from the same origin.
-- The unified frontend uses dedicated folders for Home, property catalogue, property details, public layout, shared services and Admin pages.
+## This branch — UI, About, Blog and access control
+- [x] Establish design tokens, display/body typography and reduced-motion baseline.
+- [x] Update public navigation/footer; About is a real route instead of a footer anchor.
+- [x] Add About content in pages/about/about.content.ts with TODO placeholders for unknown business facts.
+- [x] Add public Blog listing and article detail pages.
+- [x] Add role-aware auth helpers/guard and role-specific login destination.
+- [x] Add role-filtered Admin sidebar, dashboard route and forbidden page.
+- [x] Add Editor role migration and backend permission classes.
+- [x] Revise Admin user-management scope to EDITOR and AGENT; add activation and Super Admin-only delete endpoints.
+- [x] Add BlogPost model/API, HTML sanitisation, cover image validation and demo seed command.
+- [x] Add Blog and account permission test modules.
+- [x] Update business rules, API and database documentation.
+- [ ] Complete frontend users route/runtime verification.
+- [ ] Add automated API test coverage for all role × endpoint combinations and last-Super-Admin demotion/deletion edge cases.
+- [ ] Run Django migration checks, system check and full suite locally.
+- [ ] Run Angular production SSR build and test 360px/1280px layouts.
+- [ ] Confirm property management publication/delete confirmation behaviour in browser.
+- [ ] Add/verify BlogPosting JSON-LD, social metadata and canonical on server-rendered HTML.
+- [ ] Confirm dynamic sitemap integration if the repository has a sitemap generator.
 
-## Unified frontend
+## Local verification (not yet run in this remote GitHub editing session)
+Backend:
+- cd backend
+- .\venv\Scripts\Activate.ps1
+- python manage.py makemigrations --check
+- python manage.py check
+- python manage.py test
 
-- [x] Public homepage and navigation.
-- [x] Public property catalogue with search, category/listing filters and pagination.
-- [x] Public property detail pages with brochure, location and photo gallery.
-- [x] Admin/Super Admin login, protected workspace and JWT refresh handling.
-- [x] Admin property inventory and CRUD actions.
-- [x] Multi-photo property upload, primary photo selection and removal.
-- [x] Use one Angular workspace and one development server for public and Admin routes.
-- [x] Apply Swastik logo and business contact details to the shared brand experience.
-- [ ] Verify frontend upload, update, publish, delete and public photo gallery flows locally on Windows.
+Frontend:
+- cd frontend/web-app
+- npm.cmd install
+- npm.cmd run build
 
-## Next backend and frontend slices
-
-- [ ] Implement Residential, Commercial and Land-specific detail models after exact subtype fields are agreed.
-- [ ] Add property assignment and approval history for Agents.
-- [ ] Implement the six agreed public forms and server-side validation.
-- [ ] Implement administrator-only submission management and downloadable exports for all forms.
-- [ ] Preserve customer submissions when a related property is permanently deleted.
-- [ ] Add property activity/audit logging.
-- [ ] Generate a dynamic sitemap for published property detail routes.
-
-## Security and deployment follow-up
-
-- [ ] Configure PostgreSQL verification.
-- [ ] Configure persistent production media storage and reverse proxy routes for /api/ and /media/.
-- [ ] Add a production Content Security Policy and review dashboard token handling.
-- [ ] Complete deployment configuration and production security checks.
+## Follow-up
+- Add residential/commercial/land subtypes after exact subtype fields are agreed.
+- Implement the six agreed public forms and administrator-only submissions/exports.
+- Configure PostgreSQL verification, persistent production media storage, CSP and deployment checks.
