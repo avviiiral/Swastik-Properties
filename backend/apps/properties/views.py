@@ -53,15 +53,18 @@ class PropertyViewSet(viewsets.ModelViewSet):
                 publication_status=Property.PublicationStatus.PUBLISHED
             )
 
-        for field in (
-            "category",
-            "listing_type",
-            "availability_status",
-            "publication_status",
-        ):
+        # Public filters only narrow the already-published catalogue.
+        for field in ("category", "listing_type", "availability_status"):
             value = self.request.query_params.get(field)
-            if value and is_admin:
+            if value:
                 queryset = queryset.filter(**{field: value})
+
+        # Publication state is an administrative workflow detail, never a
+        # public query parameter.
+        if is_admin:
+            publication_status = self.request.query_params.get("publication_status")
+            if publication_status:
+                queryset = queryset.filter(publication_status=publication_status)
 
         return queryset
 

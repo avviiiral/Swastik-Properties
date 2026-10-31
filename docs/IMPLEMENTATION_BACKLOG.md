@@ -49,4 +49,4 @@
 - [ ] Publish and review OpenAPI/Swagger documentation.
 - [ ] Add production media storage and delivery configuration.
 - [ ] Add deployment configuration and production security checks.
-- [ ] Build the separate public-facing Angular SSR website.
+- [x] Build the separate public-facing Angular SSR website with homepage, property search/filtering, detail routes and public-only API access.\n- [ ] Connect customer enquiry forms when the submissions API is implemented.\n- [ ] Generate a dynamic sitemap for published property detail routes.

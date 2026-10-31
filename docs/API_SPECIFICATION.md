@@ -72,7 +72,7 @@ Supported publication statuses: DRAFT, PENDING_REVIEW, CHANGES_REQUESTED, APPROV
 
 Availability is separate from publication status: AVAILABLE, SOLD, RENTED, LEASED or UNAVAILABLE.
 
-Public catalogue responses contain only PUBLISHED properties. Admin and Super Admin requests can access all publication states. Property deletion is permanent.
+Public catalogue responses contain only PUBLISHED properties. Admin and Super Admin requests can access all publication states. Property deletion is permanent.\n\nPublic list filtering supports `search` (name, description, developer, location and reference), `category` (RESIDENTIAL, COMMERCIAL, LAND), `listing_type` (SALE, RENT, LEASE), `availability_status` and the documented ordering fields. Public filtering never exposes or accepts publication workflow states; the server always restricts anonymous users to PUBLISHED records.
 
 ### Example property payload (multipart/form-data)
 
