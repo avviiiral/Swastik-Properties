@@ -9,8 +9,8 @@ Backend API for the Swastik Properties platform.
 - Django REST Framework
 - PostgreSQL for the target deployment database
 - SQLite as a no-configuration local development fallback
-- SimpleJWT authentication
-- drf-spectacular API schema/documentation
+- SimpleJWT authentication with refresh-token rotation and revocation
+- drf-spectacular OpenAPI/Swagger documentation
 
 ## Local setup (Windows PowerShell)
 
@@ -31,20 +31,28 @@ Edit `backend/.env` and set a unique `DJANGO_SECRET_KEY`. Generate one with:
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-For the first local check, leave `DATABASE_URL=` empty; the development settings then use SQLite. When PostgreSQL is installed and the database/user have been created, set `DATABASE_URL` to the PostgreSQL connection string.
+For a first local run, leave `DATABASE_URL=` empty; development settings then use SQLite. Once PostgreSQL is installed and the database/user have been created, set `DATABASE_URL` to the PostgreSQL connection string.
 
 Then run:
 
 ```powershell
 python manage.py check
-python manage.py makemigrations accounts
 python manage.py migrate
 python manage.py test apps.accounts
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Do not commit `.env`, database files, uploaded media, or secrets.
+## Authentication API
+
+- `POST /api/v1/auth/login/` — email/password login; returns access, refresh and user.
+- `POST /api/v1/auth/token/refresh/` — rotate refresh token and issue a new access token.
+- `POST /api/v1/auth/logout/` — revoke the authenticated user's refresh token.
+- `GET /api/v1/auth/me/` — current user's profile.
+- `GET/POST /api/v1/auth/users/` — role-limited user management.
+- `GET/PATCH /api/v1/auth/users/{id}/` — retrieve/update manageable users.
+
+Swagger UI: `/api/docs/`; OpenAPI schema: `/api/schema/`.
 
 ## Django applications
 
@@ -61,3 +69,4 @@ Do not commit `.env`, database files, uploaded media, or secrets.
 - Administrators manage properties directly.
 - Property deletion is permanent, subject to explicit handling of dependent records and uploaded files.
 - Agents must not have access to form submission records or exports.
+- Admins manage Agent accounts; Super Admins manage Admin and Agent accounts.
