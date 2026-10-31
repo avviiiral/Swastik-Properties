@@ -13,14 +13,17 @@
 - [x] Implement role-based user-management API boundaries.
 - [x] Add authentication and authorization API tests.
 - [x] Add GitHub Actions backend CI workflow.
-- [ ] Validate the authentication changes locally and push test results.
-- [ ] Confirm CI workflow passes.
-- [ ] Configure local PostgreSQL database and verify all migrations against PostgreSQL.
+- [x] Implement normalized State, District, City and Locality models.
+- [x] Implement public read-only location lookup endpoints.
+- [x] Add idempotent Maharashtra and 36-district seed command.
+- [ ] Generate and apply the locations migration locally.
+- [ ] Run location seed command and location tests locally.
+- [ ] Configure local PostgreSQL database and verify migrations against PostgreSQL.
 
 ## Domain development
 
-- [ ] Define locations schema and APIs.
 - [ ] Define agent profile and assignment schema/APIs.
+- [ ] Finalize category-specific property detail fields.
 - [ ] Define property schema, images, lifecycle and CRUD APIs.
 - [ ] Define form-specific submission schemas and validators.
 - [ ] Implement administrator-only submission access.
