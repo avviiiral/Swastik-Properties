@@ -24,7 +24,8 @@ export const appRoutes: Routes = [
  {path:'admin',pathMatch:'full',canActivate:[workspaceGuard],component:LoginComponent},
  {path:'admin/forbidden',loadComponent:()=>import('./admin/features/forbidden/forbidden.component').then(m=>m.ForbiddenComponent),title:'Access Denied | Swastik Properties'},
  {path:'admin',component:AdminLayoutComponent,canActivate:[adminGuard],children:[
-  {path:'',pathMatch:'full',loadComponent:()=>import('./admin/features/dashboard/dashboard.component').then(m=>m.DashboardComponent),data:{roles:['ADMIN','SUPER_ADMIN']}},
+  {path:'',pathMatch:'full',redirectTo:'overview'},
+  {path:'overview',loadComponent:()=>import('./admin/features/dashboard/dashboard.component').then(m=>m.DashboardComponent),data:{roles:['ADMIN','SUPER_ADMIN']},title:'Admin Overview | Swastik Properties'},
   {path:'properties',component:AdminPropertiesComponent,data:{roles:['ADMIN','SUPER_ADMIN']},title:'Property Management | Swastik Properties'},
   {path:'blog',loadComponent:()=>import('./admin/features/blog/blog-admin-list.component').then(m=>m.BlogAdminListComponent),data:{roles:['EDITOR','SUPER_ADMIN']},title:'Blog Management | Swastik Properties'},
   {path:'blog/new',loadComponent:()=>import('./admin/features/blog/blog-editor.component').then(m=>m.BlogEditorComponent),data:{roles:['EDITOR','SUPER_ADMIN']}},
