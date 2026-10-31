@@ -73,7 +73,7 @@ import { SiteSeo } from '../../core/services/site-seo.service';
                   <span class="visual-cat">{{property.category || 'PROPERTY'}}</span><span class="visual-ref">{{property.property_reference}}</span><div>S<span>.</span></div>
                 }
               </div>
-              <div class="card-info"><small>{{property.listing_type || 'PROPERTY'}} · {{property.availability_status}}</small><h3>{{property.name}}</h3><p>{{location(property)}}</p><div><strong>{{price(property)}}</strong><span>View details ↗</span></div></div>
+              <div class="card-info"><small>{{property.listing_type || 'PROPERTY'}} · {{property.availability_status}}</small><h3>{{property.name}}</h3><p>{{location(property)}}</p><div><strong>{{area(property)}}</strong><span>Request details ↗</span></div></div>
             </a>
           }
         </div>
@@ -151,8 +151,9 @@ export class HomeComponent implements OnInit {
     return property.images?.find((image) => image.is_primary) ?? property.images?.[0] ?? null;
   }
 
-  price(p: Property): string {
-    if (!p.price || !Number.isFinite(Number(p.price))) return 'Price on request';
-    return new Intl.NumberFormat('en-IN',{style:'currency',currency:p.currency || 'INR',maximumFractionDigits:0}).format(Number(p.price));
+  area(p: Property): string {
+    if (!p.area_value) return 'Area on request';
+    const units: Record<string,string> = {SQ_FT:'sq. ft.',SQ_M:'sq. m.',ACRE:'acre',GUNTHA:'guntha'};
+    return p.area_value + ' ' + (units[p.area_unit] || p.area_unit);
   }
 }

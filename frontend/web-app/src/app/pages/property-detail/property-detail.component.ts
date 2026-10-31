@@ -42,7 +42,7 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
           </div></section>
         </div>
         <aside class="aside">
-          <div class="price-panel"><span class="aside-label">INDICATIVE PRICE</span><strong>{{price(property()!)}}</strong><span class="availability" [class.no]="property()!.availability_status!=='AVAILABLE'">{{pretty(property()!.availability_status)}}</span><hr>
+          <div class="price-panel"><span class="aside-label">PROPERTY INFORMATION</span><strong>{{area(property()!)}}</strong><span class="availability" [class.no]="property()!.availability_status!=='AVAILABLE'">{{pretty(property()!.availability_status)}}</span><hr>
             @if(property()!.brochure_url){<a class="primary" [href]="property()!.brochure_url" target="_blank" rel="noopener noreferrer">View project brochure <b>↗</b></a>} @else {<span class="no-brochure">Brochure not available</span>}
             <a class="secondary" [href]="property()!.location_url" target="_blank" rel="noopener noreferrer">Open in Google Maps <b>↗</b></a>
           </div>
@@ -55,14 +55,15 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
               <a class="contact-action" [href]="'tel:' + contact().contact_number"><span>Call us</span><b>↗</b></a>
               <a class="contact-action" [href]="emailUrl(property()!)"><span>Email</span><b>↗</b></a>
             </div>
-            <form class="enquiry-form" (ngSubmit)="submitEnquiry()" #enquiryForm="ngForm">
+            <form class="enquiry-form" (ngSubmit)="submitEnquiry(enquiryFormElement)" #enquiryForm="ngForm" #enquiryFormElement>
               <label>Your name<input type="text" name="enquiryName" [(ngModel)]="enquiryName" required minlength="2" maxlength="120" autocomplete="name" placeholder="Full name"></label>
               <label>Email address<input type="email" name="enquiryEmail" [(ngModel)]="enquiryEmail" required maxlength="254" autocomplete="email" placeholder="you@example.com"></label>
               <label>Phone number<input type="tel" name="enquiryPhone" [(ngModel)]="enquiryPhone" required minlength="10" maxlength="20" autocomplete="tel" placeholder="+91"></label>
-              <label>Your message<textarea name="enquiryMessage" [(ngModel)]="enquiryMessage" required minlength="10" maxlength="2000" rows="4" placeholder="I would like to know more about this property..."></textarea></label>
+              <label>Your message<textarea name="enquiryMessage" [(ngModel)]="enquiryMessage" required maxlength="2000" rows="4" placeholder="I would like to know more about this property..."></textarea><small class="field-hint">A short message is fine. Please tell us what you would like to know.</small></label>
+              <label class="enquiry-consent"><input type="checkbox" name="enquiryConsent" [(ngModel)]="enquiryConsent" required><span>I agree that Swastik Properties may contact me about this property enquiry.</span></label>
               @if (enquiryError()) { <p class="form-feedback error" role="alert">{{enquiryError()}}</p> }
               @if (enquirySuccess()) { <p class="form-feedback success" role="status">Thank you. Your enquiry has been received. Our team will contact you.</p> }
-              <button class="enquiry-submit" type="submit" [disabled]="enquirySending() || !enquiryForm.valid">{{enquirySending() ? 'Sending…' : 'Send property enquiry'}} <b>↗</b></button>
+              <button class="enquiry-submit" type="submit" [disabled]="enquirySending()">{{enquirySending() ? 'Sending…' : 'Send property enquiry'}} <b>↗</b></button>
               <small class="privacy-note">Your details will only be used to respond to this property enquiry.</small>
             </form>
           </section>
@@ -84,7 +85,7 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
     .aside{position:sticky;top:105px;display:flex;flex-direction:column;gap:13px}.price-panel,.address-panel{padding:23px;border:1px solid #e2e8e1;background:#fff}.aside-label{display:block;color:#a78354;font-size:9px;font-weight:700;letter-spacing:.16em}
     .price-panel>strong{display:block;margin-top:11px;color:#254638;font:700 24px 'Manrope',sans-serif;letter-spacing:-.04em}.availability{display:inline-block;margin-top:12px;padding:6px 8px;color:#315d40;background:#edf4ec;font-size:8px;font-weight:700;letter-spacing:.1em}.availability.no{color:#875e3d;background:#f5f0e8}
     hr{height:1px;margin:20px 0 16px;border:0;background:#e8ece7}.primary,.secondary{min-height:42px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;font-size:10px;font-weight:700}.primary{background:#23463b;color:#fff}.primary b{color:#d4b17b;font-size:15px}.secondary{margin-top:8px;border:1px solid #dce5dc;color:#2d4c3e}.secondary b{color:#ae8552;font-size:15px}.no-brochure{font-size:11px;color:#9aa39d}
-    .contact-panel{padding:23px;border:1px solid #e2e8e1;background:#fff}.contact-panel h2{margin:11px 0 6px;color:#284438;font:700 18px 'Manrope',sans-serif;letter-spacing:-.03em}.contact-intro{margin:0;color:#7c8980;font-size:11px;line-height:1.7}.contact-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:16px}.contact-action{min-height:39px;padding:0 9px;display:flex;align-items:center;justify-content:space-between;gap:4px;border:1px solid #dce5dc;color:#29483d;text-decoration:none;font-size:10px;font-weight:700}.contact-action b{color:#ad8552}.contact-action.whatsapp{border-color:#d4e5d8;background:#edf5ef;color:#236342}.enquiry-form{display:grid;gap:12px;margin-top:19px;padding-top:17px;border-top:1px solid #e8ece7}.enquiry-form label{display:grid;gap:6px;color:#596a60;font-size:10px;font-weight:700}.enquiry-form input,.enquiry-form textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid #dce4dc;border-radius:0;background:#fcfcf9;color:#263d34;font:400 12px 'DM Sans',sans-serif}.enquiry-form input:focus,.enquiry-form textarea:focus{outline:2px solid rgba(184,140,85,.35);border-color:#ad895c}.enquiry-form textarea{resize:vertical;min-height:85px}.enquiry-submit{min-height:43px;padding:0 13px;display:flex;align-items:center;justify-content:space-between;border:0;background:#23463b;color:#fff;font-size:11px;font-weight:700;cursor:pointer}.enquiry-submit b{color:#d4b17b;font-size:15px}.enquiry-submit:disabled{opacity:.55;cursor:not-allowed}.privacy-note{color:#929b93;font-size:9px;line-height:1.5}.form-feedback{margin:0;padding:10px;font-size:10px;line-height:1.5}.form-feedback.error{background:#fff1ef;color:#973b34}.form-feedback.success{background:#edf6ef;color:#276344}
+    .contact-panel{padding:23px;border:1px solid #e2e8e1;background:#fff}.contact-panel h2{margin:11px 0 6px;color:#284438;font:700 18px 'Manrope',sans-serif;letter-spacing:-.03em}.contact-intro{margin:0;color:#7c8980;font-size:11px;line-height:1.7}.contact-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:16px}.contact-action{min-height:39px;padding:0 9px;display:flex;align-items:center;justify-content:space-between;gap:4px;border:1px solid #dce5dc;color:#29483d;text-decoration:none;font-size:10px;font-weight:700}.contact-action b{color:#ad8552}.contact-action.whatsapp{border-color:#d4e5d8;background:#edf5ef;color:#236342}.enquiry-form{display:grid;gap:12px;margin-top:19px;padding-top:17px;border-top:1px solid #e8ece7}.enquiry-form label{display:grid;gap:6px;color:#596a60;font-size:10px;font-weight:700}.enquiry-form input,.enquiry-form textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid #dce4dc;border-radius:0;background:#fcfcf9;color:#263d34;font:400 12px 'DM Sans',sans-serif}.enquiry-form input:focus,.enquiry-form textarea:focus{outline:2px solid rgba(184,140,85,.35);border-color:#ad895c}.enquiry-form textarea{resize:vertical;min-height:85px}.field-hint{color:#87948a;font-size:9px;font-weight:400;line-height:1.5}.enquiry-submit{min-height:43px;padding:0 13px;display:flex;align-items:center;justify-content:space-between;border:0;background:#23463b;color:#fff;font-size:11px;font-weight:700;cursor:pointer}.enquiry-submit b{color:#d4b17b;font-size:15px}.enquiry-submit:disabled{opacity:.55;cursor:not-allowed}.enquiry-consent{display:flex!important;grid-template-columns:none!important;align-items:flex-start;gap:8px;color:#7e8a81!important;font-size:9px!important;line-height:1.5}.enquiry-consent input{width:auto!important;min-height:0!important;margin-top:2px;accent-color:#23463b}.privacy-note{color:#929b93;font-size:9px;line-height:1.5}.form-feedback{margin:0;padding:10px;font-size:10px;line-height:1.5}.form-feedback.error{background:#fff1ef;color:#973b34}.form-feedback.success{background:#edf6ef;color:#276344}
     .address-panel strong{display:block;margin-top:11px;color:#2b4338;font:700 15px 'Manrope',sans-serif}.address-panel p{margin:7px 0 0;color:#7c8980;font-size:11px;line-height:1.7} .back{color:#315344;text-decoration:none;font-size:11px;font-weight:700}
     @media(max-width:680px){.contact-actions{gap:6px}.contact-action{padding:0 7px;font-size:9px}}
 
@@ -111,6 +112,7 @@ export class PropertyDetailComponent implements OnInit {
   enquiryEmail = '';
   enquiryPhone = '';
   enquiryMessage = '';
+  enquiryConsent = false;
   readonly property = signal<Property | null>(null);
   readonly loading = signal(true);
   readonly galleryImages = computed(() => {
@@ -150,35 +152,58 @@ export class PropertyDetailComponent implements OnInit {
     const body = 'Hello Swastik Properties,\n\nI am interested in ' + p.name + ' (' + p.property_reference + '). Please share more details.\n\nThank you.';
     return 'mailto:' + this.contact().email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   }
-  submitEnquiry(): void {
+  submitEnquiry(formElement: HTMLFormElement): void {
     const p = this.property();
     if (!p || this.enquirySending()) return;
+
+    // Read the actual controls on submit. This also captures browser-autofilled
+    // values even when the browser has not synchronized them into ngModel yet.
+    const formData = new FormData(formElement);
+    const name = String(formData.get('enquiryName') || '').trim();
+    const email = String(formData.get('enquiryEmail') || '').trim();
+    const phone = String(formData.get('enquiryPhone') || '').trim();
+    const message = String(formData.get('enquiryMessage') || '').trim();
+    const consent = formData.get('enquiryConsent') === 'on';
+
+    if (!name || !email || !phone || !message || !consent) {
+      this.enquiryError.set('Please complete all fields and agree to be contacted before submitting.');
+      return;
+    }
+
     this.enquirySending.set(true);
     this.enquirySuccess.set(false);
     this.enquiryError.set('');
-    this.enquiryApi.submit({
+    this.enquiryApi.submitLead({
+      enquiry_type: 'PROPERTY_ENQUIRY',
       property_slug: p.slug,
-      name: this.enquiryName.trim(),
-      email: this.enquiryEmail.trim(),
-      phone: this.enquiryPhone.trim(),
-      message: this.enquiryMessage.trim(),
+      name,
+      email,
+      phone,
+      message,
+      details: { property_reference: p.property_reference },
+      source_path: '/properties/' + p.slug,
+      consent,
+      website: '',
     }).subscribe({
       next: () => {
         this.enquirySending.set(false);
         this.enquirySuccess.set(true);
+        formElement.reset();
         this.enquiryName = '';
         this.enquiryEmail = '';
         this.enquiryPhone = '';
         this.enquiryMessage = '';
+        this.enquiryConsent = false;
       },
       error: error => {
         this.enquirySending.set(false);
-        this.enquiryError.set(error?.error?.detail || 'We could not send your enquiry. Please try again or contact us directly.');
+        const data = error?.error;
+        const message = data?.detail || data?.message || Object.values(data || {}).flat().join(' ') || 'We could not send your enquiry. Please try again or contact us directly.';
+        this.enquiryError.set(message);
       }
     });
   }
   location(p: Property): string {return [p.location_name||p.locality_name,p.city_name,p.district_name,p.state_name].filter((v,i,a):v is string=>!!v&&a.indexOf(v)===i).join(', ')||'Maharashtra';}
-  price(p: Property): string {if(!p.price||!Number.isFinite(Number(p.price)))return 'Price on request';return new Intl.NumberFormat('en-IN',{style:'currency',currency:p.currency||'INR',maximumFractionDigits:0}).format(Number(p.price));}
   pretty(value: string): string {return (value||'Not specified').replaceAll('_',' ').toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());}
   area(p: Property): string {if(!p.area_value)return 'Not specified';const units:Record<string,string>={SQ_FT:'sq. ft.',SQ_M:'sq. m.',ACRE:'acre',GUNTHA:'guntha'};return p.area_value+' '+(units[p.area_unit]||p.area_unit);}
 }

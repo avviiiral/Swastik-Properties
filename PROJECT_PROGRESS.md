@@ -2,45 +2,41 @@
 
 ## Existing platform baseline
 - Django 5.2 + DRF backend with JWT login, rotation and blacklist.
-- Custom SUPER_ADMIN, ADMIN and AGENT roles; EDITOR role added in this branch.
+- SUPER_ADMIN, ADMIN, EDITOR and AGENT role boundaries.
 - Maharashtra location hierarchy and public read APIs.
-- Property inventory, publication workflow, brochure uploads and image galleries.
-- One Angular 22 SSR application serves public and Admin routes.
+- Property inventory, approval/publication workflow, brochure uploads and image galleries.
+- One Angular 22 SSR application serves public and protected Admin routes.
 
-## This branch — UI, About, Blog and access control
-- [x] Establish design tokens, display/body typography and reduced-motion baseline.
-- [x] Update public navigation/footer; About is a real route instead of a footer anchor.
-- [x] Add About content in pages/about/about.content.ts with TODO placeholders for unknown business facts.
-- [x] Add public Blog listing and article detail pages.
-- [x] Add role-aware auth helpers/guard and role-specific login destination.
-- [x] Add role-filtered Admin sidebar, dashboard route and forbidden page.
-- [x] Add Editor role migration and backend permission classes.
-- [x] Revise Admin user-management scope to EDITOR and AGENT; add activation and Super Admin-only delete endpoints.
-- [x] Add BlogPost model/API, HTML sanitisation, cover image validation and demo seed command.
-- [x] Add Blog and account permission test modules.
-- [x] Update business rules, API and database documentation.
-- [ ] Complete frontend users route/runtime verification.
-- [ ] Add automated API test coverage for all role × endpoint combinations and last-Super-Admin demotion/deletion edge cases.
-- [ ] Run Django migration checks, system check and full suite locally.
-- [ ] Run Angular production SSR build and test 360px/1280px layouts.
-- [ ] Confirm property management publication/delete confirmation behaviour in browser.
-- [ ] Add/verify BlogPosting JSON-LD, social metadata and canonical on server-rendered HTML.
-- [ ] Confirm dynamic sitemap integration if the repository has a sitemap generator.
+## New work — feature/property-lead-management
+- [x] Add one public Contact page with six guided form types: general enquiry, property enquiry, buy requirement, rent requirement, sell property and list property.
+- [x] Store all new form submissions in the existing lead table; preserve historical property enquiries and the original property enquiry API.
+- [x] Capture contact consent timestamp; validate contact details and type-specific location/budget inputs.
+- [x] Add anonymous submission throttling and a honeypot field for basic spam screening.
+- [x] Add Admin-only lead inbox with form-type/status/search filters, pagination, private notes and status progression.
+- [x] Add filter-aware CSV export including structured requirement details and consent timestamp; protect CSV cells from spreadsheet formula injection.
+- [x] Add direct call/email/WhatsApp follow-up links and Admin navigation to the full lead inbox.
+- [x] Add public property catalogue price range filters, locality/city/district search and sort options.
+- [x] Update API, database, admin workspace and setup documentation.
+- [ ] Run backend and frontend GitHub Actions checks and resolve any failures.
+- [ ] Verify migration and SSR build against the deployment database.
+- [ ] Browser-check public forms, mobile/desktop layouts, admin lead updates and CSV downloads.
 
-## Local verification (not yet run in this remote GitHub editing session)
-Backend:
-- cd backend
-- .\venv\Scripts\Activate.ps1
-- python manage.py makemigrations --check
-- python manage.py check
-- python manage.py test
+## Local verification commands
+Backend (from `backend`):
+```powershell
+python manage.py makemigrations --check --dry-run
+python manage.py check
+python manage.py migrate --noinput
+python manage.py test apps.submissions apps.properties
+```
 
-Frontend:
-- cd frontend/web-app
-- npm.cmd install
-- npm.cmd run build
+Frontend (from `frontend/web-app`):
+```powershell
+npm.cmd install
+npm.cmd run build
+```
 
-## Follow-up
-- Add residential/commercial/land subtypes after exact subtype fields are agreed.
-- Implement the six agreed public forms and administrator-only submissions/exports.
-- Configure PostgreSQL verification, persistent production media storage, CSP and deployment checks.
+## Deferred recommendations
+- Add property-specific subtypes and fields after the business confirms the exact data to capture.
+- Consider authenticated agent assignment only if the operating policy changes; customer submissions remain Admin-only in the current scope.
+- Configure production PostgreSQL, persistent media storage, HTTPS, CSP, backups and monitoring before launch.

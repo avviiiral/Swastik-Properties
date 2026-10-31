@@ -17,12 +17,12 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
             <a routerLink="/properties" routerLinkActive="active">Properties</a>
             <a routerLink="/about" routerLinkActive="active">About</a>
             <a routerLink="/blog" routerLinkActive="active">Blog</a>
-            <a href="mailto:{{contact.email}}">Contact</a>
+            <a routerLink="/contact" routerLinkActive="active">Contact</a>
           </nav>
           <a class="header-cta" routerLink="/properties">Explore properties <span>↗</span></a>
           <button class="menu-toggle" type="button" aria-label="Toggle navigation" [attr.aria-expanded]="menuOpen()" (click)="menuOpen.set(!menuOpen())"><span></span><span></span></button>
         </div>
-        @if(menuOpen()){<nav class="mobile-nav" aria-label="Mobile navigation"><a routerLink="/" (click)="menuOpen.set(false)">Home</a><a routerLink="/properties" (click)="menuOpen.set(false)">Properties</a><a routerLink="/about" (click)="menuOpen.set(false)">About</a><a routerLink="/blog" (click)="menuOpen.set(false)">Blog</a><a href="mailto:{{contact.email}}" (click)="menuOpen.set(false)">Contact</a></nav>}
+        @if(menuOpen()){<nav class="mobile-nav" aria-label="Mobile navigation"><a routerLink="/" (click)="menuOpen.set(false)">Home</a><a routerLink="/properties" (click)="menuOpen.set(false)">Properties</a><a routerLink="/about" (click)="menuOpen.set(false)">About</a><a routerLink="/blog" (click)="menuOpen.set(false)">Blog</a><a routerLink="/contact" (click)="menuOpen.set(false)">Contact</a></nav>}
       </header>
       <main><router-outlet /></main>
       <footer class="site-footer">

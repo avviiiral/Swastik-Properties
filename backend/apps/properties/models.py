@@ -79,14 +79,6 @@ class Property(models.Model):
         blank=True,
         default="",
     )
-    price = models.DecimalField(
-        max_digits=14,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(0)],
-    )
-    currency = models.CharField(max_length=3, default="INR")
     area_value = models.DecimalField(
         max_digits=12,
         decimal_places=2,

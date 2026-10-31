@@ -1,8 +1,11 @@
+from decimal import Decimal, InvalidOperation
+
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -27,8 +30,11 @@ class PropertyViewSet(viewsets.ModelViewSet):
         "location_name",
         "full_address",
         "property_reference",
+        "locality__name",
+        "locality__city__name",
+        "locality__city__district__name",
     )
-    ordering_fields = ("created_at", "updated_at", "name", "price", "area_value")
+    ordering_fields = ("created_at", "updated_at", "name", "area_value")
     ordering = ("-created_at",)
     http_method_names = ("get", "post", "patch", "put", "delete", "head", "options")
 
@@ -72,6 +78,26 @@ class PropertyViewSet(viewsets.ModelViewSet):
             publication_status = self.request.query_params.get("publication_status")
             if publication_status:
                 queryset = queryset.filter(publication_status=publication_status)
+
+        area_min = self.request.query_params.get("area_min")
+        area_max = self.request.query_params.get("area_max")
+        try:
+            minimum_area = Decimal(area_min) if area_min not in (None, "") else None
+            maximum_area = Decimal(area_max) if area_max not in (None, "") else None
+        except (InvalidOperation, TypeError, ValueError):
+            raise ValidationError({"area": "Enter a valid numeric area range."})
+        if (minimum_area is not None and not minimum_area.is_finite()) or (maximum_area is not None and not maximum_area.is_finite()):
+            raise ValidationError({"area": "Enter finite area values."})
+        if minimum_area is not None and minimum_area < 0:
+            raise ValidationError({"area_min": "Minimum area cannot be negative."})
+        if maximum_area is not None and maximum_area < 0:
+            raise ValidationError({"area_max": "Maximum area cannot be negative."})
+        if minimum_area is not None and maximum_area is not None and minimum_area > maximum_area:
+            raise ValidationError({"area": "Minimum area cannot exceed maximum area."})
+        if minimum_area is not None:
+            queryset = queryset.filter(area_value__gte=minimum_area)
+        if maximum_area is not None:
+            queryset = queryset.filter(area_value__lte=maximum_area)
 
         return queryset
 

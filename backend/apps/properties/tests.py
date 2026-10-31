@@ -164,7 +164,6 @@ class PropertyAPITests(TestCase):
                 "subcategory": "Residential Plot",
                 "location_name": "Bidkin, Chhatrapati Sambhajinagar",
                 "location_url": MAP_URL,
-                "price": "",
                 "area_value": "",
                 "brochure": make_pdf(),
             },
@@ -174,7 +173,6 @@ class PropertyAPITests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         saved = Property.objects.get(slug="abc-3-signature")
         self.assertEqual(saved.created_by, self.admin)
-        self.assertIsNone(saved.price)
         self.assertIsNone(saved.area_value)
         self.assertEqual(saved.publication_status, Property.PublicationStatus.DRAFT)
         self.assertEqual(saved.latitude, Decimal("19.6565164"))
@@ -270,6 +268,26 @@ class PropertyAPITests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
+
+    def test_admin_property_api_ignores_and_never_returns_price_fields(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post(
+            "/api/v1/properties/",
+            {
+                "name": "No price property",
+                "location_url": MAP_URL,
+                "price": "12500000",
+                "currency": "INR",
+                "brochure": make_pdf("no-price.pdf"),
+            },
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertNotIn("price", response.data)
+        self.assertNotIn("currency", response.data)
+        saved = Property.objects.get(slug="no-price-property")
+        self.assertFalse(hasattr(saved, "price"))
+        self.assertFalse(hasattr(saved, "currency"))
 
 
 class PropertyModelFileTests(TestCase):

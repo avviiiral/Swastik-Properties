@@ -12,11 +12,14 @@
 
 ## Property catalogue
 
+- [x] Remove property price and currency completely from the property model, Admin interface, API and public website.
+- [x] Remove public price display, price filtering and price sorting; use area information and area filters instead.
+
 - [x] Add the initial Property catalogue model and generated property reference/slug.
 - [x] Support Admin/Super Admin multipart property creation with required name, Google Maps link and PDF brochure.
 - [x] Validate Google Maps destination links and PDF signature/size.
 - [x] Extract coordinates from supported Google Maps URLs when embedded.
-- [x] Add optional category, listing type, price, area and normalized locality fields.
+- [x] Add optional category, listing type, area and normalized locality fields.
 - [x] Add separate publication and availability states.
 - [x] Restrict public catalogue reads to published properties.
 - [x] Restrict create/update/permanent delete operations to Admin and Super Admin.

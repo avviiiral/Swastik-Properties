@@ -3,7 +3,7 @@
     <a class="brand" routerLink="/admin/overview" aria-label="Swastik Properties dashboard home"><img class="brand-symbol-image" src="/assets/brand/swastik-symbol.png" alt=""><span class="brand-text"><strong>SWASTIK</strong><small>PROPERTIES</small></span></a>
     <div class="nav-caption">WORKSPACE</div>
     <nav class="side-nav" aria-label="Admin navigation">
-      @if(auth.canManageProperties()){<a routerLink="/admin/overview" routerLinkActive="active"><span class="nav-icon">⌂</span><span>Overview</span></a><a routerLink="/admin/properties" routerLinkActive="active"><span class="nav-icon">▦</span><span>Properties</span></a>}
+      @if(auth.canManageProperties()){<a routerLink="/admin/overview" routerLinkActive="active"><span class="nav-icon">⌂</span><span>Overview</span></a><a routerLink="/admin/properties" routerLinkActive="active"><span class="nav-icon">▦</span><span>Properties</span></a><a routerLink="/admin/leads" routerLinkActive="active"><span class="nav-icon">↗</span><span>Enquiries</span></a>}
       @if(auth.canManageBlog()){<a routerLink="/admin/blog" routerLinkActive="active"><span class="nav-icon">✎</span><span>Blog</span></a>}
       @if(auth.canManageUsers()){<a routerLink="/admin/users" routerLinkActive="active"><span class="nav-icon">♙</span><span>Users</span></a>}
     </nav>

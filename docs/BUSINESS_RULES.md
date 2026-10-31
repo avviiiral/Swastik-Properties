@@ -22,6 +22,8 @@
 
 ## Properties
 
+- Property prices are not collected, stored, managed, accepted or displayed anywhere in the property catalogue, Admin interface, APIs or public website. Public property discovery uses location, category, listing purpose, availability and area instead.
+
 - Administrators can add, update and permanently delete properties.
 - Property publication and agent-assignment rules are encoded in the property domain.
 - Deletion accounts for dependent images and related records; it must not leave orphaned media files.
@@ -38,6 +40,10 @@ The website will support these agreed form categories:
 
 - All agreed forms must be captured by the backend.
 - All form submissions must be downloadable by administrators.
+- New website submissions record the visitor's explicit contact consent timestamp. Legacy submissions remain available with a null consent timestamp.
+- Administrators manage NEW, CONTACTED, QUALIFIED, CLOSED and SPAM statuses and can store private follow-up notes.
+- Agents cannot read, update or export any customer submissions.
+- Buy/rent forms require a preferred location; sell/list forms require the property location. Optional budget and price values must be non-negative and the minimum budget cannot exceed the maximum.
 - Public intake endpoints must validate submitted data and attachments.
 - Only administrators may access submission records and downloadable exports.
 - Agents must not access customer submissions or exports.
