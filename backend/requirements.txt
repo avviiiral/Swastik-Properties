@@ -9,3 +9,4 @@ Pillow==13.0.0
 drf-spectacular==0.30.0
 pytest==9.2.0
 pytest-django==4.14.0
+nh3==0.3.2
