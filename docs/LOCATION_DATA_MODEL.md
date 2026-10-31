@@ -77,8 +77,8 @@ All endpoints are anonymous GET-only lookups. POST, PUT, PATCH and DELETE are no
 |---|---|
 | `GET /api/v1/locations/states/` | search, ordering, page |
 | `GET /api/v1/locations/districts/?state={id}` | state, search, ordering, page |
-| `GET /api/v1/locations/cities/?district={id}` | district, district__state, search, ordering, page |
-| `GET /api/v1/locations/localities/?city={id}` | city, city__district, city__district__state, search, ordering, page |
+| `GET /api/v1/locations/cities/?district={id}` | district, state, search, ordering, page |
+| `GET /api/v1/locations/localities/?city={id}` | city, district, state, search, ordering, page |
 
 Responses expose parent IDs and names for frontend cascading selects. Pagination follows the global DRF configuration.
 
