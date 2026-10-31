@@ -33,8 +33,6 @@ ALLOWED_HOSTS = env.list(
     default=["localhost", "127.0.0.1"],
 )
 
-# Application definition
-
 INSTALLED_APPS = [
     # Django
     "django.contrib.admin",
@@ -47,6 +45,7 @@ INSTALLED_APPS = [
     # Third-party
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "django_filters",
     "drf_spectacular",
@@ -91,8 +90,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# Database
-# Use DATABASE_URL for PostgreSQL; SQLite is the no-configuration local fallback.
+# Database: PostgreSQL is selected by DATABASE_URL; SQLite is the local fallback.
 DATABASE_URL = env("DATABASE_URL", default="")
 if DATABASE_URL:
     DATABASES = {"default": env.db("DATABASE_URL")}
@@ -104,10 +102,7 @@ else:
         }
     }
 
-# Custom user model must be configured before the first migration.
 AUTH_USER_MODEL = "accounts.User"
-
-# Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -124,8 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Django REST Framework
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -141,12 +134,17 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    "DEFAULT_THROTTLE_RATES": {
+        "auth_login": "10/minute",
+    },
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "AUTH_HEADER_TYPES": ("Bearer",),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 SPECTACULAR_SETTINGS = {
@@ -154,9 +152,9 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API documentation for the Swastik Properties platform.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
 }
 
-# CORS: Angular development origins. Override through .env when required.
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
     default=[
@@ -173,14 +171,10 @@ CSRF_TRUSTED_ORIGINS = env.list(
     ],
 )
 
-# Internationalization
-
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Kolkata"
 USE_I18N = True
 USE_TZ = True
-
-# Static and uploaded files
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -190,7 +184,6 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 X_FRAME_OPTIONS = "DENY"
 
-# Production security defaults. Configure HTTPS and HSTS at the deployment layer.
 SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=not DEBUG)
 SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE", default=not DEBUG)
 CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE", default=not DEBUG)
