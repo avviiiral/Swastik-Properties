@@ -1,6 +1,7 @@
 from decimal import Decimal
 from tempfile import TemporaryDirectory
 
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from rest_framework import status
@@ -37,8 +38,6 @@ class PropertyValidationTests(TestCase):
         validate_google_maps_url(MAP_URL)
 
     def test_rejects_non_google_location_url(self):
-        from django.core.exceptions import ValidationError
-
         with self.assertRaises(ValidationError):
             validate_google_maps_url("https://example.com/location")
 
@@ -81,7 +80,6 @@ class PropertyValidationTests(TestCase):
         self.assertEqual(property_obj.longitude, Decimal("75.3296438"))
 
     def test_invalid_pdf_signature_is_rejected(self):
-        from rest_framework.exceptions import ValidationError
         from .validators import validate_pdf_upload
 
         bad_file = SimpleUploadedFile(
@@ -93,7 +91,6 @@ class PropertyValidationTests(TestCase):
             validate_pdf_upload(bad_file)
 
     def test_oversized_brochure_is_rejected(self):
-        from django.core.exceptions import ValidationError
         from .validators import validate_pdf_upload
 
         class OversizedFile:
@@ -195,22 +192,26 @@ class PropertyAPITests(TestCase):
         self.assertEqual(draft.approved_by, self.admin)
         self.assertIsNotNone(draft.published_at)
 
-    def test_admin_can_permanently_delete_property(self):
+    def test_admin_can_permanently_delete_property_and_brochure(self):
         property_obj = self.create_property(
             "Delete me",
             Property.PublicationStatus.DRAFT,
         )
+        brochure_name = property_obj.brochure.name
+        storage = property_obj.brochure.storage
         self.client.force_authenticate(user=self.admin)
 
-        response = self.client.delete(f"/api/v1/properties/{property_obj.slug}/")
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.delete(f"/api/v1/properties/{property_obj.slug}/")
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Property.objects.filter(pk=property_obj.pk).exists())
+        self.assertFalse(storage.exists(brochure_name))
 
-    def test_agent_cannot_create_or_delete_properties(self):
+    def test_agent_cannot_create_properties(self):
         self.client.force_authenticate(user=self.agent)
 
-        create_response = self.client.post(
+        response = self.client.post(
             "/api/v1/properties/",
             {
                 "name": "Agent project",
@@ -219,7 +220,7 @@ class PropertyAPITests(TestCase):
             },
             format="multipart",
         )
-        self.assertEqual(create_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_can_view_unpublished_properties(self):
         draft = self.create_property("Admin draft", Property.PublicationStatus.DRAFT)
@@ -234,6 +235,15 @@ class PropertyAPITests(TestCase):
         self.create_property("ABC 3 Signature", Property.PublicationStatus.PUBLISHED)
 
         response = self.client.get("/api/v1/properties/?search=Signature")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+
+    def test_public_list_can_filter_by_category(self):
+        self.create_property("Land project", Property.PublicationStatus.PUBLISHED)
+        Property.objects.filter(name="Land project").update(category="LAND")
+
+        response = self.client.get("/api/v1/properties/?category=LAND")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)

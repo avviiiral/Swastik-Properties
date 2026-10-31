@@ -7,8 +7,8 @@ from django.core.exceptions import ValidationError
 MAX_BROCHURE_SIZE = 25 * 1024 * 1024
 
 _COORDINATE_PATTERNS = (
-    re.compile(r"!3d(-?\\d+(?:\\.\\d+)?)!4d(-?\\d+(?:\\.\\d+)?)"),
-    re.compile(r"/@(-?\\d+(?:\\.\\d+)?),(-?\\d+(?:\\.\\d+)?)"),
+    re.compile(r"!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)"),
+    re.compile(r"/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)"),
 )
 
 

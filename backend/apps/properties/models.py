@@ -3,7 +3,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
-from django.db import models, transaction
+from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -197,14 +197,6 @@ class Property(models.Model):
             self.published_at = None
 
         super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        brochure_name = self.brochure.name if self.brochure else None
-        storage = self.brochure.storage if self.brochure else None
-        result = super().delete(*args, **kwargs)
-        if brochure_name and storage:
-            transaction.on_commit(lambda: storage.delete(brochure_name))
-        return result
 
     def __str__(self):
         return f"{self.property_reference} — {self.name}"

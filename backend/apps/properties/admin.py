@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils import timezone
 
 from .models import Property
 
@@ -94,6 +95,9 @@ class PropertyAdmin(admin.ModelAdmin):
         if obj.publication_status in (
             Property.PublicationStatus.APPROVED,
             Property.PublicationStatus.PUBLISHED,
-        ) and not obj.approved_by_id:
-            obj.approved_by = request.user
+        ):
+            if not obj.approved_by_id:
+                obj.approved_by = request.user
+            if not obj.approved_at:
+                obj.approved_at = timezone.now()
         super().save_model(request, obj, form, change)
