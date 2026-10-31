@@ -67,7 +67,8 @@ class UserDetailView(UserManagementQuerysetMixin, RetrieveUpdateAPIView):
 
     def get_object(self):
         if (
-            self.request.user.role == User.Role.ADMIN
+            self.request.method in ("PATCH", "DELETE")
+            and self.request.user.role == User.Role.ADMIN
             and str(self.kwargs["pk"]) == str(self.request.user.pk)
         ):
             raise PermissionDenied("Admins cannot modify their own account.")
