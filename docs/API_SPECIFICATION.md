@@ -88,6 +88,21 @@ Public catalogue responses contain only PUBLISHED properties. Admin and Super Ad
 
 The exact brochure URL is returned by the API after upload; the backend does not parse or rewrite the brochure contents.
 
+### Property photo gallery
+
+The property serializer includes an `images` array. Each photo contains `id`, `image`, `image_url`, `caption`, `alt_text`, `is_primary`, `sort_order` and `created_at`.
+
+| Method | Endpoint | Access | Purpose |
+|---|---|---|---|
+| GET | /api/v1/properties/{slug}/images/ | Public for published properties | List photos for a public property |
+| POST | /api/v1/properties/{slug}/images/ | Admin / Super Admin | Upload up to 20 photos in one multipart request |
+| PATCH | /api/v1/properties/{slug}/images/{image_id}/ | Admin / Super Admin | Set a photo as the primary image using `{"is_primary": true}` |
+| DELETE | /api/v1/properties/{slug}/images/{image_id}/ | Admin / Super Admin | Permanently remove a photo |
+
+For the upload endpoint, send repeated multipart `images` file fields. Supported formats are JPG, JPEG, PNG and WEBP; each image is limited to 10 MB. Optionally send `primary_index` to choose the primary photo from the uploaded batch. If no primary photo exists, the first uploaded photo becomes primary automatically. Only one primary photo is allowed per property.
+
+The public detail API returns the gallery images and marks the primary photo. Permanent property deletion removes its brochure and all associated photograph files.
+
 ## API documentation
 
 - OpenAPI schema: /api/schema/

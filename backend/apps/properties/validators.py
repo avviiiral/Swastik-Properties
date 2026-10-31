@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 
 
 MAX_BROCHURE_SIZE = 25 * 1024 * 1024
+MAX_PROPERTY_IMAGE_SIZE = 10 * 1024 * 1024
+ALLOWED_PROPERTY_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
 
 _COORDINATE_PATTERNS = (
     re.compile(r"!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)"),
@@ -66,3 +68,13 @@ def extract_google_maps_coordinates(value):
                 return latitude, longitude
 
     return None, None
+
+
+
+def validate_property_image_upload(uploaded_file):
+    """Limit property photographs to common web formats and 10 MB per image."""
+    suffix = (uploaded_file.name.rsplit(".", 1)[-1] if "." in uploaded_file.name else "").lower()
+    if f".{suffix}" not in ALLOWED_PROPERTY_IMAGE_EXTENSIONS:
+        raise ValidationError("Upload property photos as JPG, JPEG, PNG or WEBP files.")
+    if uploaded_file.size > MAX_PROPERTY_IMAGE_SIZE:
+        raise ValidationError("Each property photo must not exceed 10 MB.")

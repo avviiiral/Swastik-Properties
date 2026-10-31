@@ -108,3 +108,20 @@ td { padding:14px 13px; border-top:1px solid #edf0ed; color:#5e6a63; font-size:1
   .pagination { align-items:flex-start; flex-direction:column; padding:13px 15px; }
   .pagination-actions { width:100%; justify-content:space-between; }
 }
+
+
+.image-file-icon{color:#2f684a;background:#edf6ed}
+.selected-photo-list{display:grid;gap:7px;margin-top:10px}
+.selected-photo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;border:1px solid #e7ece7;border-radius:8px;background:#fbfdfb;color:#59685f;font-size:10px}
+.selected-photo span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.selected-photo button,.existing-photo-actions button{padding:5px 8px;border:1px solid #dce6dd;border-radius:6px;color:#41634e;background:#fff;font-size:9px;font-weight:700;white-space:nowrap}
+.selected-photo button:hover,.existing-photo-actions button:hover{background:#eef6ef}
+.existing-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:14px}
+.existing-photo-card{min-width:0;overflow:hidden;border:1px solid #e1e8e1;border-radius:9px;background:#fff}
+.existing-photo-card.primary-photo{border-color:#8eae94;box-shadow:0 0 0 1px #8eae94}
+.existing-photo-card img{display:block;width:100%;height:105px;object-fit:cover;background:#eef1ec}
+.existing-photo-meta{display:grid;gap:8px;padding:9px}
+.existing-photo-meta strong{color:#506157;font-size:9px}
+.existing-photo-actions{display:flex;flex-wrap:wrap;gap:5px}
+.existing-photo-actions .remove-photo{color:#a84942;border-color:#efd9d6}
+.existing-photo-actions .remove-photo:hover{background:#fff3f1}

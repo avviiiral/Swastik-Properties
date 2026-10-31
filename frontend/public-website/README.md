@@ -7,7 +7,7 @@ One Angular SSR application serves both the public website and the protected Adm
 - Responsive public homepage with Residential, Commercial and Land entry points.
 - Property catalogue with search, category and listing-purpose filters.
 - Paginated property results and individual property detail pages.
-- Brochure and Google Maps links from the backend property record.
+- Property photographs and primary-image gallery from the backend property record, plus brochure and Google Maps links.
 - Server-side rendering and dynamic property titles/descriptions.
 - Public property requests bypass Admin authorization headers and receive only published catalogue data.
 
@@ -16,7 +16,7 @@ One Angular SSR application serves both the public website and the protected Adm
 - Admin/Super Admin sign-in at `/admin/login`.
 - Protected property management at `/admin/properties`.
 - Existing property inventory, search, category filter and pagination.
-- Create/edit properties, upload/replace PDF brochures, publish/unpublish, change availability and permanently delete properties.
+- Create/edit properties, upload/replace PDF brochures, upload multiple JPG/PNG/WEBP property photographs, select a primary photo, remove photos, publish/unpublish, change availability and permanently delete properties.
 - JWT access-token handling, refresh-token rotation and logout revocation.
 - Agent accounts are denied access to the Admin workspace.
 - No CMS, page builder or public content-management tools.

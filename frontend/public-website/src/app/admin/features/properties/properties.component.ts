@@ -8,6 +8,7 @@ import {
   AvailabilityStatus,
   PaginatedResponse,
   Property,
+  PropertyImage,
   PublicationStatus
 } from '../../core/models/property.models';
 
@@ -33,6 +34,7 @@ export class PropertiesComponent {
   readonly showEditor = signal(false);
   readonly editingProperty = signal<Property | null>(null);
   readonly selectedFile = signal<File | null>(null);
+  readonly selectedImages = signal<File[]>([]);
   readonly searchTerm = signal('');
   readonly categoryFilter = signal('');
   readonly errorMessage = signal('');
@@ -113,6 +115,7 @@ export class PropertiesComponent {
   openCreate(): void {
     this.editingProperty.set(null);
     this.selectedFile.set(null);
+    this.selectedImages.set([]);
     this.errorMessage.set('');
     this.form.reset({
       name: '',
@@ -136,6 +139,7 @@ export class PropertiesComponent {
   openEdit(property: Property): void {
     this.editingProperty.set(property);
     this.selectedFile.set(null);
+    this.selectedImages.set([]);
     this.errorMessage.set('');
     this.form.reset({
       name: property.name,
@@ -163,6 +167,7 @@ export class PropertiesComponent {
     this.showEditor.set(false);
     this.editingProperty.set(null);
     this.selectedFile.set(null);
+    this.selectedImages.set([]);
   }
 
   onFileSelected(event: Event): void {
@@ -186,6 +191,94 @@ export class PropertiesComponent {
     }
     this.errorMessage.set('');
     this.selectedFile.set(file);
+  }
+
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const incoming = Array.from(input.files ?? []);
+    if (!incoming.length) return;
+
+    const current = this.selectedImages();
+    if (current.length + incoming.length > 20) {
+      this.errorMessage.set('You can upload a maximum of 20 photos at a time.');
+      input.value = '';
+      return;
+    }
+
+    const invalid = incoming.find((file) => {
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      return !['jpg', 'jpeg', 'png', 'webp'].includes(extension ?? '') ||
+        file.size > 10 * 1024 * 1024;
+    });
+    if (invalid) {
+      this.errorMessage.set(
+        invalid.size > 10 * 1024 * 1024
+          ? 'Each property photo must not exceed 10 MB.'
+          : 'Choose JPG, JPEG, PNG or WEBP property photos.'
+      );
+      input.value = '';
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.selectedImages.set([...current, ...incoming]);
+    input.value = '';
+  }
+
+  removeSelectedImage(index: number): void {
+    this.selectedImages.update((files) => files.filter((_, fileIndex) => fileIndex !== index));
+  }
+
+  setPrimaryImage(property: Property, image: PropertyImage): void {
+    this.http.patch<PropertyImage>(
+      this.apiUrl + '/properties/' + property.slug + '/images/' + image.id + '/',
+      { is_primary: true }
+    ).subscribe({
+      next: (updated) => {
+        this.editingProperty.update((current) => current ? {
+          ...current,
+          images: current.images.map((item) => ({
+            ...item,
+            is_primary: item.id === updated.id
+          }))
+        } : current);
+        this.successMessage.set('Primary property photo updated.');
+      },
+      error: (error: unknown) => this.errorMessage.set(this.describeError(error))
+    });
+  }
+
+  deletePropertyImage(property: Property, image: PropertyImage): void {
+    if (!window.confirm('Permanently remove this property photo?')) return;
+
+    this.http.delete(
+      this.apiUrl + '/properties/' + property.slug + '/images/' + image.id + '/'
+    ).subscribe({
+      next: () => {
+        this.editingProperty.update((current) => {
+          if (!current) return current;
+          const remaining = current.images.filter((item) => item.id !== image.id);
+          if (image.is_primary && remaining.length) {
+            remaining[0] = { ...remaining[0], is_primary: true };
+          }
+          return { ...current, images: remaining };
+        });
+        this.successMessage.set('Property photo removed.');
+      },
+      error: (error: unknown) => this.errorMessage.set(this.describeError(error))
+    });
+  }
+
+  private finishPropertySave(property: Property, wasEditing: boolean): void {
+    this.saving.set(false);
+    this.showEditor.set(false);
+    this.editingProperty.set(null);
+    this.selectedFile.set(null);
+    this.selectedImages.set([]);
+    this.successMessage.set(
+      wasEditing ? 'Property details and photos updated.' : 'Property and photos saved successfully.'
+    );
+    this.loadProperties();
   }
 
   saveProperty(): void {
@@ -220,15 +313,34 @@ export class PropertiesComponent {
       : this.http.post<Property>(this.apiUrl + '/properties/', payload);
 
     request.subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.showEditor.set(false);
-        this.editingProperty.set(null);
+      next: (savedProperty) => {
+        const photoFiles = this.selectedImages();
         this.selectedFile.set(null);
-        this.successMessage.set(
-          property ? 'Property details updated.' : 'Property saved successfully.'
-        );
-        this.loadProperties();
+        this.editingProperty.set(savedProperty);
+
+        if (!photoFiles.length) {
+          this.finishPropertySave(savedProperty, Boolean(property));
+          return;
+        }
+
+        const photoPayload = new FormData();
+        photoFiles.forEach((photo) => photoPayload.append('images', photo, photo.name));
+        if (!savedProperty.images?.length) photoPayload.append('primary_index', '0');
+
+        this.http.post<PropertyImage[]>(
+          this.apiUrl + '/properties/' + savedProperty.slug + '/images/',
+          photoPayload
+        ).subscribe({
+          next: () => this.finishPropertySave(savedProperty, Boolean(property)),
+          error: (error: unknown) => {
+            this.errorMessage.set(
+              'Property details were saved, but photo upload failed. ' +
+              this.describeError(error) +
+              ' Your selected photos are still available; save again to retry.'
+            );
+            this.saving.set(false);
+          }
+        });
       },
       error: (error: unknown) => {
         this.errorMessage.set(this.describeError(error));
@@ -273,7 +385,7 @@ export class PropertiesComponent {
 
   deleteProperty(property: Property): void {
     const confirmed = window.confirm(
-      'Permanently delete "' + property.name + '"? This also removes its uploaded brochure. This action cannot be undone.'
+      'Permanently delete "' + property.name + '"? This also removes its brochure and all property photos. This action cannot be undone.'
     );
     if (!confirmed) {
       return;

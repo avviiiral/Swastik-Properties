@@ -83,6 +83,47 @@
               @if (editingProperty()?.brochure_url && !selectedFile()) { <a class="current-brochure" [href]="editingProperty()?.brochure_url" target="_blank" rel="noopener">View current brochure</a> }
               @if (!editingProperty() && !selectedFile()) { <small class="field-hint">A brochure is required before saving a new property.</small> }
             </div>
+            <div class="form-field full photo-upload-field">
+              <label for="property-images">Property photos</label>
+              <label class="file-drop" for="property-images">
+                <span class="file-icon image-file-icon">IMG</span>
+                <span>
+                  <strong>{{ selectedImages().length ? selectedImages().length + ' photo(s) selected' : 'Choose property photographs' }}</strong>
+                  <small>JPG, JPEG, PNG or WEBP · Maximum 10 MB each · Up to 20 per upload</small>
+                </span>
+                <span class="file-browse">Browse</span>
+              </label>
+              <input id="property-images" class="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="onImagesSelected($event)">
+              @if (selectedImages().length) {
+                <div class="selected-photo-list">
+                  @for (photo of selectedImages(); track $index; let i = $index) {
+                    <div class="selected-photo">
+                      <span>{{ photo.name }}</span>
+                      <button type="button" (click)="removeSelectedImage(i)">Remove</button>
+                    </div>
+                  }
+                </div>
+              }
+              @if (editingProperty()?.images?.length) {
+                <div class="existing-photo-grid">
+                  @for (image of editingProperty()?.images ?? []; track image.id) {
+                    <div class="existing-photo-card" [class.primary-photo]="image.is_primary">
+                      <img [src]="image.image_url" [alt]="image.alt_text || editingProperty()?.name || 'Property photo'">
+                      <div class="existing-photo-meta">
+                        <strong>{{ image.is_primary ? 'Primary photo' : 'Property photo' }}</strong>
+                        <div class="existing-photo-actions">
+                          @if (!image.is_primary) {
+                            <button type="button" (click)="setPrimaryImage(editingProperty()!, image)">Set primary</button>
+                          }
+                          <button class="remove-photo" type="button" (click)="deletePropertyImage(editingProperty()!, image)">Remove</button>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+              <small class="field-hint">The primary photo is used as the main image for the public property page.</small>
+            </div>
             <div class="form-field full"><label for="description">Description</label><textarea id="description" class="form-control" rows="3" formControlName="description" placeholder="Add a short property or project description…"></textarea></div>
             <div class="form-field"><label for="price">Price (INR)</label><input id="price" class="form-control" type="number" min="0" step="0.01" formControlName="price" placeholder="Optional"></div>
             <div class="form-field"><label for="area">Area</label><input id="area" class="form-control" type="number" min="0" step="0.01" formControlName="area_value" placeholder="Optional"></div>

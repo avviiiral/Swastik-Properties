@@ -7,7 +7,8 @@ import {
   Injectable,
   OnInit,
   inject,
-  signal
+  signal,
+  computed
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Meta, Title, provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
@@ -20,6 +21,17 @@ import { authInterceptor } from './admin/core/auth.interceptor';
 import { LoginComponent } from './admin/features/auth/login.component';
 import { PropertiesComponent as AdminPropertiesComponent } from './admin/features/properties/properties.component';
 import { AdminLayoutComponent } from './admin/layout/admin-layout.component';
+
+export interface PropertyImage {
+  id: number;
+  image: string;
+  image_url: string;
+  caption: string;
+  alt_text: string;
+  is_primary: boolean;
+  sort_order: number;
+  created_at: string;
+}
 
 export interface Property {
   id: number;
@@ -43,6 +55,7 @@ export interface Property {
   state_name: string | null;
   location_url: string;
   brochure_url: string | null;
+  images: PropertyImage[];
   publication_status: string;
   availability_status: string;
 }
@@ -225,7 +238,13 @@ export class PublicLayoutComponent {
         <div class="featured-grid">
           @for (property of featured(); track property.id; let i = $index) {
             <a class="featured-card" [routerLink]="['/properties',property.slug]">
-              <div class="property-visual" [class.warm]="i%3===1" [class.sage]="i%3===2"><span class="visual-cat">{{property.category || 'PROPERTY'}}</span><span class="visual-ref">{{property.property_reference}}</span><div>S<span>.</span></div></div>
+              <div class="property-visual" [class.warm]="i%3===1" [class.sage]="i%3===2">
+                @if (primaryImage(property); as photo) {
+                  <img class="actual-property-photo" [src]="photo.image_url" [alt]="photo.alt_text || property.name">
+                } @else {
+                  <span class="visual-cat">{{property.category || 'PROPERTY'}}</span><span class="visual-ref">{{property.property_reference}}</span><div>S<span>.</span></div>
+                }
+              </div>
               <div class="card-info"><small>{{property.listing_type || 'PROPERTY'}} · {{property.availability_status}}</small><h3>{{property.name}}</h3><p>{{location(property)}}</p><div><strong>{{price(property)}}</strong><span>View details ↗</span></div></div>
             </a>
           }
@@ -300,6 +319,10 @@ export class HomeComponent implements OnInit {
     return [p.location_name || p.locality_name,p.city_name,p.district_name,p.state_name]
       .filter((v,i,a): v is string => !!v && a.indexOf(v)===i).join(', ') || 'Maharashtra';
   }
+  primaryImage(property: Property): PropertyImage | null {
+    return property.images?.find((image) => image.is_primary) ?? property.images?.[0] ?? null;
+  }
+
   price(p: Property): string {
     if (!p.price || !Number.isFinite(Number(p.price))) return 'Price on request';
     return new Intl.NumberFormat('en-IN',{style:'currency',currency:p.currency || 'INR',maximumFractionDigits:0}).format(Number(p.price));
@@ -341,7 +364,14 @@ export class HomeComponent implements OnInit {
         <div class="property-grid">
           @for (p of items();track p.id;let i=$index) {
             <a class="property-card" [routerLink]="['/properties',p.slug]">
-              <div class="visual" [class.warm]="i%3===1" [class.sage]="i%3===2"><span class="visual-cat">{{categoryName(p.category)}}</span><span class="visual-ref">{{p.property_reference}}</span><div>S<span>.</span></div><small [class.unavailable]="p.availability_status!=='AVAILABLE'">{{p.availability_status.replace('_',' ')}}</small></div>
+              <div class="visual" [class.warm]="i%3===1" [class.sage]="i%3===2">
+                @if (primaryImage(p); as photo) {
+                  <img class="actual-property-photo" [src]="photo.image_url" [alt]="photo.alt_text || p.name">
+                } @else {
+                  <span class="visual-cat">{{categoryName(p.category)}}</span><span class="visual-ref">{{p.property_reference}}</span><div>S<span>.</span></div>
+                }
+                <small [class.unavailable]="p.availability_status!=='AVAILABLE'">{{p.availability_status.replace('_',' ')}}</small>
+              </div>
               <div class="card-body"><div class="kind">{{p.listing_type || 'PROPERTY'}} · {{p.subcategory || categoryName(p.category)}}</div><h3>{{p.name}}</h3><p>⌖ &nbsp;{{location(p)}}</p><div class="card-bottom"><strong>{{price(p)}}</strong><span>View details <b>↗</b></span></div></div>
             </a>
           }
@@ -404,6 +434,9 @@ export class PropertyListComponent implements OnInit {
   reset(): void {this.search='';this.category='';this.listingType='';this.load(1);}
   totalPages(): number {return Math.max(1,Math.ceil(this.count()/this.pageSize));}
   categoryName(value: string): string {return ({RESIDENTIAL:'Residential',COMMERCIAL:'Commercial',LAND:'Land & plots'} as Record<string,string>)[value] ?? 'Property';}
+  primaryImage(property: Property): PropertyImage | null {
+    return property.images?.find((image) => image.is_primary) ?? property.images?.[0] ?? null;
+  }
   location(p: Property): string {return [p.location_name||p.locality_name,p.city_name,p.district_name,p.state_name].filter((v,i,a):v is string=>!!v&&a.indexOf(v)===i).join(', ')||'Maharashtra';}
   price(p: Property): string {if(!p.price||!Number.isFinite(Number(p.price)))return 'Price on request';return new Intl.NumberFormat('en-IN',{style:'currency',currency:p.currency||'INR',maximumFractionDigits:0}).format(Number(p.price));}
 }
@@ -420,7 +453,18 @@ export class PropertyListComponent implements OnInit {
       <section class="detail-hero"><div class="wrap"><div class="crumb"><a routerLink="/">Home</a><span>/</span><a routerLink="/properties">Properties</a><span>/</span><span>{{property()!.name}}</span></div><div class="detail-label">{{property()!.category || 'PROPERTY'}} · {{property()!.listing_type || 'OPPORTUNITY'}}</div><h1>{{property()!.name}}</h1><p>⌖ &nbsp;{{location(property()!)}}</p><small>PROPERTY REFERENCE&nbsp;&nbsp; {{property()!.property_reference}}</small></div></section>
       <section class="detail-content wrap">
         <div class="detail-main">
-          <div class="detail-art"><div>S<span>.</span></div><span class="art-ref">{{property()!.property_reference}}</span><span class="art-cat">{{property()!.category || 'PROPERTY'}}</span></div>
+          @if (galleryImages().length) {
+            <div class="property-gallery">
+              @for (image of galleryImages(); track image.id; let i = $index) {
+                <figure class="gallery-image" [class.gallery-primary]="i === 0">
+                  <img [src]="image.image_url" [alt]="image.alt_text || property()!.name">
+                  @if (image.caption) { <figcaption>{{ image.caption }}</figcaption> }
+                </figure>
+              }
+            </div>
+          } @else {
+            <div class="detail-art"><div>S<span>.</span></div><span class="art-ref">{{property()!.property_reference}}</span><span class="art-cat">{{property()!.category || 'PROPERTY'}}</span></div>
+          }
           <section class="detail-section"><div class="kicker">01 / OVERVIEW</div><h2>About this property</h2><p>{{property()!.description || 'A detailed description has not been provided for this listing. Please refer to the project brochure or verify particulars with the seller or developer.'}}</p></section>
           <section class="detail-section"><div class="kicker">02 / PROPERTY DETAILS</div><h2>At a glance</h2><div class="facts">
             <div><span>Category</span><strong>{{property()!.category || 'Not specified'}}</strong></div>
@@ -468,6 +512,15 @@ export class PropertyDetailComponent implements OnInit {
   private readonly seo = inject(SiteSeo);
   readonly property = signal<Property | null>(null);
   readonly loading = signal(true);
+  readonly galleryImages = computed(() => {
+    const property = this.property();
+    return property?.images
+      ? [...property.images].sort((left, right) =>
+          Number(right.is_primary) - Number(left.is_primary) ||
+          left.sort_order - right.sort_order
+        )
+      : [];
+  });
 
   ngOnInit(): void {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {

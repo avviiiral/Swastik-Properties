@@ -22,7 +22,7 @@
 - [x] Restrict create/update/permanent delete operations to Admin and Super Admin.
 - [x] Remove the uploaded brochure when its property is permanently deleted.
 - [ ] Implement category-specific Residential, Commercial and Land detail tables.
-- [ ] Implement multiple property images and primary image management.
+- [x] Implement multi-photo property uploads, primary-image selection, image removal and public property galleries.
 - [ ] Add property activity/audit logging.
 - [ ] Implement agent-owned property creation, assignment and approval workflow.
 

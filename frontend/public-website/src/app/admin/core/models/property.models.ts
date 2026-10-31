@@ -15,6 +15,17 @@ export type AvailabilityStatus =
   | 'LEASED'
   | 'UNAVAILABLE';
 
+export interface PropertyImage {
+  id: number;
+  image: string;
+  image_url: string;
+  caption: string;
+  alt_text: string;
+  is_primary: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
 export interface Property {
   id: number;
   property_reference: string;
@@ -41,6 +52,7 @@ export interface Property {
   longitude: string | null;
   brochure: string;
   brochure_url: string | null;
+  images: PropertyImage[];
   publication_status: PublicationStatus;
   availability_status: AvailabilityStatus;
   created_by: number | null;

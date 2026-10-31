@@ -98,8 +98,12 @@ The former `frontend/admin-dashboard` workspace is retained temporarily for refe
 - POST /api/v1/properties/ — Admin/Super Admin multipart upload.
 - PATCH /api/v1/properties/{slug}/ — Admin/Super Admin update.
 - DELETE /api/v1/properties/{slug}/ — permanent Admin/Super Admin deletion.
+- GET /api/v1/properties/{slug}/images/ — public photo gallery for published properties.
+- POST /api/v1/properties/{slug}/images/ — Admin/Super Admin multi-photo upload.
+- PATCH /api/v1/properties/{slug}/images/{image_id}/ — set the primary photo.
+- DELETE /api/v1/properties/{slug}/images/{image_id}/ — remove a photo.
 
-A new property requires a name, HTTPS Google Maps URL and PDF brochure. The backend generates its reference and slug, validates the brochure, and saves it as DRAFT by default.
+A new property requires a name, HTTPS Google Maps URL and PDF brochure. The backend generates its reference and slug, validates the brochure, and saves it as DRAFT by default. Admins can upload up to 20 property photographs per request (JPG, JPEG, PNG or WEBP, maximum 10 MB each), choose a primary image and manage the public gallery. Deleting a property removes its brochure and image files.
 
 ## Location APIs
 
