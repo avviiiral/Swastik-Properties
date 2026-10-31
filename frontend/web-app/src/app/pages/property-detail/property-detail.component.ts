@@ -140,7 +140,7 @@ export class PropertyDetailComponent implements OnInit {
   }
   emailUrl(p: Property): string {
     const subject = 'Enquiry about ' + p.name + ' (' + p.property_reference + ')';
-    const body = 'Hello Swastik Properties,\\n\\nI am interested in ' + p.name + ' (' + p.property_reference + '). Please share more details.\n\nThank you.';
+    const body = 'Hello Swastik Properties,\n\nI am interested in ' + p.name + ' (' + p.property_reference + '). Please share more details.\n\nThank you.';
     return 'mailto:' + this.contact.email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   }
   submitEnquiry(): void {
