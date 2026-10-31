@@ -7,7 +7,8 @@ Backend API for the Swastik Properties platform.
 - Python 3.12
 - Django 5.2 LTS
 - Django REST Framework
-- PostgreSQL (SQLite is used only as a no-configuration local fallback)
+- PostgreSQL for the target deployment database
+- SQLite as a no-configuration local development fallback
 - SimpleJWT authentication
 - drf-spectacular API schema/documentation
 
@@ -24,7 +25,13 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Edit `backend/.env` and set a unique `DJANGO_SECRET_KEY`. Configure `DATABASE_URL` to a PostgreSQL database you have created. Until `DATABASE_URL` is set, development settings use SQLite.
+Edit `backend/.env` and set a unique `DJANGO_SECRET_KEY`. Generate one with:
+
+```powershell
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+For the first local check, leave `DATABASE_URL=` empty; the development settings then use SQLite. When PostgreSQL is installed and the database/user have been created, set `DATABASE_URL` to the PostgreSQL connection string.
 
 Then run:
 
@@ -32,6 +39,7 @@ Then run:
 python manage.py check
 python manage.py makemigrations accounts
 python manage.py migrate
+python manage.py test apps.accounts
 python manage.py createsuperuser
 python manage.py runserver
 ```
