@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied,ValidationError
 from rest_framework_simplejwt.exceptions import TokenError
