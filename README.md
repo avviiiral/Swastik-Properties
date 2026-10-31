@@ -38,7 +38,8 @@ Then run:
 ```powershell
 python manage.py check
 python manage.py migrate
-python manage.py test apps.accounts
+python manage.py test apps.accounts apps.locations
+python manage.py seed_maharashtra_locations
 python manage.py createsuperuser
 python manage.py runserver
 ```
@@ -52,13 +53,22 @@ python manage.py runserver
 - `GET/POST /api/v1/auth/users/` — role-limited user management.
 - `GET/PATCH /api/v1/auth/users/{id}/` — retrieve/update manageable users.
 
+## Location APIs
+
+- `GET /api/v1/locations/states/`
+- `GET /api/v1/locations/districts/?state={state_id}`
+- `GET /api/v1/locations/cities/?district={district_id}`
+- `GET /api/v1/locations/localities/?city={city_id}`
+
+Location lookup endpoints are public and read-only. Super Admins maintain location records through Django Admin; the seed command creates Maharashtra and its 36 districts.
+
 Swagger UI: `/api/docs/`; OpenAPI schema: `/api/schema/`.
 
 ## Django applications
 
 - `accounts`: authentication, users and access roles.
 - `properties`: property inventory and property lifecycle.
-- `locations`: reusable geographic data.
+- `locations`: normalized State → District → City → Locality reference data.
 - `agents`: agent-specific business profile and assignments.
 - `submissions`: public form submissions and administrator-only review/export.
 - `common`: shared models and utilities.
@@ -68,5 +78,6 @@ Swagger UI: `/api/docs/`; OpenAPI schema: `/api/schema/`.
 - There is no CMS.
 - Administrators manage properties directly.
 - Property deletion is permanent, subject to explicit handling of dependent records and uploaded files.
-- Agents must not have access to form submission records or exports.
+- Customer form submissions must be retained when a related property is deleted.
+- Agents must not have access to form submissions or exports.
 - Admins manage Agent accounts; Super Admins manage Admin and Agent accounts.
