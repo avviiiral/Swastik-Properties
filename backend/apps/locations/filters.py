@@ -9,7 +9,7 @@ class CityFilter(django_filters.FilterSet):
 
     class Meta:
         model = City
-        fields = ("district", "state")
+        fields = ("district",)
 
 
 class LocalityFilter(django_filters.FilterSet):
@@ -19,4 +19,4 @@ class LocalityFilter(django_filters.FilterSet):
 
     class Meta:
         model = Locality
-        fields = ("city", "district", "state")
+        fields = ("city",)
