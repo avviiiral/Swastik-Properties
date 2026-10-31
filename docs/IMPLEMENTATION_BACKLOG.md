@@ -6,7 +6,7 @@
 - [x] Register domain applications in Django settings.
 - [x] Add custom User model with Super Admin, Admin and Agent roles.
 - [x] Add environment-based settings and safe local defaults.
-- [x] Generate and apply initial custom User migration locally.
+- [x] Add initial custom User migration.
 - [x] Implement email-based JWT login and token refresh.
 - [x] Implement refresh-token blacklist on logout.
 - [x] Implement current-user endpoint.
@@ -16,8 +16,8 @@
 - [x] Implement normalized State, District, City and Locality models.
 - [x] Implement public read-only location lookup endpoints.
 - [x] Add idempotent Maharashtra and 36-district seed command.
-- [ ] Generate and apply the locations migration locally.
-- [ ] Run location seed command and location tests locally.
+- [x] Add initial locations migration.
+- [ ] Apply locations migration locally and run location tests.
 - [ ] Configure local PostgreSQL database and verify migrations against PostgreSQL.
 
 ## Domain development
