@@ -1,15 +1,20 @@
 # Swastik Properties — Implementation Backlog
 
-## Foundation
+## Foundation and authentication
 
 - [x] Create Django project and six domain applications.
 - [x] Register domain applications in Django settings.
 - [x] Add custom User model with Super Admin, Admin and Agent roles.
 - [x] Add environment-based settings and safe local defaults.
-- [ ] Configure local PostgreSQL database.
-- [ ] Generate and apply initial migrations.
-- [ ] Add JWT login, refresh and current-user endpoints.
-- [ ] Add and test role-based API permissions.
+- [x] Generate and apply initial custom User migration locally.
+- [x] Implement email-based JWT login and token refresh.
+- [x] Implement refresh-token blacklist on logout.
+- [x] Implement current-user endpoint.
+- [x] Implement role-based user-management API boundaries.
+- [x] Add authentication and authorization API tests.
+- [ ] Validate the authentication changes locally and push test results.
+- [ ] Configure local PostgreSQL database and verify all migrations against PostgreSQL.
+- [ ] Add CI checks.
 
 ## Domain development
 
@@ -22,6 +27,5 @@
 
 ## Quality and delivery
 
-- [ ] Add automated API and permission tests.
-- [ ] Publish OpenAPI/Swagger documentation.
-- [ ] Add CI checks and deployment configuration.
+- [ ] Publish and review OpenAPI/Swagger documentation.
+- [ ] Add deployment configuration and production security checks.
