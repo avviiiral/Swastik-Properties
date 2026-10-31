@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "apps.agents.apps.AgentsConfig",
     "apps.submissions.apps.SubmissionsConfig",
     "apps.common.apps.CommonConfig",
+    "apps.blog.apps.BlogConfig",
 ]
 
 MIDDLEWARE = [

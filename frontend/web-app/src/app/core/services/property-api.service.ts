@@ -21,6 +21,28 @@ export class PropertyApi {
     });
   }
 
+  /**
+   * Authenticated inventory query for Admin dashboards.
+   * Unlike list(), this deliberately does not set SKIP_ADMIN_AUTH so the
+   * request interceptor sends the Admin JWT and the API can expose workflow
+   * fields such as publication_status.
+   */
+  listAdmin(filters: {
+    search?: string;
+    category?: string;
+    listing_type?: string;
+    publication_status?: string;
+    page?: number;
+  } = {}) {
+    let params = new HttpParams();
+    if (filters.search?.trim()) params = params.set('search', filters.search.trim());
+    if (filters.category) params = params.set('category', filters.category);
+    if (filters.listing_type) params = params.set('listing_type', filters.listing_type);
+    if (filters.publication_status) params = params.set('publication_status', filters.publication_status);
+    if (filters.page) params = params.set('page', filters.page);
+    return this.http.get<PropertyPage>(this.base + '/properties/', { params });
+  }
+
   detail(slug: string) {
     return this.http.get<Property>(this.base + '/properties/' + encodeURIComponent(slug) + '/', {
       context: new HttpContext().set(SKIP_ADMIN_AUTH, true)

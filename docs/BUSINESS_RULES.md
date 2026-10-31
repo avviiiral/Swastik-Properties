@@ -1,22 +1,34 @@
 # Swastik Properties — Business Rules
 
-## Roles
+## Roles and permissions
 
-- Super Admin: complete system access.
-- Admin: manage properties, agents and all form submissions.
-- Agent: restricted access to permitted property and own profile operations.
-- Agents cannot list, read, update, delete or export submissions.
+| Capability | SUPER_ADMIN | ADMIN | EDITOR | AGENT |
+|---|---:|---:|---:|---:|
+| Create/edit/delete/publish properties and images | Yes | Yes | No | Existing Agent rules unchanged |
+| Create/edit/delete/publish Blog posts | Yes | No | Yes | No |
+| Manage ADMIN accounts | Yes | No | No | No |
+| Manage EDITOR and AGENT accounts | Yes | Yes | No | No |
+| Manage SUPER_ADMIN accounts | Yes | No | No | No |
+| Permanently delete user accounts | Yes | No | No | No |
+
+- SUPER_ADMIN is the system superuser and has full access.
+- ADMIN manages property inventory, publication, property photos and EDITOR/AGENT users. ADMIN cannot access blog write endpoints or Admin/Super Admin accounts.
+- EDITOR manages Blog posts only. EDITOR cannot access property management or user administration. Public property queries remain published-only for EDITOR.
+- AGENT behaviour and permitted agent workflows remain unchanged.
+- Users cannot change their own role or deactivate/delete themselves through user management.
+- ADMIN cannot create/promote accounts to ADMIN or SUPER_ADMIN.
+- User deactivation is the default removal action; permanent deletion is Super Admin only.
+- The last active SUPER_ADMIN cannot be demoted or deactivated.
 
 ## Properties
 
 - Administrators can add, update and permanently delete properties.
-- Property publication and agent-assignment rules will be encoded in the property domain.
-- Deletion must account for dependent images and related records; it must not silently leave orphaned files.
+- Property publication and agent-assignment rules are encoded in the property domain.
+- Deletion accounts for dependent images and related records; it must not leave orphaned media files.
 
 ## Forms and submissions
 
-The website will support the following agreed form categories:
-
+The website will support these agreed form categories:
 1. General Enquiry
 2. Property Enquiry
 3. Buy Requirement
@@ -28,8 +40,13 @@ The website will support the following agreed form categories:
 - All form submissions must be downloadable by administrators.
 - Public intake endpoints must validate submitted data and attachments.
 - Only administrators may access submission records and downloadable exports.
-- Form-specific fields and validation rules will be defined from the approved project requirements.
+- Agents must not access customer submissions or exports.
 
-## CMS exclusion
+## Scoped content exception: Blog
 
-No CMS or general-purpose content-management module will be built.
+A scoped Blog module is the only exception to the previous no-CMS decision. This is not a general-purpose CMS. It supports editorial articles only, with drafts, publication and archive states. EDITOR and SUPER_ADMIN manage posts; ADMIN and AGENT have no Blog write access.
+
+- Public Blog endpoints expose PUBLISHED posts only.
+- Rich text HTML is sanitised server-side with an explicit allowlist.
+- Blog cover images are validated uploads and removed when their post is deleted.
+- Demo content is clearly labelled and seeded only with DEBUG enabled.

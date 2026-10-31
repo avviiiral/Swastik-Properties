@@ -3,112 +3,74 @@
 Base URL prefix: /api/v1/
 
 ## Conventions
-
-- JSON request and response bodies unless an endpoint returns a file.
-- Property create/update endpoints accept multipart/form-data to support brochure upload.
-- JWT Bearer authentication for protected endpoints.
-- Access tokens expire after 15 minutes.
-- Refresh tokens expire after 7 days and are rotated on refresh.
+- JSON requests and responses unless an endpoint returns a file or accepts multipart/form-data.
+- JWT Bearer authentication for protected endpoints; access tokens live 15 minutes and refresh tokens 7 days.
+- Refresh tokens rotate and are blacklisted after use. Inactive accounts are rejected on refresh.
 - Page-number pagination, default page size 20.
-- Protected API endpoints require authentication by default.
+- Public catalogue endpoints enforce publication visibility server-side.
 
-## Authentication endpoints
-
-| Method | Endpoint | Access | Purpose |
-|---|---|---|---|
-| POST | /api/v1/auth/login/ | Public, throttled | Authenticate with email and password; returns access token, refresh token and user details |
-| POST | /api/v1/auth/token/refresh/ | Public, refresh token required | Rotate refresh token and issue a new access token |
-| POST | /api/v1/auth/logout/ | Authenticated | Blacklist the supplied refresh token belonging to the authenticated user |
-| GET | /api/v1/auth/me/ | Authenticated | Return the current user's safe profile |
-
-## User administration endpoints
+## Authentication and users
 
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
-| GET | /api/v1/auth/users/ | Admin / Super Admin | List manageable accounts |
-| POST | /api/v1/auth/users/ | Admin / Super Admin | Create a manageable account |
-| GET | /api/v1/auth/users/{id}/ | Admin / Super Admin | Retrieve a manageable account |
-| PATCH | /api/v1/auth/users/{id}/ | Admin / Super Admin | Update account details, role or active status |
+| POST | /auth/login/ | Public, throttled | Authenticate email/password; returns access, refresh and safe user data including role |
+| POST | /auth/token/refresh/ | Valid refresh token and active account | Rotate refresh token and issue access token |
+| POST | /auth/logout/ | Authenticated | Blacklist refresh token belonging to current user |
+| GET | /auth/me/ | Authenticated | Return safe current-user profile |
+| GET | /auth/users/ | ADMIN, SUPER_ADMIN | List manageable accounts |
+| POST | /auth/users/ | ADMIN, SUPER_ADMIN | Create manageable EDITOR/AGENT or ADMIN/EDITOR/AGENT accounts according to role |
+| GET | /auth/users/{id}/ | ADMIN, SUPER_ADMIN | Retrieve account within management scope |
+| PATCH | /auth/users/{id}/ | ADMIN, SUPER_ADMIN | Update permitted account fields, role or is_active |
+| DELETE | /auth/users/{id}/ | SUPER_ADMIN | Permanently delete account; blocked for self and last active Super Admin |
+| POST | /auth/users/{id}/activation/ | ADMIN, SUPER_ADMIN | Activate/deactivate within management scope |
 
-Admins can manage Agent accounts only. Super Admins can manage Admin and Agent accounts. Super Admin accounts are created through the trusted Django management command. User API deletion is not available; accounts are deactivated with is_active=false.
+SUPER_ADMIN can manage all roles through user management, but cannot manage their own role/status; the last active SUPER_ADMIN cannot be deactivated. ADMIN can only manage EDITOR and AGENT users. ADMIN cannot create/promote ADMIN or SUPER_ADMIN. Password values are write-only and validated by Django password validators. Password hashes are never returned. Deactivation is the default removal action.
 
-## Location lookup endpoints
+## Public Blog
 
-All endpoints are public, read-only and return active locations.
+| Method | Endpoint | Access | Purpose |
+|---|---|---|---|
+| GET | /blog/posts/ | Public | Paginated list of PUBLISHED posts; supports search and category |
+| GET | /blog/posts/{slug}/ | Public | Retrieve one PUBLISHED post; drafts/archived posts return 404 |
+
+## Blog management
+
+All management routes require EDITOR or SUPER_ADMIN. ADMIN and AGENT are denied.
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| GET | /api/v1/locations/states/ | List states |
-| GET | /api/v1/locations/districts/?state={id} | List districts |
-| GET | /api/v1/locations/cities/?district={id} or ?state={id} | List cities |
-| GET | /api/v1/locations/localities/?city={id} or ?district={id} or ?state={id} | List localities |
+| GET | /blog/manage/posts/ | List every editorial status |
+| POST | /blog/manage/posts/ | Create post; accepts JSON or multipart cover upload |
+| GET | /blog/manage/posts/{id}/ | Retrieve editorial record |
+| PATCH | /blog/manage/posts/{id}/ | Update editorial record |
+| PUT | /blog/manage/posts/{id}/ | Replace editorial record |
+| DELETE | /blog/manage/posts/{id}/ | Delete post and cover image |
+| POST | /blog/manage/posts/{id}/publish/ | Publish post |
+| POST | /blog/manage/posts/{id}/unpublish/ | Return post to draft |
 
-## Property catalogue and brochure upload
+Blog fields include title, slug, excerpt, rich-text HTML content, cover image, category, tags, status, published_at, author, SEO title/description and computed reading time. The server sanitises content HTML on save with nh3 and a safe tag/attribute/URL allowlist. Cover uploads are limited to JPG/JPEG/PNG/WEBP, maximum 8 MB, and checked as real image files.
 
-| Method | Endpoint | Access | Purpose |
-|---|---|---|---|
-| GET | /api/v1/properties/ | Public | List published property/project entries |
-| GET | /api/v1/properties/{slug}/ | Public | View a published property/project |
-| POST | /api/v1/properties/ | Admin / Super Admin | Create a property and upload its PDF brochure |
-| PATCH | /api/v1/properties/{slug}/ | Admin / Super Admin | Update details, replace brochure or change publication status |
-| PUT | /api/v1/properties/{slug}/ | Admin / Super Admin | Replace editable property fields and brochure |
-| DELETE | /api/v1/properties/{slug}/ | Admin / Super Admin | Permanently delete the property and its brochure file |
-
-### Property upload request
-
-Send multipart/form-data. Minimum required fields:
-
-- name
-- location_url (HTTPS Google Maps URL)
-- brochure (PDF file, maximum 25 MB)
-
-Optional fields include description, developer_name, category, subcategory, listing_type, price, area_value, area_unit, location_name, full_address and locality.
-
-Google Maps place coordinates are extracted from supported URL formats when they are embedded in the supplied link. Coordinates can also be provided explicitly.
-
-The brochure is validated by extension, file size and PDF signature. The API returns brochure_url for viewing/downloading the uploaded document. Property uploads are created as DRAFT by default; an Admin or Super Admin can publish them by setting publication_status to PUBLISHED.
-
-Supported publication statuses: DRAFT, PENDING_REVIEW, CHANGES_REQUESTED, APPROVED, PUBLISHED, REJECTED and ARCHIVED.
-
-Availability is separate from publication status: AVAILABLE, SOLD, RENTED, LEASED or UNAVAILABLE.
-
-Public catalogue responses contain only PUBLISHED properties. Admin and Super Admin requests can access all publication states. Property deletion is permanent.\n\nPublic list filtering supports `search` (name, description, developer, location and reference), `category` (RESIDENTIAL, COMMERCIAL, LAND), `listing_type` (SALE, RENT, LEASE), `availability_status` and the documented ordering fields. Public filtering never exposes or accepts publication workflow states; the server always restricts anonymous users to PUBLISHED records.
-
-### Example property payload (multipart/form-data)
-
-| Field | Example |
-|---|---|
-| name | ABC 3 Signature |
-| developer_name | ABC Group |
-| category | LAND |
-| subcategory | Residential Plot |
-| location_name | Bidkin, Chhatrapati Sambhajinagar |
-| location_url | https://www.google.com/maps/place/... |
-| brochure | 3 Singneture Brochure Dt. 20 07 26.pdf |
-
-The exact brochure URL is returned by the API after upload; the backend does not parse or rewrite the brochure contents.
-
-### Property photo gallery
-
-The property serializer includes an `images` array. Each photo contains `id`, `image`, `image_url`, `caption`, `alt_text`, `is_primary`, `sort_order` and `created_at`.
+## Property catalogue
 
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
-| GET | /api/v1/properties/{slug}/images/ | Public for published properties | List photos for a public property |
-| POST | /api/v1/properties/{slug}/images/ | Admin / Super Admin | Upload up to 20 photos in one multipart request |
-| PATCH | /api/v1/properties/{slug}/images/{image_id}/ | Admin / Super Admin | Set a photo as the primary image using `{"is_primary": true}` |
-| DELETE | /api/v1/properties/{slug}/images/{image_id}/ | Admin / Super Admin | Permanently remove a photo |
+| GET | /properties/ | Public published; ADMIN/SUPER_ADMIN can see all | List property entries |
+| GET | /properties/{slug}/ | Public published; ADMIN/SUPER_ADMIN can see all | Property details |
+| POST | /properties/ | ADMIN/SUPER_ADMIN | Create property and PDF brochure |
+| PATCH | /properties/{slug}/ | ADMIN/SUPER_ADMIN | Update property/publication state |
+| PUT | /properties/{slug}/ | ADMIN/SUPER_ADMIN | Replace editable property fields |
+| DELETE | /properties/{slug}/ | ADMIN/SUPER_ADMIN | Permanently delete property and media |
+| GET | /properties/{slug}/images/ | Public published | List property gallery |
+| POST | /properties/{slug}/images/ | ADMIN/SUPER_ADMIN | Upload up to 20 images |
+| PATCH | /properties/{slug}/images/{image_id}/ | ADMIN/SUPER_ADMIN | Set primary image |
+| DELETE | /properties/{slug}/images/{image_id}/ | ADMIN/SUPER_ADMIN | Remove gallery image |
 
-For the upload endpoint, send repeated multipart `images` file fields. Supported formats are JPG, JPEG, PNG and WEBP; each image is limited to 10 MB. Optionally send `primary_index` to choose the primary photo from the uploaded batch. If no primary photo exists, the first uploaded photo becomes primary automatically. Only one primary photo is allowed per property.
+Property visibility remains restricted by the backend queryset. EDITOR and AGENT never receive unpublished property records.
 
-The public detail API returns the gallery images and marks the primary photo. Permanent property deletion removes its brochure and all associated photograph files.
+## Existing location APIs
+- GET /locations/states/
+- GET /locations/districts/?state={id}
+- GET /locations/cities/?district={id}
+- GET /locations/localities/?city={id}
 
-## API documentation
-
-- OpenAPI schema: /api/schema/
-- Swagger UI: /api/docs/
-
-## Planned API domains
-
-- /api/v1/agents/ — agent business profiles and property assignments.
-- /api/v1/submissions/ — public form intake and administrator-only review/export.
+Swagger UI: /api/docs/; OpenAPI schema: /api/schema/.

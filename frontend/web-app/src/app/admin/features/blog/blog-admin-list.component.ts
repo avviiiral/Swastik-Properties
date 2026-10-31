@@ -1,0 +1,25 @@
+import {Component,OnInit,inject,signal} from '@angular/core';
+import {DatePipe} from '@angular/common';
+import {RouterLink} from '@angular/router';
+import {HttpClient,HttpParams} from '@angular/common/http';
+import {FormsModule} from '@angular/forms';
+import {API_BASE_URL} from '../../../core/api-base-url.token';
+interface PostRow{id:number;title:string;slug:string;category:string;status:string;updated_at:string;}
+@Component({standalone:true,imports:[RouterLink,FormsModule,DatePipe],template:`
+<section class="page"><div class="heading"><div><span>EDITORIAL WORKSPACE</span><h1>Blog posts</h1><p>Draft, publish and maintain the Swastik journal.</p></div><a routerLink="/admin/blog/new">New article +</a></div>
+<div class="filter"><input [(ngModel)]="search" placeholder="Search title or excerpt"><select [(ngModel)]="status"><option value="">All statuses</option><option>DRAFT</option><option>PUBLISHED</option><option>ARCHIVED</option></select><button (click)="load()">Filter</button></div>
+@if(error()){<p class="notice">Could not load posts. Check the API connection and permissions.</p>}
+<div class="table"><div class="row head"><span>Article</span><span>Category</span><span>Status</span><span>Updated</span><span>Actions</span></div>
+@for(p of posts();track p.id){<div class="row"><span><strong>{{p.title}}</strong><small>{{p.slug}}</small></span><span>{{p.category}}</span><span class="status">{{p.status}}</span><span>{{p.updated_at|date:'mediumDate'}}</span><span class="actions"><a [routerLink]="['/admin/blog',p.id]">Edit</a>@if(p.status==='PUBLISHED'){<button (click)="setStatus(p,'unpublish')">Unpublish</button>}@else{<button (click)="setStatus(p,'publish')">Publish</button>}<button class="danger" (click)="remove(p)">Delete</button></span></div>}
+@if(!posts().length&&!error()){<p class="notice">No posts found. Create the first article when ready.</p>}
+</div></section>`,styles:[`
+.page{max-width:1200px}.heading{display:flex;align-items:center;justify-content:space-between;gap:20px}.heading span{color:#b88c55;font-size:10px;letter-spacing:.15em}.heading h1{margin:8px 0;font:500 43px var(--font-display);color:#1b3a33}.heading p{color:#7c887f;font-size:13px}.heading>a{padding:12px 16px;background:#1b3a33;color:#fff;text-decoration:none;font-size:12px}.filter{display:flex;gap:9px;margin:25px 0}.filter input,.filter select{min-height:40px;padding:0 12px;border:1px solid #dfe5dd;background:#fff}.filter button{padding:0 16px;border:0;background:#1b3a33;color:#fff}.table{background:#fff;border:1px solid #e4e9e4;overflow:auto}.row{display:grid;grid-template-columns:2fr 1fr .8fr 1fr 1.8fr;gap:12px;align-items:center;min-width:800px;padding:15px;border-bottom:1px solid #edf0eb;font-size:12px;color:#647369}.row:last-child{border-bottom:0}.row strong,.row small{display:block}.row strong{color:#263d33}.row small{margin-top:4px;color:#9aa39c;font-size:10px}.row a{color:#967044}.head{background:#f6f7f3;color:#89948b;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.status{font-weight:700}.actions{display:flex;gap:7px;align-items:center}.actions button{border:1px solid #dfe5dd;background:#fff;padding:6px 8px;color:#43594b;font-size:10px}.actions .danger{color:#a83f37}.notice{padding:28px;text-align:center;color:#748077;background:#f4f5f0}@media(max-width:620px){.heading{align-items:flex-start;flex-direction:column}.filter{flex-wrap:wrap}}
+`]})
+export class BlogAdminListComponent implements OnInit{
+ private readonly http=inject(HttpClient);private readonly base=inject(API_BASE_URL);
+ readonly posts=signal<PostRow[]>([]);readonly error=signal(false);search='';status='';
+ ngOnInit(){this.load();}
+ load(){let params=new HttpParams();if(this.search)params=params.set('search',this.search);if(this.status)params=params.set('status',this.status);this.http.get<any>(this.base+'/blog/manage/posts/',{params}).subscribe({next:r=>this.posts.set(r.results??r),error:()=>this.error.set(true)});}
+ setStatus(post:PostRow,action:'publish'|'unpublish'){if(!confirm((action==='publish'?'Publish':'Unpublish')+' "'+post.title+'"?'))return;this.http.post(this.base+'/blog/manage/posts/'+post.id+'/'+action+'/',{}).subscribe({next:()=>this.load(),error:()=>this.error.set(true)});}
+ remove(post:PostRow){if(!confirm('Delete "'+post.title+'"? This also deletes its cover image.'))return;this.http.delete(this.base+'/blog/manage/posts/'+post.id+'/').subscribe({next:()=>this.load(),error:()=>this.error.set(true)});}
+}
