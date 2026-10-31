@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddIndex(
             model_name='blogpost',
-            index=models.Index(fields=['status', 'published_at'], name='blog_status_published'),
+            index=models.Index(fields=['status', 'published_at'], name='blog_blogpo_status_aa5436_idx'),
         ),
     ]
