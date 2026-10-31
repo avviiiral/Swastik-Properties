@@ -23,4 +23,4 @@ class Migration(migrations.Migration):
  ("created_at",models.DateTimeField(auto_now_add=True)),
  ("updated_at",models.DateTimeField(auto_now=True)),
  ("author",models.ForeignKey(on_delete=django.db.models.deletion.PROTECT,related_name="blog_posts",to=settings.AUTH_USER_MODEL)),
- ],options={"ordering":("-published_at","-created_at")})]
+ ],options={"ordering":("-published_at","-created_at")}),migrations.AddIndex(model_name="blogpost",index=models.Index(fields=["status","published_at"],name="blog_status_published"))]
