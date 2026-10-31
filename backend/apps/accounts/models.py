@@ -43,8 +43,8 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     """Application user with a Swastik Properties access role.
 
-    Django's standard username-based authentication is retained. Email is
-    required and unique so it can be used for account communication and recovery.
+    Users authenticate with their unique email address. A username is retained
+    as a required display/account identifier for Django compatibility.
     """
 
     class Role(models.TextChoices):
@@ -59,7 +59,10 @@ class User(AbstractUser):
         default=Role.AGENT,
     )
 
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
+
     objects = UserManager()
 
     def __str__(self):
-        return f"{self.username} ({self.get_role_display()})"
+        return f"{self.email} ({self.get_role_display()})"
