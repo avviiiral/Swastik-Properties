@@ -88,8 +88,8 @@ class LeadSubmissionSerializer(serializers.ModelSerializer):
 
     def validate_message(self, value):
         value = value.strip()
-        if len(value) < 10:
-            raise serializers.ValidationError("Please add a little more detail.")
+        if not value:
+            raise serializers.ValidationError("Please enter a message.")
         return value
 
     def validate_details(self, value):
