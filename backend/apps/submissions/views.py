@@ -24,10 +24,12 @@ from .serializers import LeadSubmissionSerializer, PropertyEnquirySerializer
 
 
 class PropertyEnquiryThrottle(AnonRateThrottle):
+    scope = "property_enquiry"
     rate = "5/hour"
 
 
 class LeadSubmissionThrottle(AnonRateThrottle):
+    scope = "lead_submission"
     rate = "10/hour"
 
 
