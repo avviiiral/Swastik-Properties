@@ -2,12 +2,13 @@
 
 ## Scope
 
-The Admin workspace is part of the single Angular application at `frontend/web-app`. It is used for operational administration only; it is not a CMS and does not contain page editing, homepage content editing or a page builder.
+The Admin workspace is part of the single Angular application at `frontend/web-app`. It supports operational administration and a scoped Site Content editor for Home, About, Blog and Contact. It is not a general-purpose CMS or arbitrary page builder.
 
 Admin routes:
 - `/admin/login` — administrator sign-in.
 - `/admin/properties` — property inventory and management.
 - `/admin/leads` — all website enquiries and requirements, with filters, private follow-up notes, status updates and CSV export.
+- `/admin/site-content` — edit public website content for Home, About, Blog and Contact (planned).
 
 ## Technology
 
@@ -23,7 +24,7 @@ Admin routes:
 - Access and refresh tokens are stored in browser session storage for the current tab/session.
 - The interceptor attaches the access token to protected API requests.
 - On an API 401 response, the interceptor attempts a refresh request; SimpleJWT refresh rotation is supported.
-- Only ADMIN and SUPER_ADMIN application roles can enter the Admin workspace.
+- Only ADMIN and SUPER_ADMIN application roles can enter the Admin workspace and edit public website content.
 - Logout calls POST /api/v1/auth/logout/ and clears the local session.
 
 Session storage is still accessible to JavaScript in the page. Production deployment must apply a strong Content Security Policy, avoid unsafe third-party scripts, enforce HTTPS, and consider a backend-for-frontend with HttpOnly cookies if the threat model requires stronger token isolation.
@@ -44,6 +45,17 @@ The Admin property page provides:
 The `/admin/leads` workspace is available only to ADMIN and SUPER_ADMIN. It can filter by form type, status and free-text search; review contact details and structured form answers; update the NEW → CONTACTED → QUALIFIED → CLOSED workflow (or mark SPAM); and save private internal notes. The export follows the current filters and includes the structured form payload. Agents cannot view or export customer submissions.
 
 The Django API remains authoritative for input validation and authorization.
+
+## Public website content management
+
+The Site Content workspace is a bounded structured editor, not a free-form page builder. ADMIN and SUPER_ADMIN can edit:
+
+- **Home:** hero heading, eyebrow, description, discovery labels, section copy and calls to action.
+- **About:** introduction, story, mission, values, process, service areas, statistics, team profiles and closing copy. Company history, locations, statistics and biographies must be verified; never invent values to replace TODO placeholders.
+- **Blog:** landing-page copy/categories and article records (title, slug, excerpt, body, cover image, tags, SEO metadata and publication state).
+- **Contact:** headings, instructions, helper text and direct-contact display settings. Existing form validation, consent, submission storage and lead workflow must remain unchanged.
+
+Content is stored in the database. Public routes use read-only published APIs; the Admin editor uses authenticated APIs. Rich text is sanitized server-side, images are validated, and updates record editor and timestamp. Do not permit arbitrary templates, scripts or CSS. Property prices and budget inputs remain prohibited.
 
 ## Local development
 
