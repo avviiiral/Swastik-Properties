@@ -89,3 +89,4 @@ Responses expose parent IDs and names for frontend cascading selects. Pagination
 3. Super Admin adds localities under each city.
 4. Public website and dashboard load the hierarchy from APIs.
 5. Property records reference normalized location rows, not hardcoded text lists.
+6. The About page may show a curated service-area list editable through Site Content; it is separate from normalized geographic master data.

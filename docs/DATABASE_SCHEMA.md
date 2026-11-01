@@ -13,6 +13,21 @@
 
 The custom user inherits Django AbstractUser. Email is the login identifier; Django password hashing and password validators are retained. User API serializers never expose password hashes.
 
+## SiteContentSection
+
+A bounded database-backed content record for each public section.
+
+| Field | Type | Purpose |
+|---|---|---|
+| id | BigAutoField | Primary key |
+| section | CharField, unique | `home`, `about`, `blog`, `contact` |
+| content | JSONField | Validated section-specific structured content; no executable templates or arbitrary CSS/JS |
+| status | Choice | DRAFT, PUBLISHED |
+| updated_by_id | FK User, SET_NULL | Admin/Super Admin who last changed the content |
+| created_at / updated_at | DateTime | Audit timestamps |
+
+Use versioned section schemas and server-side validation. Public APIs expose only published/approved fields; Admin APIs expose editable data to ADMIN/SUPER_ADMIN. Repeatable About values, process steps, service areas, statistics and team profiles are bounded structured arrays. Rich text is sanitized and image assets use validated media references.
+
 ## BlogPost
 
 | Field | Type | Purpose |
@@ -37,16 +52,21 @@ BlogPost has an index on (status, published_at) and default order newest publish
 
 ## Property
 
-The Property model remains in apps.properties. Its category/listing/price/location fields, brochure, publication_status, availability_status, created_by/approved_by and timestamps are unchanged. PropertyImage remains related to Property and retains its image cleanup behaviour.
+The Property model remains in apps.properties. Its category, listing, location, brochure, publication_status, availability_status, created_by/approved_by and timestamps are retained. Property/API/UI schemas must not include price, currency, budget, expected amount or cost fields. PropertyImage remains related to Property and retains its image cleanup behaviour.
 
 ## Location hierarchy
 
 State → District → City → Locality → optional Property locality.
 
+## Content model implementation note
+
+The `SiteContentSection` schema above is the proposed target for the planned Site Content feature; it is not yet implemented in the current database. Add a migration only after the section payload schemas and media lifecycle are finalized.
+
 ## Role access rules
 
 - SUPER_ADMIN: full system access.
 - ADMIN: property management and EDITOR/AGENT user management; no Blog authoring or privileged-account access.
-- EDITOR: Blog management only; no property or user management.
+- ADMIN: property, public site content, leads and permitted user management.
+- EDITOR: no Site Content access by default; any legacy Blog permission must be handled explicitly during role migration.
 - AGENT: unchanged agent access.
 - Public Blog reads published posts only; public Property reads published properties only.

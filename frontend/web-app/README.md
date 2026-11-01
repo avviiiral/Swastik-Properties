@@ -19,7 +19,7 @@ One Angular SSR application serves both the public website and the protected Adm
 - Create/edit properties, upload/replace PDF brochures, upload multiple JPG/PNG/WEBP property photographs, select a primary photo, remove photos, publish/unpublish, change availability and permanently delete properties.
 - JWT access-token handling, refresh-token rotation and logout revocation.
 - Agent accounts are denied access to the Admin workspace.
-- No CMS, page builder or public content-management tools.
+- Planned scoped Site Content editor for Home, About, Blog and Contact, restricted to Admin and Super Admin. This is not a general-purpose CMS or page builder.
 
 ## Routes
 
@@ -31,6 +31,7 @@ One Angular SSR application serves both the public website and the protected Adm
 | `/admin/login` | Public sign-in screen |
 | `/admin` | Admin / Super Admin; redirects to properties |
 | `/admin/properties` | Admin / Super Admin |
+| `/admin/site-content` | Admin / Super Admin (planned) |
 
 ## Local development (Windows PowerShell)
 
@@ -72,14 +73,19 @@ The Admin routes are client-rendered so browser session storage is never accesse
 - `POST /api/v1/auth/login/`
 - `POST /api/v1/auth/token/refresh/`
 - `POST /api/v1/auth/logout/`
+- Planned: `/api/v1/site-content/` and `/api/v1/site-content/{section}/` for authenticated Admin content management.
+- Planned: `/api/v1/public/site-content/{section}/` for public read-only content.
 - Admin property CRUD endpoints under `/api/v1/properties/`
 
-The public API returns published properties only. Customer enquiry forms will be added when the agreed submissions API is implemented.
+The public property API returns published properties only. Customer enquiry forms are connected to the submissions API. Site Content APIs are planned; do not assume Home/About/Blog/Contact are database-backed until implementation and verification are complete. Property price and budget fields are prohibited.
 
 
 ## Source structure
 
 - `src/app/pages/home` — public homepage.
+- `src/app/pages/about` — public About page.
+- `src/app/pages/contact` — public contact and lead forms.
+- Planned: `src/app/admin/features/site-content` — structured content editor for Home, About, Blog and Contact.
 - `src/app/pages/properties` — searchable property catalogue.
 - `src/app/pages/property-detail` — individual property details and photo gallery.
 - `src/app/layout/public-layout` — public header, navigation and contact footer.

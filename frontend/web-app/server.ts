@@ -5,9 +5,22 @@ import {
   writeResponseToNodeResponse
 } from '@angular/ssr/node';
 import express from 'express';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const server = express();
 const angularApp = new AngularNodeAppEngine();
+const browserDistFolder = join(dirname(fileURLToPath(import.meta.url)), '../browser');
+
+// Serve the browser build before SSR so JS, CSS, public assets and robots.txt
+// are returned as static files rather than falling through to the Angular router.
+server.disable('x-powered-by');
+server.use(express.static(browserDistFolder, {
+  maxAge: '1y',
+  index: false,
+  redirect: false,
+  immutable: true
+}));
 
 server.use((request, response, next) => {
   angularApp.handle(request)

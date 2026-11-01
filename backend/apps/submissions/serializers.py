@@ -1,5 +1,3 @@
-from decimal import Decimal, InvalidOperation
-
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -136,20 +134,17 @@ class LeadSubmissionSerializer(serializers.ModelSerializer):
                 "details": f"Provide {required_key.replace('_', ' ')} for this form type."
             })
 
-        for key in ("budget_min", "budget_max", "expected_price"):
-            raw_value = details.get(key)
-            if raw_value in (None, ""):
-                continue
-            try:
-                amount = Decimal(str(raw_value))
-            except (InvalidOperation, TypeError, ValueError):
-                raise serializers.ValidationError({"details": f"{key.replace('_', ' ')} must be numeric."})
-            if not amount.is_finite() or amount < 0:
-                raise serializers.ValidationError({"details": f"{key.replace('_', ' ')} must be a non-negative amount."})
+        # Property prices and customer budgets are intentionally not collected.
+        # Reject price-like keys instead of silently persisting arbitrary JSON.
+        forbidden_keys = {
+            key for key in details
+            if any(token in str(key).lower() for token in ("price", "budget", "amount", "cost"))
+        }
+        if forbidden_keys:
+            raise serializers.ValidationError({
+                "details": "Price and budget information must not be submitted."
+            })
 
-        if details.get("budget_min") not in (None, "") and details.get("budget_max") not in (None, ""):
-            if Decimal(str(details["budget_min"])) > Decimal(str(details["budget_max"])):
-                raise serializers.ValidationError({"details": "Minimum budget cannot exceed maximum budget."})
         return attrs
 
     def create(self, validated_data):

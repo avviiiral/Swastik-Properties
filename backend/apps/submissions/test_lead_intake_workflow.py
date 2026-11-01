@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -8,12 +9,14 @@ from .models import PropertyEnquiry
 
 class LeadIntakeAPITests(TestCase):
     def setUp(self):
+        # Isolate anonymous API throttle counters between test methods.
+        cache.clear()
         self.client = APIClient()
 
     def payload(self, enquiry_type="GENERAL_ENQUIRY"):
         details = {}
         if enquiry_type in ("BUY_REQUIREMENT", "RENT_REQUIREMENT"):
-            details = {"preferred_location": "Nagpur", "budget_min": "2000000", "budget_max": "5000000"}
+            details = {"preferred_location": "Nagpur", "property_category": "RESIDENTIAL"}
         elif enquiry_type in ("SELL_PROPERTY", "PROPERTY_LISTING"):
             details = {"property_location": "Nagpur"}
         return {
@@ -77,9 +80,20 @@ class LeadIntakeAPITests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(PropertyEnquiry.objects.exists())
 
+    def test_public_submission_rejects_price_and_budget_details(self):
+        for forbidden_key in ("budget_min", "budget_max", "expected_price", "price", "amount"):
+            with self.subTest(key=forbidden_key):
+                payload = self.payload("BUY_REQUIREMENT")
+                payload["details"][forbidden_key] = "5000000"
+                response = self.client.post(
+                    "/api/v1/submissions/leads/", payload, format="json"
+                )
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(PropertyEnquiry.objects.exists())
+
     def test_buy_requirement_needs_a_preferred_location(self):
         payload = self.payload("BUY_REQUIREMENT")
-        payload["details"] = {"budget_max": "5000000"}
+        payload["details"] = {}
         response = self.client.post("/api/v1/submissions/leads/", payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -105,7 +119,7 @@ class LeadAdministrationAPITests(TestCase):
             email="buyer@example.com",
             phone="+919876543210",
             message="Looking for a residential property in Nagpur.",
-            details={"preferred_location": "Nagpur", "budget_max": "8000000"},
+            details={"preferred_location": "Nagpur"},
             source_path="/contact",
         )
 

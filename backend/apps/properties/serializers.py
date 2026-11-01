@@ -156,3 +156,20 @@ class PropertySerializer(serializers.ModelSerializer):
                 attrs["longitude"] = Decimal(str(extracted_longitude))
 
         return attrs
+
+class PublicPropertySerializer(PropertySerializer):
+    """Public representation without staff identities or approval workflow data."""
+
+    class Meta(PropertySerializer.Meta):
+        fields = tuple(
+            field
+            for field in PropertySerializer.Meta.fields
+            if field not in {
+                "publication_status",
+                "created_by",
+                "created_by_email",
+                "approved_by",
+                "approved_by_email",
+                "approved_at",
+            }
+        )
