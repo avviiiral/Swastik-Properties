@@ -138,6 +138,9 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "auth_login": "10/minute",
     },
+    # Set to the number of trusted reverse proxies in production. With 0,
+    # DRF uses REMOTE_ADDR and ignores client-supplied X-Forwarded-For values.
+    "NUM_PROXIES": env.int("DJANGO_NUM_PROXIES", default=0),
 }
 
 SIMPLE_JWT = {
@@ -153,7 +156,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API documentation for the Swastik Properties platform.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
-    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
 }
 
 CORS_ALLOWED_ORIGINS = env.list(
