@@ -38,11 +38,25 @@
 - [x] Add publish/unpublish, availability update and permanent delete actions.
 - [ ] Verify unified Angular build and public/Admin navigation and CRUD flows locally on Windows.
 
+## Admin-managed public website content
+
+- [ ] Create Site Content model and migration for Home, About, Blog and Contact sections.
+- [ ] Define versioned schemas and validators for each section.
+- [ ] Add authenticated ADMIN/SUPER_ADMIN list, retrieve and partial-update APIs.
+- [ ] Add public read-only APIs exposing published content only.
+- [ ] Build `/admin/site-content` with section navigation, edit forms, repeatable-list controls, media upload, preview and save states.
+- [ ] Connect public pages to database-backed content with safe fallback values.
+- [ ] Make About story, values, process, service areas, statistics and team entries editable; remove TODO placeholders only after verified data is supplied.
+- [ ] Support Blog landing copy and article CRUD/publication under Admin content management.
+- [ ] Support Contact page copy and contact display settings without changing lead form validation/storage.
+- [ ] Add audit metadata, permission/validation/sanitization/public-visibility tests.
+- [ ] Standardize page colors with deep green, warm ivory and champagne gold; verify accessible contrast.
+
 ## Website forms and submissions
 
-- [ ] Define form-specific submission schemas and validators.
-- [ ] Implement administrator-only submission access.
-- [ ] Implement downloadable submission exports for all agreed forms.
+- [x] Define form-specific submission schemas and validators.
+- [x] Implement administrator-only submission access.
+- [x] Implement downloadable submission exports for all agreed forms.
 - [ ] Preserve customer submissions when a related property is permanently deleted.
 
 ## Quality and delivery
@@ -56,5 +70,5 @@
 - [x] Integrate Admin login, JWT refresh and property management under protected `/admin` routes in the same Angular app.
 - [x] Ensure public property HTTP requests do not inherit the Admin JWT.
 - [x] Use one frontend development server and a unified Angular SSR build for public and Admin routes.
-- [ ] Connect customer enquiry forms when the submissions API is implemented.
+- [x] Connect customer enquiry forms to the submissions API.
 - [ ] Generate a dynamic sitemap for published property detail routes.
