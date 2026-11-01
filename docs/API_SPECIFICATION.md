@@ -26,16 +26,29 @@ Base URL prefix: /api/v1/
 
 SUPER_ADMIN can manage all roles through user management, but cannot manage their own role/status; the last active SUPER_ADMIN cannot be deactivated. ADMIN can only manage EDITOR and AGENT users. ADMIN cannot create/promote ADMIN or SUPER_ADMIN. Password values are write-only and validated by Django password validators. Password hashes are never returned. Deactivation is the default removal action.
 
-## Public Blog
+## Public Blog and public website content
 
 | Method | Endpoint | Access | Purpose |
 |---|---|---|---|
 | GET | /blog/posts/ | Public | Paginated list of PUBLISHED posts; supports search and category |
 | GET | /blog/posts/{slug}/ | Public | Retrieve one PUBLISHED post; drafts/archived posts return 404 |
+| GET | /public/site-content/{section}/ | Public | Retrieve published `home`, `about`, `blog` or `contact` content; unknown/unpublished sections return 404 |
 
-## Blog management
+## Admin website content management
 
-All management routes require EDITOR or SUPER_ADMIN. ADMIN and AGENT are denied.
+All endpoints require ADMIN or SUPER_ADMIN. AGENT and unauthenticated users are denied.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | /site-content/ | List editable sections and version metadata |
+| GET | /site-content/{section}/ | Retrieve `home`, `about`, `blog` or `contact` content |
+| PATCH | /site-content/{section}/ | Partially update validated structured content |
+
+The public endpoint is read-only. Validate field lengths, URL schemes, repeatable-item limits and image references. Sanitize rich text server-side. Record editor and timestamp. Reject arbitrary templates, scripts, CSS and executable content.
+
+## Blog article management
+
+All management routes require ADMIN or SUPER_ADMIN. AGENT is denied.
 
 | Method | Endpoint | Purpose |
 |---|---|---|
@@ -48,7 +61,7 @@ All management routes require EDITOR or SUPER_ADMIN. ADMIN and AGENT are denied.
 | POST | /blog/manage/posts/{id}/publish/ | Publish post |
 | POST | /blog/manage/posts/{id}/unpublish/ | Return post to draft |
 
-Blog fields include title, slug, excerpt, rich-text HTML content, cover image, category, tags, status, published_at, author, SEO title/description and computed reading time. The server sanitises content HTML on save with nh3 and a safe tag/attribute/URL allowlist. Cover uploads are limited to JPG/JPEG/PNG/WEBP, maximum 8 MB, and checked as real image files.
+Blog fields include title, slug, excerpt, rich-text HTML content, cover image, category, tags, status, published_at, author, SEO title/description and computed reading time. Blog landing copy and article content are managed from Admin Site Content. The server sanitises content HTML on save with nh3 and a safe tag/attribute/URL allowlist. Cover uploads are limited to JPG/JPEG/PNG/WEBP, maximum 8 MB, and checked as real image files.
 
 ## Property catalogue
 
