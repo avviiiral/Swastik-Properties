@@ -58,6 +58,10 @@ The Property model remains in apps.properties. Its category, listing, location, 
 
 State → District → City → Locality → optional Property locality.
 
+## Content model implementation note
+
+The `SiteContentSection` schema above is the proposed target for the planned Site Content feature; it is not yet implemented in the current database. Add a migration only after the section payload schemas and media lifecycle are finalized.
+
 ## Role access rules
 
 - SUPER_ADMIN: full system access.
