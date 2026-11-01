@@ -5,7 +5,7 @@
 The Admin workspace is part of the single Angular application at `frontend/web-app`. It supports operational administration and a scoped Site Content editor for Home, About, Blog and Contact. It is not a general-purpose CMS or arbitrary page builder.
 
 Admin routes:
-- `/admin/login` — administrator sign-in.
+- `/admin/login` — administrator sign-in (ADMIN/SUPER_ADMIN).
 - `/admin/properties` — property inventory and management.
 - `/admin/leads` — all website enquiries and requirements, with filters, private follow-up notes, status updates and CSV export.
 - `/admin/site-content` — edit public website content for Home, About, Blog and Contact (planned).
