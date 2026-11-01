@@ -24,6 +24,7 @@ The backend is a modular Django monolith exposing REST APIs to one Angular SSR f
 | agents | Agent profiles and property assignments |
 | submissions | Website forms, submitted data, attachments and administrator review/export |
 | common | Shared abstract models, constants and reusable utilities |
+| site_content | Structured public website content for Home, About, Blog and Contact |
 
 ## Public website content architecture
 
@@ -32,7 +33,7 @@ A dedicated Site Content domain stores bounded structured content for Home, Abou
 ## Access principles
 
 - Super Admin: complete system administration.
-- Admin: property, agent and submission administration.
+- Admin: property, agent, submission and public website content administration.
 - Agent: restricted agent/property functions.
 - Submission records and downloads are restricted to administrators.
 - Public website content editing is restricted to ADMIN and SUPER_ADMIN.
