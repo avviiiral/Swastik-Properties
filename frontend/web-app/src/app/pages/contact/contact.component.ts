@@ -47,16 +47,15 @@ import { SiteSeo } from '../../core/services/site-seo.service';
             <div class="field-grid">
               <label>Preferred location <span>*</span><input name="preferredLocation" [(ngModel)]="details['preferred_location']" required maxlength="160" placeholder="City, locality or area"></label>
               <label>Property category<select name="propertyCategory" [(ngModel)]="details['property_category']"><option value="">Any category</option><option value="RESIDENTIAL">Residential</option><option value="COMMERCIAL">Commercial</option><option value="LAND">Land & plots</option></select></label>
-              <label>Minimum budget (₹)<input type="text" inputmode="decimal" name="budgetMin" [(ngModel)]="details['budget_min']" placeholder="Optional"></label>
-              <label>Maximum budget (₹)<input type="text" inputmode="decimal" name="budgetMax" [(ngModel)]="details['budget_max']" placeholder="Optional"></label>
-              <label>Preferred area / size<input name="preferredArea" [(ngModel)]="details['preferred_area']" maxlength="100" placeholder="e.g. 2 BHK, 1,000 sq. ft."></label>
+              <label>Bedrooms / configuration<input name="configuration" [(ngModel)]="details['configuration']" maxlength="100" placeholder="e.g. 2 BHK, office space"></label>
+              <label>Preferred area / size<input name="preferredArea" [(ngModel)]="details['preferred_area']" maxlength="100" placeholder="e.g. 1,000 sq. ft."></label>
               <label>When do you need it?<select name="timeline" [(ngModel)]="details['timeline']"><option value="">Select timeline</option><option>Immediately</option><option>Within 1 month</option><option>Within 3 months</option><option>Within 6 months</option><option>Exploring options</option></select></label>
             </div>
           } @else if (selectedType() === 'SELL_PROPERTY' || selectedType() === 'PROPERTY_LISTING') {
             <div class="field-grid">
               <label>Property location <span>*</span><input name="propertyLocation" [(ngModel)]="details['property_location']" required maxlength="180" placeholder="City, locality or full address"></label>
               <label>Property category<select name="propertyCategory" [(ngModel)]="details['property_category']"><option value="">Select category</option><option value="RESIDENTIAL">Residential</option><option value="COMMERCIAL">Commercial</option><option value="LAND">Land & plots</option></select></label>
-              <label>Expected price (₹)<input type="text" inputmode="decimal" name="expectedPrice" [(ngModel)]="details['expected_price']" placeholder="Optional"></label>
+              <label>Property availability<select name="propertyAvailability" [(ngModel)]="details['property_availability']"><option value="">Select status</option><option>Vacant</option><option>Currently occupied</option><option>Available soon</option></select></label>
               <label>Property area<input name="propertyArea" [(ngModel)]="details['property_area']" maxlength="100" placeholder="e.g. 1,200 sq. ft."></label>
               <label class="full">Ownership / additional information<textarea name="ownership" [(ngModel)]="details['ownership_details']" rows="3" maxlength="1000" placeholder="Share ownership, property condition or other relevant details."></textarea></label>
             </div>
