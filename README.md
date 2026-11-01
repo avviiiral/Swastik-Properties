@@ -35,7 +35,7 @@ Optional demo editorial data (DEBUG only; all samples are DRAFT and labelled DEM
 ```powershell
 python manage.py seed_demo_blog
 ```
-To add a Blog Editor, create a user with role EDITOR through Super Admin user management (or a trusted local Django shell).
+Routine public website content is edited by ADMIN and SUPER_ADMIN in the Site Content workspace. Do not create EDITOR accounts for this workflow.
 
 ### Unified Angular app
 In a second terminal:
@@ -56,7 +56,7 @@ Open http://localhost:4200. The development proxy forwards /api and /media to Dj
 | /contact | General, property, buy, rent, sell and listing enquiries | Everyone |
 | /blog | Published Blog posts | Everyone |
 | /blog/{slug} | Published Blog article | Everyone |
-| /admin/login | Workspace sign-in | Admin, Super Admin, Editor |
+| /admin/login | Workspace sign-in | Admin, Super Admin |
 | /admin | Admin dashboard | Admin, Super Admin |
 | /admin/site-content | Manage public website content (Home, About, Blog, Contact) | Admin, Super Admin |
 | /admin/properties | Property management | Admin, Super Admin |
@@ -126,7 +126,7 @@ Location APIs:
 | Capability | SUPER_ADMIN | ADMIN | EDITOR | AGENT |
 |---|---|---|---|---|
 | Property management | Yes | Yes | No | Existing rules |
-| Blog management | Yes | No | Yes | No |
+| Public website content (Home, About, Blog, Contact) | Yes | Yes | No | No |
 | User management | All roles | EDITOR + AGENT | No | No |
 | Permanent user deletion | Yes | No | No | No |
 
