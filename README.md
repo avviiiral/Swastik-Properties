@@ -58,11 +58,12 @@ Open http://localhost:4200. The development proxy forwards /api and /media to Dj
 | /blog/{slug} | Published Blog article | Everyone |
 | /admin/login | Workspace sign-in | Admin, Super Admin, Editor |
 | /admin | Admin dashboard | Admin, Super Admin |
+| /admin/site-content | Manage public website content (Home, About, Blog, Contact) | Admin, Super Admin |
 | /admin/properties | Property management | Admin, Super Admin |
-| /admin/blog | Blog management | Editor, Super Admin |
+| /admin/blog | Blog management (content editing consolidated under Site Content) | Admin, Super Admin |
 | /admin/users | User management | Admin, Super Admin |
 
-After login, EDITOR lands on /admin/blog; ADMIN and SUPER_ADMIN land on /admin. AGENT accounts retain their existing restricted access and cannot enter the workspace.
+After login, ADMIN and SUPER_ADMIN land on /admin. AGENT accounts retain their existing restricted access and cannot enter the workspace. ADMIN and SUPER_ADMIN manage Home, About, Blog and Contact content from Site Content.
 
 Build the SSR application:
 ```powershell
@@ -90,7 +91,15 @@ Public Blog:
 - GET /api/v1/blog/posts/ (search, category, pagination)
 - GET /api/v1/blog/posts/{slug}/
 
-Blog management (EDITOR/SUPER_ADMIN):
+Site content management (ADMIN/SUPER_ADMIN):
+- GET /api/v1/site-content/ — list editable sections.
+- GET /api/v1/site-content/{section}/ — retrieve Home, About, Blog or Contact content.
+- PATCH /api/v1/site-content/{section}/ — update validated structured content.
+
+Public site content:
+- GET /api/v1/public/site-content/{section}/ — public read-only published content.
+
+Blog article management (ADMIN/SUPER_ADMIN):
 - GET/POST /api/v1/blog/manage/posts/
 - GET/PATCH/PUT/DELETE /api/v1/blog/manage/posts/{id}/
 - POST /api/v1/blog/manage/posts/{id}/publish/
@@ -121,6 +130,6 @@ Location APIs:
 | User management | All roles | EDITOR + AGENT | No | No |
 | Permanent user deletion | Yes | No | No | No |
 
-The Blog module is a scoped exception to the no-CMS rule; it is not a general-purpose CMS. Public Blog reads only PUBLISHED articles. Public property reads only PUBLISHED properties. Admin deactivation is preferred to deletion; only Super Admin can permanently delete user accounts.
+The Admin Site Content area is a bounded editor for Home, About, Blog and Contact, not a general-purpose page builder. Public visitors receive read-only published content. Property pages contain no price or budget fields.
 
 Swagger UI: /api/docs/; OpenAPI schema: /api/schema/.
