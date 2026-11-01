@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -8,6 +9,8 @@ from .models import PropertyEnquiry
 
 class LeadIntakeAPITests(TestCase):
     def setUp(self):
+        # Isolate anonymous API throttle counters between test methods.
+        cache.clear()
         self.client = APIClient()
 
     def payload(self, enquiry_type="GENERAL_ENQUIRY"):
@@ -90,7 +93,7 @@ class LeadIntakeAPITests(TestCase):
 
     def test_buy_requirement_needs_a_preferred_location(self):
         payload = self.payload("BUY_REQUIREMENT")
-        payload["details"] = {"preferred_location": "Nagpur"}
+        payload["details"] = {}
         response = self.client.post("/api/v1/submissions/leads/", payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
