@@ -59,8 +59,6 @@ class PropertyAdmin(admin.ModelAdmin):
                     "category",
                     "subcategory",
                     "listing_type",
-                    "price",
-                    "currency",
                     "area_value",
                     "area_unit",
                 )
