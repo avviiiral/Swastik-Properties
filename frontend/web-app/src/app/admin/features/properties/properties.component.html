@@ -214,3 +214,32 @@
     }
   </section>
 </section>
+
+@if (confirmation(); as dialog) {
+  <div class="confirmation-backdrop" (click)="closeConfirmation()" (keydown.escape)="closeConfirmation()">
+    <section
+      class="confirmation-dialog"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="confirmation-title"
+      aria-describedby="confirmation-message"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="confirmation-icon" [class.danger]="dialog.tone === 'danger'">
+        @if (dialog.tone === 'danger') { <span aria-hidden="true">!</span> } @else { <span aria-hidden="true">↗</span> }
+      </div>
+      <span class="confirmation-eyebrow">SWASTIK PROPERTIES / ADMIN</span>
+      <h2 id="confirmation-title">{{ dialog.title }}</h2>
+      <p id="confirmation-message">{{ dialog.message }}</p>
+      <div class="confirmation-actions">
+        <button class="confirmation-cancel" type="button" (click)="closeConfirmation()">Cancel</button>
+        <button
+          class="confirmation-accept"
+          [class.danger]="dialog.tone === 'danger'"
+          type="button"
+          (click)="acceptConfirmation()"
+        >{{ dialog.confirmLabel }}</button>
+      </div>
+    </section>
+  </div>
+}

@@ -39,6 +39,13 @@ export class PropertiesComponent {
   readonly categoryFilter = signal('');
   readonly errorMessage = signal('');
   readonly successMessage = signal('');
+  readonly confirmation = signal<{
+    title: string;
+    message: string;
+    confirmLabel: string;
+    tone: 'primary' | 'danger';
+  } | null>(null);
+  private confirmationAction: (() => void) | null = null;
   readonly publishedCount = computed(
     () => this.properties().filter((item) => item.publication_status === 'PUBLISHED').length
   );
@@ -245,9 +252,39 @@ export class PropertiesComponent {
     });
   }
 
-  deletePropertyImage(property: Property, image: PropertyImage): void {
-    if (!window.confirm('Permanently remove this property photo?')) return;
+  requestConfirmation(
+    title: string,
+    message: string,
+    confirmLabel: string,
+    action: () => void,
+    tone: 'primary' | 'danger' = 'primary'
+  ): void {
+    this.confirmationAction = action;
+    this.confirmation.set({ title, message, confirmLabel, tone });
+  }
 
+  closeConfirmation(): void {
+    this.confirmation.set(null);
+    this.confirmationAction = null;
+  }
+
+  acceptConfirmation(): void {
+    const action = this.confirmationAction;
+    this.closeConfirmation();
+    action?.();
+  }
+
+  deletePropertyImage(property: Property, image: PropertyImage): void {
+    this.requestConfirmation(
+      'Remove property photo?',
+      'This photo will be permanently removed from the property gallery.',
+      'Remove photo',
+      () => this.removePropertyImage(property, image),
+      'danger'
+    );
+  }
+
+  private removePropertyImage(property: Property, image: PropertyImage): void {
     this.http.delete(
       this.apiUrl + '/properties/' + property.slug + '/images/' + image.id + '/'
     ).subscribe({
@@ -349,10 +386,19 @@ export class PropertiesComponent {
   setPublication(property: Property): void {
     const nextStatus: PublicationStatus =
       property.publication_status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
-    const action = nextStatus === 'PUBLISHED' ? 'publish' : 'unpublish';
-    if (!window.confirm('Are you sure you want to ' + action + ' "' + property.name + '"?')) {
-      return;
-    }
+    const isPublishing = nextStatus === 'PUBLISHED';
+    this.requestConfirmation(
+      isPublishing ? 'Publish this property?' : 'Move property to draft?',
+      isPublishing
+        ? '"' + property.name + '" will become visible on the public website.'
+        : '"' + property.name + '" will no longer appear in public property listings.',
+      isPublishing ? 'Publish property' : 'Move to draft',
+      () => this.updatePublication(property, nextStatus),
+      'primary'
+    );
+  }
+
+  private updatePublication(property: Property, nextStatus: PublicationStatus): void {
     this.http.patch<Property>(
       this.apiUrl + '/properties/' + property.slug + '/',
       { publication_status: nextStatus }
@@ -381,12 +427,16 @@ export class PropertiesComponent {
   }
 
   deleteProperty(property: Property): void {
-    const confirmed = window.confirm(
-      'Permanently delete "' + property.name + '"? This also removes its brochure and all property photos. This action cannot be undone.'
+    this.requestConfirmation(
+      'Delete this property permanently?',
+      '"' + property.name + '" and its brochure and property photos will be permanently deleted. This action cannot be undone.',
+      'Delete permanently',
+      () => this.removeProperty(property),
+      'danger'
     );
-    if (!confirmed) {
-      return;
-    }
+  }
+
+  private removeProperty(property: Property): void {
     this.http.delete(
       this.apiUrl + '/properties/' + property.slug + '/'
     ).subscribe({
