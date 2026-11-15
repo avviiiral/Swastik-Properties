@@ -9,6 +9,7 @@ import { SiteSeo } from '../../core/services/site-seo.service';
   imports: [RouterLink, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <div class="home-page">
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-copy">
@@ -86,6 +87,7 @@ import { SiteSeo } from '../../core/services/site-seo.service';
       </div>
     </section>
     <section class="closing"><div class="section-wrap"><div class="section-index">05 / TAKE THE NEXT STEP</div><div class="closing-row"><h2>The right place<br>starts with a <em>look.</em></h2><a class="button-light" routerLink="/properties">Browse all properties <span>↗</span></a></div></div></section>
+    </div>
   `,
   styles: []
 })
