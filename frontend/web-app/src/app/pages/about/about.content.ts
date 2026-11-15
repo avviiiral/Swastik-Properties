@@ -6,8 +6,7 @@ export const ABOUT_CONTENT = {
     heading: 'Rooted in Maharashtra. Focused on what comes next.',
     paragraphs: [
       'Swastik Properties brings property opportunities and people together through a clear, practical discovery experience.',
-      'Our work spans residential, commercial and land opportunities. We aim to make it easier to understand the options, ask informed questions and take the next step with confidence.',
-      'TODO: Add the verified company founding story, milestones and business history.'
+      'Our work spans residential, commercial and land opportunities. We aim to make it easier to understand the options, ask informed questions and take the next step with confidence.'
     ]
   },
   mission: {
@@ -31,14 +30,8 @@ export const ABOUT_CONTENT = {
     { title: 'Connect', copy: 'Ask questions and arrange a conversation about a property.' },
     { title: 'Verify', copy: 'Review documents and independently verify material details before proceeding.' }
   ],
-  areas: ['TODO: Confirm cities and districts served across Maharashtra.'],
-  stats: [
-    { value: 'TODO', label: 'Years of experience' },
-    { value: 'TODO', label: 'Properties represented' },
-    { value: 'TODO', label: 'Locations served' }
-  ],
-  team: [
-    { name: 'TODO: Add verified team member name', role: 'TODO: Add verified designation', bio: 'TODO: Add an approved biography.' }
-  ],
+  areas: [],
+  stats: [],
+  team: [],
   closing: 'A good decision begins with a good conversation.'
 } as const;

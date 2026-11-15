@@ -22,17 +22,11 @@ import { SiteSeo } from '../../core/services/site-seo.service';
           </div>
           <div class="hero-footnote"><span></span> MADE FOR THE WAY YOU WANT TO LIVE</div>
         </div>
-        <div class="hero-art" aria-hidden="true">
-          <div class="art-grid"></div><div class="circle circle-one"></div><div class="circle circle-two"></div>
-          <div class="art-label top-label">A PLACE TO BEGIN</div>
-          <svg viewBox="0 0 500 490" fill="none">
-            <path d="M70 360L250 215L430 360V455H70V360Z" stroke="#D7B47D" stroke-width="2"/>
-            <path d="M112 360L250 250L388 360M175 455V352H325V455M217 455V377H283V455" stroke="#D7B47D" stroke-width="1.5"/>
-            <path d="M85 360H415M250 215V135" stroke="#D7B47D" stroke-width="1.2" stroke-dasharray="4 7"/>
-            <path d="M50 455H450M100 310L250 190L400 310" stroke="#D7B47D" stroke-width="1"/>
-            <circle cx="250" cy="215" r="5" fill="#D7B47D"/>
-          </svg>
-          <div class="coordinate">19° 04' N&nbsp;&nbsp; 72° 52' E</div><div class="art-label bottom-label">SPACE TO MAKE YOURS</div>
+        <div class="hero-art" aria-label="Featured architecture and property photography">
+          <img class="hero-photo" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=1400&amp;q=85" alt="Contemporary residence framed by mature landscaping" fetchpriority="high">
+          <div class="hero-photo-shade"></div>
+          <div class="hero-photo-caption"><span>THE SWASTIK COLLECTION</span><strong>Spaces shaped around possibility.</strong></div>
+          <div class="hero-photo-index">01 <span> / </span> 03</div>
         </div>
       </div>
       <div class="hero-bottom"><span>SWASTIK PROPERTIES</span><span>01 — DISCOVER</span></div>
@@ -80,7 +74,18 @@ import { SiteSeo } from '../../core/services/site-seo.service';
       }
     </section>
 
-    <section class="closing"><div class="section-wrap"><div class="section-index">04 / TAKE THE NEXT STEP</div><div class="closing-row"><h2>The right place<br>starts with a <em>look.</em></h2><a class="button-light" routerLink="/properties">Browse all properties <span>↗</span></a></div></div></section>
+    <section class="trust-section">
+      <div class="section-wrap">
+        <div class="section-index">04 / THE SWASTIK APPROACH</div>
+        <div class="trust-heading"><h2>Good decisions begin<br>with <em>clear information.</em></h2><p>Property decisions deserve time, context and straightforward conversations. We help you explore the available information and take the next step with confidence.</p></div>
+        <div class="trust-grid">
+          <article><span>01</span><h3>Clarity first</h3><p>Understand the available details before moving forward.</p></article>
+          <article><span>02</span><h3>Local perspective</h3><p>Explore residential, commercial and land opportunities across Maharashtra.</p></article>
+          <article><span>03</span><h3>Human guidance</h3><p>Speak with our team about a listing or a requirement of your own.</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="closing"><div class="section-wrap"><div class="section-index">05 / TAKE THE NEXT STEP</div><div class="closing-row"><h2>The right place<br>starts with a <em>look.</em></h2><a class="button-light" routerLink="/properties">Browse all properties <span>↗</span></a></div></div></section>
   `,
   styles: [`
     :host{display:block;color:#243d34}.hero{background:#193a33;color:#f8f7f1;overflow:hidden}.hero-inner{width:min(1220px,calc(100% - 56px));min-height:570px;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:34px;padding:45px 0}
@@ -89,10 +94,15 @@ import { SiteSeo } from '../../core/services/site-seo.service';
     .hero-description{max-width:420px;color:#c0cec6;font-size:14px;line-height:1.85}.hero-search{max-width:610px;margin-top:30px;padding:9px;background:#f8f7f0;display:grid;grid-template-columns:1fr 1.15fr auto;gap:8px;color:#243d34}
     .hero-search label{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:4px 11px;border-right:1px solid #e3e5dc}.hero-search label span{color:#9a8a6e;font-size:8px;font-weight:700;letter-spacing:.13em}.hero-search input,.hero-search select{width:100%;min-width:0;min-height:34px;padding:5px 10px;border:1px solid #e4e5dc;border-radius:3px;outline:0;background-color:#fff;color:#294237;font-size:11px;transition:border-color .18s ease,box-shadow .18s ease}.hero-search select{appearance:none;-webkit-appearance:none;padding:5px 30px 5px 10px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%23294337' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2 4 4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center}.hero-search select:focus-visible,.hero-search input:focus-visible{outline:none;border-color:#b88c55;box-shadow:0 0 0 3px rgba(184,140,85,.18)}.hero-search select option{background:#f8f7f0;color:#243d34;padding:10px}.hero-search select option:checked{background:#d9c39d;color:#193a33;font-weight:600}.hero-search button{min-width:86px;padding:0 12px;border:0;background:#1e4137;color:#fff;font-size:11px;font-weight:700}.hero-search button b{padding-left:10px;color:#d4b17b}
     .hero-footnote{display:flex;align-items:center;gap:12px;margin-top:42px;color:#8fa69a;font-size:9px;letter-spacing:.18em}.hero-footnote span{width:36px;height:1px;background:#8fa69a}
-    .hero-art{min-height:450px;position:relative;overflow:hidden;border:1px solid rgba(211,181,132,.22);background:radial-gradient(ellipse at 52% 46%,rgba(210,179,129,.14),transparent 48%),linear-gradient(135deg,rgba(255,255,255,.025),transparent 60%)}
-    .art-grid{position:absolute;inset:0;opacity:.12;background-image:linear-gradient(rgba(214,183,137,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(214,183,137,.25) 1px,transparent 1px);background-size:46px 46px}
-    .circle{position:absolute;width:350px;height:350px;border:1px solid rgba(211,181,132,.22);border-radius:50%;top:53px;left:50%;transform:translateX(-50%)}.circle-two{width:275px;height:275px;top:91px;border-color:rgba(211,181,132,.13)}
-    .hero-art svg{position:absolute;width:94%;height:93%;left:3%;top:6%}.art-label{position:absolute;color:#b9a17c;font-size:8px;font-weight:600;letter-spacing:.2em}.top-label{top:25px;left:25px}.bottom-label{bottom:25px;right:25px}.coordinate{position:absolute;bottom:25px;left:25px;color:#8ea398;font-size:9px;letter-spacing:.1em}
+    .hero-art{min-height:450px;position:relative;overflow:hidden;border:1px solid rgba(211,181,132,.22);background:#30483e;isolation:isolate}
+    .hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;animation:hero-photo-in 1.1s cubic-bezier(.2,.7,.2,1) both}
+    .hero-photo-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,31,26,.08) 30%,rgba(14,31,26,.78) 100%)}
+    .hero-photo-caption{position:absolute;right:26px;bottom:29px;left:26px;display:grid;gap:8px;color:#fff}
+    .hero-photo-caption span{color:#e4c58f;font-size:8px;font-weight:800;letter-spacing:.19em}
+    .hero-photo-caption strong{max-width:330px;font:500 clamp(24px,3vw,34px)/1.1 var(--font-display)}
+    .hero-photo-index{position:absolute;top:22px;right:22px;padding:8px 10px;border:1px solid rgba(255,255,255,.35);color:#fff;font-size:9px;letter-spacing:.12em;backdrop-filter:blur(8px)}
+    .hero-photo-index span{color:#d7b77e}
+    @keyframes hero-photo-in{from{opacity:.5;transform:scale(1.04)}to{opacity:1;transform:scale(1)}}
     .hero-bottom{width:min(1220px,calc(100% - 56px));height:43px;margin:auto;border-top:1px solid rgba(230,236,231,.13);display:flex;align-items:center;justify-content:space-between;color:#91a69a;font-size:9px;letter-spacing:.16em}
     .section-wrap{width:min(1220px,calc(100% - 56px));margin:auto}.intro{padding-top:96px;padding-bottom:100px}.intro-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:end;margin-top:25px}
     h2{margin:0;color:#203b34;font:500 clamp(36px,4.3vw,54px)/1.14 'Manrope',sans-serif;letter-spacing:-.055em}.intro-grid h2 em{color:#b88b50}.intro-grid p{max-width:430px;margin:0 0 20px;color:#6e7b73;font-size:13px;line-height:1.9}
@@ -113,7 +123,7 @@ import { SiteSeo } from '../../core/services/site-seo.service';
     .closing{padding:72px 0;background:#1c3a33;color:#f5f4ed}.closing .section-index{margin-bottom:20px}.closing-row{display:flex;align-items:end;justify-content:space-between;gap:25px}.closing h2{color:#f5f4ed;font-size:clamp(38px,5vw,59px)}
     .button-light{min-height:47px;padding:0 18px;display:inline-flex;align-items:center;gap:20px;background:#f0e9da;color:#1b3932;text-decoration:none;font-size:11px;font-weight:700}.button-light span{color:#a7783e;font-size:15px}
     @media(max-width:900px){.hero-inner{grid-template-columns:1fr .82fr;gap:18px}.hero-art{min-height:390px}.category-card{min-height:250px;padding:20px}.hero-search{grid-template-columns:1fr 1fr auto}}
-    @media(max-width:680px){.hero-inner,.section-wrap,.hero-bottom{width:calc(100% - 38px)}.hero-inner{grid-template-columns:1fr;padding:48px 0 23px}.hero-search{grid-template-columns:1fr 1fr}.hero-search label:first-child{grid-column:1/-1;border-right:0;border-bottom:1px solid #e3e5dc;padding-bottom:9px}.hero-search button{min-height:41px}.hero-art{min-height:300px}.hero-bottom{font-size:8px}.intro{padding:65px 0 70px}.intro-grid{grid-template-columns:1fr;gap:22px}.intro-grid h2{font-size:40px}.categories,.featured{padding:66px 0}.section-heading{align-items:flex-start;flex-direction:column;gap:16px}.section-heading>p{text-align:left}.category-grid,.featured-grid{grid-template-columns:1fr}.category-card{min-height:230px}.closing{padding:55px 0}.closing-row{align-items:flex-start;flex-direction:column;gap:21px}.closing h2{font-size:43px}}
+    @media(max-width:680px){.hero-inner,.section-wrap,.hero-bottom{width:calc(100% - 38px)}.hero-inner{grid-template-columns:1fr;padding:48px 0 23px}.hero-search{grid-template-columns:1fr 1fr}.hero-search label:first-child{grid-column:1/-1;border-right:0;border-bottom:1px solid #e3e5dc;padding-bottom:9px}.hero-search button{min-height:41px}.hero-art{min-height:300px}.hero-bottom{font-size:8px}.intro{padding:65px 0 70px}.intro-grid{grid-template-columns:1fr;gap:22px}.intro-grid h2{font-size:40px}.categories,.featured{padding:66px 0}.section-heading{align-items:flex-start;flex-direction:column;gap:16px}.section-heading>p{text-align:left}.trust-heading{grid-template-columns:1fr;gap:17px}.trust-grid{grid-template-columns:1fr}.trust-section{padding:65px 0}.category-grid,.featured-grid{grid-template-columns:1fr}.category-card{min-height:230px}.closing{padding:55px 0}.closing-row{align-items:flex-start;flex-direction:column;gap:21px}.closing h2{font-size:43px}}
   `]
 })
 export class HomeComponent implements OnInit {
