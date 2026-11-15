@@ -10,11 +10,7 @@
 .brand-message p { max-width:370px; color:rgba(255,255,255,.68); font-size:14px; line-height:1.8; }
 .brand-footer { color:rgba(255,255,255,.42); font-size:9px; font-weight:700; letter-spacing:.17em; }
 .login-panel { display:grid; place-items:center; padding:48px 28px; }
-.login-card { width:min(100%,410px); }
-.login-card .form-control{min-height:48px;border-radius:5px;background:#fdfefc}
-.login-card .form-control:focus{border-color:#9aab9d;box-shadow:0 0 0 3px rgba(38,83,63,.1)}
-.sign-in{letter-spacing:.02em}
-.public-return{margin-top:18px}
+.login-card { width:min(100%,390px); }
 .login-card h2 { margin:14px 0 8px; color:#1e302b; font-family:'Manrope',sans-serif; font-size:31px; letter-spacing:-.04em; }
 .intro { margin:0 0 30px; color:#77817c; font-size:13px; line-height:1.7; }
 .login-card form { display:flex; flex-direction:column; }
