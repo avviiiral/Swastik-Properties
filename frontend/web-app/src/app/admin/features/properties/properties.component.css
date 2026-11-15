@@ -125,3 +125,45 @@ td { padding:14px 13px; border-top:1px solid #edf0ed; color:#5e6a63; font-size:1
 .existing-photo-actions{display:flex;flex-wrap:wrap;gap:5px}
 .existing-photo-actions .remove-photo{color:#a84942;border-color:#efd9d6}
 .existing-photo-actions .remove-photo:hover{background:#fff3f1}
+
+/* Branded confirmation dialog — replaces browser-native confirm() popups */
+.confirmation-backdrop{
+  position:fixed;inset:0;z-index:1200;display:grid;place-items:center;
+  padding:22px;background:rgba(12,27,23,.62);backdrop-filter:blur(5px);
+  animation:confirmation-fade .16s ease-out both
+}
+.confirmation-dialog{
+  width:min(100%,460px);padding:30px;border:1px solid rgba(196,155,98,.28);
+  border-radius:13px;background:#fafaf7;box-shadow:0 28px 90px rgba(5,20,15,.32);
+  animation:confirmation-rise .2s cubic-bezier(.2,.7,.2,1) both
+}
+.confirmation-icon{
+  display:grid;place-items:center;width:43px;height:43px;margin-bottom:22px;
+  border:1px solid #e8ddc9;border-radius:50%;background:#f4eddf;color:#9c7845;
+  font:600 19px var(--font-display)
+}
+.confirmation-icon.danger{border-color:#f0d8d3;background:#fff0ed;color:#b34e43}
+.confirmation-eyebrow{color:#a17c49;font-size:9px;font-weight:800;letter-spacing:.16em}
+.confirmation-dialog h2{margin:11px 0 9px;color:#1b3a33;font:600 25px/1.2 var(--font-display);letter-spacing:-.035em}
+.confirmation-dialog p{margin:0;color:#6f7c73;font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+.confirmation-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:27px;padding-top:19px;border-top:1px solid #e8ebe4}
+.confirmation-actions button{min-height:42px;padding:0 17px;border-radius:4px;font-size:11px;font-weight:750;cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.confirmation-actions button:hover{transform:translateY(-1px)}
+.confirmation-cancel{border:1px solid #dce3da;background:#fff;color:#526359}
+.confirmation-cancel:hover{border-color:#aebcaf;background:#f2f5f0}
+.confirmation-accept{border:1px solid #1b3a33;background:#1b3a33;color:#fff}
+.confirmation-accept:hover{border-color:#2b5547;background:#2b5547}
+.confirmation-accept.danger{border-color:#a9473e;background:#a9473e}
+.confirmation-accept.danger:hover{border-color:#8e3832;background:#8e3832}
+@keyframes confirmation-fade{from{opacity:0}to{opacity:1}}
+@keyframes confirmation-rise{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:520px){
+ .confirmation-dialog{padding:23px 20px;border-radius:11px}
+ .confirmation-dialog h2{font-size:22px}
+ .confirmation-actions{display:grid;grid-template-columns:1fr 1fr}
+ .confirmation-actions button{padding:0 9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .confirmation-backdrop,.confirmation-dialog{animation:none}
+ .confirmation-actions button{transition:none}
+}
