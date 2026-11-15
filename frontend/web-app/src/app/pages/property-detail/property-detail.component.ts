@@ -77,8 +77,8 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
     :host{display:block;color:#243d34}.wrap{width:min(1220px,calc(100% - 56px));margin:auto}.detail-hero{background:#1b3a33;color:#f6f5ef}.detail-hero .wrap{padding:28px 0 45px}
     .crumb{display:flex;flex-wrap:wrap;gap:10px;color:#94a99e;font-size:10px;margin-bottom:47px}.crumb a{color:#d4ded6;text-decoration:none}.detail-label,.kicker{color:#c5a575;font-size:9px;font-weight:700;letter-spacing:.17em}
     .detail-hero h1{margin:13px 0 7px;font:600 clamp(37px,5.5vw,63px)/1.08 'Manrope',sans-serif;letter-spacing:-.055em}.detail-hero p{color:#bdc9c1;font-size:12px}.detail-hero small{display:block;margin-top:26px;color:#8da49a;font-size:8px;font-weight:700;letter-spacing:.17em}
-    .detail-content{padding:50px 0 8px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,.75fr);align-items:start;gap:48px}
-    .detail-art{height:325px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(145deg,#dce1d7,#aebdaf)}.detail-art:before{content:'';position:absolute;inset:20px;border:1px solid rgba(40,74,59,.22)}.detail-art>div{color:rgba(29,61,51,.7);font:500 125px 'Manrope',sans-serif;letter-spacing:-.1em}.detail-art>div span{color:#a7783e}
+    .detail-content{padding:50px 0 8px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.75fr);align-items:start;gap:42px}
+    .detail-art{height:430px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(145deg,#dce1d7,#aebdaf)}.detail-art:before{content:'';position:absolute;inset:20px;border:1px solid rgba(40,74,59,.22)}.detail-art>div{color:rgba(29,61,51,.7);font:500 125px 'Manrope',sans-serif;letter-spacing:-.1em}.detail-art>div span{color:#a7783e}
     .art-ref,.art-cat{position:absolute;top:18px;color:#33473d;font-size:8px;font-weight:700;letter-spacing:.13em}.art-ref{right:22px}.art-cat{left:22px}
     .detail-section{padding:39px 0 33px;border-bottom:1px solid #e3e8e1}.detail-section h2{margin:12px 0 14px;color:#253e34;font:600 26px 'Manrope',sans-serif;letter-spacing:-.04em}.detail-section p{max-width:700px;color:#6e7c72;font-size:13px;line-height:1.95;white-space:pre-line}
     .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:0 28px}.facts>div{padding:14px 0;border-top:1px solid #edf0eb;display:flex;flex-direction:column;gap:6px}.facts span{color:#8a958c;font-size:10px}.facts strong{color:#2b4439;font-size:12px}
@@ -90,8 +90,8 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
     @media(max-width:680px){.contact-actions{gap:6px}.contact-action{padding:0 7px;font-size:9px}}
 
     .detail-message{min-height:350px;display:grid;place-items:center;color:#758279;font-size:13px}.not-found{width:min(1220px,calc(100% - 56px));min-height:460px;margin:auto;padding:75px 0}.not-found h1{color:#203e34;font:600 clamp(42px,6vw,64px)/1.08 'Manrope',sans-serif;letter-spacing:-.06em}.not-found h1 em{color:#b78c54;font-style:normal}.not-found p{max-width:430px;color:#748077;font-size:13px;line-height:1.8}.not-found a{display:inline-block;margin-top:14px;padding:13px 16px;background:#23463b;color:white;text-decoration:none;font-size:11px;font-weight:700}
-    @media(max-width:850px){.detail-content{grid-template-columns:minmax(0,1fr) 270px;gap:22px}.detail-art{height:270px}}
-    @media(max-width:680px){.wrap,.not-found{width:calc(100% - 38px)}.detail-hero .wrap{padding:23px 0 36px}.crumb{margin-bottom:32px}.detail-content{grid-template-columns:1fr;padding-top:28px}.detail-art{height:230px}.aside{position:static;grid-row:1}.facts{gap:0 16px}.facts strong{font-size:11px}}
+    @media(max-width:850px){.detail-content{grid-template-columns:minmax(0,1fr) 270px;gap:22px}.detail-art{height:320px}.contact-panel{position:static}}
+    @media(max-width:680px){.wrap,.not-found{width:calc(100% - 38px)}.detail-hero .wrap{padding:23px 0 36px}.crumb{margin-bottom:32px}.detail-content{grid-template-columns:1fr;padding-top:28px;gap:20px}.detail-art{height:245px}.aside{position:static;grid-row:auto}.contact-panel{position:static;padding:17px}.facts{gap:0 16px}.facts strong{font-size:11px}}
   `]
 })
 export class PropertyDetailComponent implements OnInit {

@@ -125,3 +125,15 @@ td { padding:14px 13px; border-top:1px solid #edf0ed; color:#5e6a63; font-size:1
 .existing-photo-actions{display:flex;flex-wrap:wrap;gap:5px}
 .existing-photo-actions .remove-photo{color:#a84942;border-color:#efd9d6}
 .existing-photo-actions .remove-photo:hover{background:#fff3f1}
+/* Mobile and accessibility refinements for the property inventory */
+@media(max-width:540px){
+ .properties-page{gap:16px}
+ .listing-heading{align-items:flex-start;gap:8px}
+ .record-count{white-space:nowrap}
+ .search-box{min-width:0;width:100%}
+ .search-box input{font-size:12px}
+ .existing-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+ .property-card,.property-card .actual-property-photo{transition:none!important}
+}
