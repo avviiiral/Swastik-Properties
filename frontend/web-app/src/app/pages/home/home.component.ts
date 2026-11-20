@@ -115,7 +115,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId) || !('IntersectionObserver' in window)) return;
 
-    const root = this.host.nativeElement.querySelector('.home-page');
+    const root = this.host.nativeElement.querySelector('.home-page') as HTMLElement | null;
     if (!root) return;
 
     // Only enable hidden/reveal states after the browser has mounted the page.
