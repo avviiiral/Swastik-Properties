@@ -221,3 +221,31 @@ a{color:inherit}img{max-width:100%}
     opacity:1!important;transform:none!important;transition:none!important;will-change:auto!important
   }
 }
+
+
+/* Public site motion and interaction system. */
+.site-scroll-progress{position:fixed;inset:0 auto auto 0;z-index:1000;width:100%;height:2px;pointer-events:none;background:transparent}
+.site-scroll-progress span{display:block;width:100%;height:100%;transform:scaleX(var(--scroll-progress,0));transform-origin:left center;background:linear-gradient(90deg,#c49b62,#e0c18d);box-shadow:0 0 10px rgba(196,155,98,.32)}
+.site-shell main{isolation:isolate}
+.site-shell main.route-changing{animation:sp-route-enter .42s cubic-bezier(.2,.7,.2,1) both}
+@keyframes sp-route-enter{from{opacity:0;transform:translate3d(0,9px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.site-shell .site-header .header-inner{transition:height .28s cubic-bezier(.2,.7,.2,1)}
+.site-shell .site-header.scrolled .header-inner{height:66px}
+.site-shell .site-header .header-cta{transition:transform .22s,background .22s,box-shadow .22s}
+.site-shell .site-header .header-cta:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(8,25,18,.2)}
+.site-shell .site-footer a{transition:color .2s ease,transform .2s ease}
+.site-shell .site-footer a:hover{transform:translateX(3px)}
+.site-shell main figure,.site-shell main .property-visual,.site-shell main .cover,.site-shell main .featured-card,.site-shell main .property-card{overflow:hidden}
+.site-shell main figure img,.site-shell main .property-visual img,.site-shell main .cover img,.site-shell main .featured-card img,.site-shell main .property-card img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.site-shell main figure:hover img,.site-shell main .property-visual:hover img,.site-shell main .cover:hover img,.site-shell main .featured-card:hover img,.site-shell main .property-card:hover img{transform:scale(1.035)}
+.site-shell main .property-card,.site-shell main .type-card{transition:transform .22s cubic-bezier(.2,.7,.2,1),box-shadow .22s,border-color .22s}
+.site-shell main .property-card:hover,.site-shell main .type-card:hover{transform:translateY(-3px)}
+.site-shell main .hero,.site-shell main .contact-hero,.site-shell main .closing{position:relative;isolation:isolate;overflow:hidden}
+.site-shell main .hero:after,.site-shell main .contact-hero:after,.site-shell main .closing:after{position:absolute;z-index:-1;inset:0;pointer-events:none;content:'';opacity:.13;background-image:radial-gradient(rgba(236,222,195,.42) .55px,transparent .7px);background-size:5px 5px;mask-image:linear-gradient(120deg,black,transparent 75%)}
+.site-shell main .hero:before,.site-shell main .contact-hero:before,.site-shell main .closing:before{position:absolute;z-index:-1;top:-40%;right:-15%;width:58vw;height:58vw;max-width:760px;max-height:760px;content:'';pointer-events:none;border-radius:50%;background:radial-gradient(circle,rgba(196,155,98,.12),transparent 68%)}
+.properties-page .loading-state,.properties-page .empty-state{display:grid;justify-items:center;padding:52px 20px;color:#89948d;font-size:12px}
+.properties-page .empty-icon{display:grid;place-items:center;width:45px;height:45px;border-radius:14px;color:#9a763e;background:#fbf2e3;font-size:24px}
+.properties-page .empty-state h3{margin:14px 0 5px;color:#34443d;font-family:'Manrope',sans-serif;font-size:15px}
+.properties-page .empty-state p{max-width:340px;margin:0 0 17px;color:#8a958e;font-size:11px;line-height:1.7;text-align:center}
+@media(hover:none){.site-shell main .property-card:hover,.site-shell main .type-card:hover{transform:none}.site-shell main figure:hover img,.site-shell main .property-visual:hover img,.site-shell main .cover:hover img{transform:none}}
+@media(prefers-reduced-motion:reduce){.site-shell main.route-changing{animation:none}.site-shell .site-header .header-inner,.site-shell .site-footer a,.site-shell main img,.site-shell main button{transition:none!important}.site-scroll-progress{display:none}}
