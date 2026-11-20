@@ -68,9 +68,25 @@ export class PublicLayoutComponent implements AfterViewInit, OnDestroy {
     }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
 
     const observePageContent = () => {
-      main.querySelectorAll<HTMLElement>(
-        'section:not(.home-page section), article:not(.home-page article), figure:not(.home-page figure), [data-scroll-reveal]'
-      ).forEach((element) => {
+      const targets = main.querySelectorAll<HTMLElement>([
+        ':scope > router-outlet + * section',
+        ':scope > router-outlet + * article',
+        ':scope > router-outlet + * figure',
+        ':scope > router-outlet + * [data-scroll-reveal]',
+        ':scope > router-outlet + * .property-card',
+        ':scope > router-outlet + * .card',
+        ':scope > router-outlet + * .featured',
+        ':scope > router-outlet + * .offer-grid > a',
+        ':scope > router-outlet + * .value-grid > article',
+        ':scope > router-outlet + * .type-card',
+        ':scope > router-outlet + * .detail-section',
+        ':scope > router-outlet + * .contact-content > *',
+        ':scope > router-outlet + * .toolbar',
+        ':scope > router-outlet + * .pagination'
+      ].join(','));
+
+      targets.forEach((element) => {
+        element.classList.add('sp-motion-target');
         if (!element.classList.contains('sp-in-view')) this.revealObserver?.observe(element);
       });
     };
