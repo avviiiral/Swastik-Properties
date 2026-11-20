@@ -60,10 +60,9 @@ export class PublicLayoutComponent implements AfterViewInit, OnDestroy {
     main.classList.add('sp-motion-ready');
     this.revealObserver = new IntersectionObserver((entries) => {
       for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('sp-in-view');
-          this.revealObserver?.unobserve(entry.target);
-        }
+        // Reverse the reveal state when the element leaves the viewport.
+        // Keeping it observed makes the entrance animation replay on every return.
+        entry.target.classList.toggle('sp-in-view', entry.isIntersecting);
       }
     }, { threshold: 0.01, rootMargin: '0px 0px -8% 0px' });
 
