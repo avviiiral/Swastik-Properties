@@ -189,33 +189,35 @@ a{color:inherit}img{max-width:100%}
 }
 
 
-/* Shared public-page scroll motion. Targets stay visible until their reveal is triggered. */
+/* Shared scroll reveal for every public route (homepage uses its dedicated observer). */
 .site-shell main.sp-motion-ready .sp-motion-target{
-  opacity:1;
-  transform:none;
-  will-change:auto;
+  opacity:0;
+  transform:translate3d(0,28px,0);
+  transition:opacity .72s cubic-bezier(.2,.7,.2,1),transform .72s cubic-bezier(.2,.7,.2,1);
+  will-change:opacity,transform;
 }
 .site-shell main.sp-motion-ready .sp-motion-target.sp-in-view{
-  animation:swastik-public-enter .68s cubic-bezier(.2,.7,.2,1) both;
+  opacity:1;
+  transform:translate3d(0,0,0);
 }
-.site-shell main.sp-motion-ready .property-card.sp-in-view,
-.site-shell main.sp-motion-ready .card.sp-in-view,
-.site-shell main.sp-motion-ready .offer-grid > a.sp-in-view,
-.site-shell main.sp-motion-ready .value-grid > article.sp-in-view,
-.site-shell main.sp-motion-ready .type-card.sp-in-view{
-  animation-name:swastik-public-card-enter;
+.site-shell main.sp-motion-ready .property-card.sp-motion-target,
+.site-shell main.sp-motion-ready .card.sp-motion-target,
+.site-shell main.sp-motion-ready .offer-grid > a.sp-motion-target,
+.site-shell main.sp-motion-ready .value-grid > article.sp-motion-target,
+.site-shell main.sp-motion-ready .type-card.sp-motion-target{
+  transition-duration:.62s;
 }
-@keyframes swastik-public-enter{
-  from{opacity:.65;transform:translate3d(0,20px,0)}
-  to{opacity:1;transform:translate3d(0,0,0)}
-}
-@keyframes swastik-public-card-enter{
-  from{opacity:.65;transform:translate3d(0,16px,0) scale(.99)}
-  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
-}
+.site-shell main.sp-motion-ready .property-card:nth-child(3n+2),
+.site-shell main.sp-motion-ready .card:nth-child(3n+2),
+.site-shell main.sp-motion-ready .offer-grid > a:nth-child(2),
+.site-shell main.sp-motion-ready .value-grid > article:nth-child(2){transition-delay:90ms}
+.site-shell main.sp-motion-ready .property-card:nth-child(3n+3),
+.site-shell main.sp-motion-ready .card:nth-child(3n+3),
+.site-shell main.sp-motion-ready .offer-grid > a:nth-child(3),
+.site-shell main.sp-motion-ready .value-grid > article:nth-child(3){transition-delay:170ms}
 @media(prefers-reduced-motion:reduce){
   .site-shell main.sp-motion-ready .sp-motion-target,
   .site-shell main.sp-motion-ready .sp-motion-target.sp-in-view{
-    opacity:1!important;transform:none!important;animation:none!important;will-change:auto!important
+    opacity:1!important;transform:none!important;transition:none!important;will-change:auto!important
   }
 }
