@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, PLATFORM_ID, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Property, PropertyImage } from '../../core/models/property.models';
@@ -12,7 +13,7 @@ import { SiteSeo } from '../../core/services/site-seo.service';
     <div class="home-page">
     <section class="hero">
       <div class="hero-inner">
-        <div class="hero-copy">
+        <div class="hero-copy hero-enter">
           <div class="eyebrow"><span></span> PROPERTY, WITH PERSPECTIVE</div>
           <h1>Find a place<br>for what comes <em>next.</em></h1>
           <p class="hero-description">A considered collection of residential, commercial and land opportunities across Maharashtra.</p>
@@ -33,17 +34,17 @@ import { SiteSeo } from '../../core/services/site-seo.service';
       <div class="hero-bottom"><span>SWASTIK PROPERTIES</span><span>01 — DISCOVER</span></div>
     </section>
 
-    <section class="intro section-wrap">
+    <section class="intro section-wrap" data-reveal="fade-up">
       <div class="section-index">01 / A BETTER STARTING POINT</div>
       <div class="intro-grid"><h2>Property choices<br>should feel <em>clear.</em></h2><div><p>Whether you are looking for a home, planning a business or considering land, begin with a clear view of the opportunities in front of you.</p><a class="underlined" routerLink="/properties">Browse the collection <span>↗</span></a></div></div>
     </section>
 
     <section class="categories">
       <div class="section-wrap">
-        <div class="section-heading"><div><div class="section-index">02 / EXPLORE BY CATEGORY</div><h2>Start with what<br>you have in mind.</h2></div><p>Three ways to look at property.<br>One place to begin.</p></div>
+        <div class="section-heading" data-reveal="fade-up"><div><div class="section-index">02 / EXPLORE BY CATEGORY</div><h2>Start with what<br>you have in mind.</h2></div><p>Three ways to look at property.<br>One place to begin.</p></div>
         <div class="category-grid">
           @for (item of categories; track item.key) {
-            <a class="category-card" [routerLink]="['/properties']" [queryParams]="{category:item.key}">
+            <a class="category-card" data-reveal="fade-up" [routerLink]="['/properties']" [queryParams]="{category:item.key}">
               <div class="category-top"><span>{{item.number}}</span><span class="symbol">{{item.symbol}}</span></div>
               <div><h3>{{item.title}}</h3><p>{{item.description}}</p><div class="category-bottom">Explore category <b>↗</b></div></div>
             </a>
@@ -53,14 +54,14 @@ import { SiteSeo } from '../../core/services/site-seo.service';
     </section>
 
     <section class="featured section-wrap">
-      <div class="section-heading featured-heading"><div><div class="section-index">03 / SELECTED OPPORTUNITIES</div><h2>Worth a closer look.</h2></div><a class="underlined" routerLink="/properties">View all properties <span>↗</span></a></div>
+      <div class="section-heading featured-heading" data-reveal="fade-up"><div><div class="section-index">03 / SELECTED OPPORTUNITIES</div><h2>Worth a closer look.</h2></div><a class="underlined" routerLink="/properties">View all properties <span>↗</span></a></div>
       @if (loading()) { <div class="loading-box">Finding available properties…</div> }
       @else if (error()) { <div class="loading-box">Property listings could not be loaded at the moment. Please try again shortly.</div> }
       @else if (!featured().length) { <div class="loading-box">New opportunities are being prepared. Check back soon.</div> }
       @else {
         <div class="featured-grid">
           @for (property of featured(); track property.id; let i = $index) {
-            <a class="featured-card" [routerLink]="['/properties',property.slug]">
+            <a class="featured-card" data-reveal="fade-up" [routerLink]="['/properties',property.slug]">
               <div class="property-visual" [class.warm]="i%3===1" [class.sage]="i%3===2">
                 @if (primaryImage(property); as photo) {
                   <img class="actual-property-photo" [src]="photo.image_url" [alt]="photo.alt_text || property.name">
@@ -78,23 +79,27 @@ import { SiteSeo } from '../../core/services/site-seo.service';
     <section class="trust-section">
       <div class="section-wrap">
         <div class="section-index">04 / THE SWASTIK APPROACH</div>
-        <div class="trust-heading"><h2>Good decisions begin<br>with <em>clear information.</em></h2><p>Property decisions deserve time, context and straightforward conversations. We help you explore the available information and take the next step with confidence.</p></div>
+        <div class="trust-heading" data-reveal="fade-up"><h2>Good decisions begin<br>with <em>clear information.</em></h2><p>Property decisions deserve time, context and straightforward conversations. We help you explore the available information and take the next step with confidence.</p></div>
         <div class="trust-grid">
-          <article><span>01</span><h3>Clarity first</h3><p>Understand the available details before moving forward.</p></article>
-          <article><span>02</span><h3>Local perspective</h3><p>Explore residential, commercial and land opportunities across Maharashtra.</p></article>
-          <article><span>03</span><h3>Human guidance</h3><p>Speak with our team about a listing or a requirement of your own.</p></article>
+          <article data-reveal="fade-up"><span>01</span><h3>Clarity first</h3><p>Understand the available details before moving forward.</p></article>
+          <article data-reveal="fade-up"><span>02</span><h3>Local perspective</h3><p>Explore residential, commercial and land opportunities across Maharashtra.</p></article>
+          <article data-reveal="fade-up"><span>03</span><h3>Human guidance</h3><p>Speak with our team about a listing or a requirement of your own.</p></article>
         </div>
       </div>
     </section>
-    <section class="closing"><div class="section-wrap"><div class="section-index">05 / TAKE THE NEXT STEP</div><div class="closing-row"><h2>The right place<br>starts with a <em>look.</em></h2><a class="button-light" routerLink="/properties">Browse all properties <span>↗</span></a></div></div></section>
+    <section class="closing" data-reveal="fade-up"><div class="section-wrap"><div class="section-index">05 / TAKE THE NEXT STEP</div><div class="closing-row"><h2>The right place<br>starts with a <em>look.</em></h2><a class="button-light" routerLink="/properties">Browse all properties <span>↗</span></a></div></div></section>
     </div>
   `,
   styles: []
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly api = inject(PropertyApi);
   private readonly router = inject(Router);
   private readonly seo = inject(SiteSeo);
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly platformId = inject(PLATFORM_ID);
+  private revealObserver?: IntersectionObserver;
+  private revealMutationObserver?: MutationObserver;
   readonly featured = signal<Property[]>([]);
   readonly loading = signal(true);
   readonly error = signal(false);
@@ -106,6 +111,40 @@ export class HomeComponent implements OnInit {
     {key:'COMMERCIAL',number:'02',title:'Commercial',description:'Workspaces and places built for business.',symbol:'▥'},
     {key:'LAND',number:'03',title:'Land & plots',description:'Room to plan, build and grow.',symbol:'⌁'}
   ];
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId) || !('IntersectionObserver' in window)) return;
+
+    const root = this.host.nativeElement.querySelector('.home-page');
+    if (!root) return;
+
+    // Only enable hidden/reveal states after the browser has mounted the page.
+    root.classList.add('reveal-ready');
+    this.revealObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          (entry.target as HTMLElement).classList.add('is-visible');
+          this.revealObserver?.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.12, rootMargin: '0px 0px -48px 0px' });
+
+    const observeRevealTargets = () => {
+      root.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)').forEach((element) => {
+        this.revealObserver?.observe(element);
+      });
+    };
+
+    observeRevealTargets();
+    // Featured properties arrive asynchronously; observe their cards when Angular renders them.
+    this.revealMutationObserver = new MutationObserver(observeRevealTargets);
+    this.revealMutationObserver.observe(root, { childList: true, subtree: true });
+  }
+
+  ngOnDestroy(): void {
+    this.revealObserver?.disconnect();
+    this.revealMutationObserver?.disconnect();
+  }
 
   ngOnInit(): void {
     this.seo.set('Swastik Properties | Find your place in Maharashtra','Explore residential, commercial and land property listings across Maharashtra.');
