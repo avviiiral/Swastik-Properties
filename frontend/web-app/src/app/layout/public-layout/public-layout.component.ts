@@ -9,7 +9,8 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
   selector:'sp-public-layout',standalone:true,imports:[RouterLink,RouterLinkActive,RouterOutlet],
   changeDetection:ChangeDetectionStrategy.OnPush,
   template:`
-    <div class="site-shell">\n      <div class="site-scroll-progress" aria-hidden="true"><span></span></div>
+    <div class="site-shell">
+      <div class="site-scroll-progress" aria-hidden="true"><span></span></div>
       <header class="site-header" [class.scrolled]="scrolled()">
         <div class="header-inner">
           <a class="brand" routerLink="/" aria-label="Swastik Properties home"><img class="brand-symbol-image" src="/assets/brand/swastik-symbol.png" alt=""><span class="brand-copy"><strong>SWASTIK</strong><small>PROPERTIES</small></span></a>
@@ -48,7 +49,19 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
 export class PublicLayoutComponent implements AfterViewInit, OnDestroy {
   readonly year=new Date().getFullYear();readonly contact=SWASTIK_CONTACT;
   readonly menuOpen=signal(false);readonly scrolled=signal(false);
-  private readonly platformId=inject(PLATFORM_ID);\n  private readonly router=inject(Router);\n  private scrollFrame=0;\n  private readonly updateScrollProgress=()=>{\n    if(!isPlatformBrowser(this.platformId))return;\n    if(this.scrollFrame)cancelAnimationFrame(this.scrollFrame);\n    this.scrollFrame=requestAnimationFrame(()=>{\n      const root=document.documentElement;\n      const range=root.scrollHeight-window.innerHeight;\n      const progress=range>0?Math.min(1,Math.max(0,window.scrollY/range)):0;\n      root.style.setProperty('--scroll-progress',String(progress));\n    });\n  };
+  private readonly platformId=inject(PLATFORM_ID);
+  private readonly router=inject(Router);
+  private scrollFrame=0;
+  private readonly updateScrollProgress=()=>{
+    if(!isPlatformBrowser(this.platformId))return;
+    if(this.scrollFrame)cancelAnimationFrame(this.scrollFrame);
+    this.scrollFrame=requestAnimationFrame(()=>{
+      const root=document.documentElement;
+      const range=root.scrollHeight-window.innerHeight;
+      const progress=range>0?Math.min(1,Math.max(0,window.scrollY/range)):0;
+      root.style.setProperty('--scroll-progress',String(progress));
+    });
+  };
   private revealObserver?: IntersectionObserver;
   private revealMutationObserver?: MutationObserver;
   constructor(){if(isPlatformBrowser(this.platformId)){const update=()=>this.scrolled.set(window.scrollY>12);update();this.updateScrollProgress();window.addEventListener('scroll',update,{passive:true});window.addEventListener('scroll',this.updateScrollProgress,{passive:true});window.addEventListener('resize',this.updateScrollProgress,{passive:true});this.router.events.pipe(filter((event):event is NavigationEnd=>event instanceof NavigationEnd)).subscribe(()=>{this.menuOpen.set(false);requestAnimationFrame(()=>{const main=document.querySelector<HTMLElement>('.site-shell main');main?.classList.remove('route-changing');void main?.offsetWidth;main?.classList.add('route-changing');window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});this.updateScrollProgress();});});}}
