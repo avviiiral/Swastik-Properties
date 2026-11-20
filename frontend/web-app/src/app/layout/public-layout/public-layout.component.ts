@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -44,9 +44,44 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
     @media(max-width:800px){.header-inner{width:calc(100% - 34px);height:68px;gap:12px}.desktop-nav{display:none}.header-cta{margin-left:auto;min-height:39px;padding:0 11px;font-size:11px}.menu-toggle{display:flex;flex-direction:column;justify-content:center;gap:5px;width:40px;height:40px;border:1px solid #dfe5dd;background:transparent;border-radius:5px}.menu-toggle span{display:block;width:17px;height:1px;margin:auto;background:#1b3a33}.mobile-nav{display:grid;gap:0;padding:6px 20px 18px;background:#fafaf7;border-top:1px solid #e7ebe5}.mobile-nav a{padding:12px 0;border-bottom:1px solid #e7ebe5;text-decoration:none;font-size:14px;color:#29463d}.footer-main{width:calc(100% - 38px);padding:42px 0 34px;grid-template-columns:1fr 1fr;gap:32px 24px}.footer-brand,.footer-contact{grid-column:1/-1}.footer-bottom{width:calc(100% - 38px);gap:10px;flex-wrap:wrap;padding:15px 0}}
   `]
 })
-export class PublicLayoutComponent {
+export class PublicLayoutComponent implements AfterViewInit, OnDestroy {
   readonly year=new Date().getFullYear();readonly contact=SWASTIK_CONTACT;
   readonly menuOpen=signal(false);readonly scrolled=signal(false);
   private readonly platformId=inject(PLATFORM_ID);
+  private revealObserver?: IntersectionObserver;
+  private revealMutationObserver?: MutationObserver;
   constructor(){if(isPlatformBrowser(this.platformId)){const update=()=>this.scrolled.set(window.scrollY>12);update();window.addEventListener('scroll',update,{passive:true});}}
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId) || !('IntersectionObserver' in window)) return;
+    const main = document.querySelector<HTMLElement>('.site-shell main');
+    if (!main) return;
+
+    main.classList.add('sp-motion-ready');
+    this.revealObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('sp-in-view');
+          this.revealObserver?.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
+
+    const observePageContent = () => {
+      main.querySelectorAll<HTMLElement>(
+        'section:not(.home-page section), article:not(.home-page article), figure:not(.home-page figure), [data-scroll-reveal]'
+      ).forEach((element) => {
+        if (!element.classList.contains('sp-in-view')) this.revealObserver?.observe(element);
+      });
+    };
+
+    observePageContent();
+    this.revealMutationObserver = new MutationObserver(observePageContent);
+    this.revealMutationObserver.observe(main, { childList: true, subtree: true });
+  }
+
+  ngOnDestroy(): void {
+    this.revealObserver?.disconnect();
+    this.revealMutationObserver?.disconnect();
+  }
 }
