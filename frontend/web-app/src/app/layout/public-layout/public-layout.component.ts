@@ -69,23 +69,15 @@ export class PublicLayoutComponent implements AfterViewInit, OnDestroy {
 
     const observePageContent = () => {
       const targets = main.querySelectorAll<HTMLElement>([
-        ':scope > router-outlet + * section',
-        ':scope > router-outlet + * article',
-        ':scope > router-outlet + * figure',
-        ':scope > router-outlet + * [data-scroll-reveal]',
-        ':scope > router-outlet + * .property-card',
-        ':scope > router-outlet + * .card',
-        ':scope > router-outlet + * .featured',
-        ':scope > router-outlet + * .offer-grid > a',
-        ':scope > router-outlet + * .value-grid > article',
-        ':scope > router-outlet + * .type-card',
-        ':scope > router-outlet + * .detail-section',
-        ':scope > router-outlet + * .contact-content > *',
-        ':scope > router-outlet + * .toolbar',
-        ':scope > router-outlet + * .pagination'
+        'section', 'article', 'figure', '[data-scroll-reveal]',
+        '.property-card', '.card', '.featured', '.offer-grid > a',
+        '.value-grid > article', '.type-card', '.detail-section',
+        '.contact-content > *', '.toolbar', '.pagination'
       ].join(','));
 
       targets.forEach((element) => {
+        // The homepage has its own reveal observer and timing.
+        if (element.closest('.home-page')) return;
         element.classList.add('sp-motion-target');
         if (!element.classList.contains('sp-in-view')) this.revealObserver?.observe(element);
       });
