@@ -120,7 +120,7 @@ export class PropertyDetailComponent implements OnInit {
   enquiryConsent = false;
   readonly property = signal<Property | null>(null);
   readonly loading = signal(true);
-  private readonly publicState = inject(PublicPropertyState);
+  readonly publicState = inject(PublicPropertyState);
   readonly related = signal<Property[]>([]);
   readonly lightboxIndex = signal<number | null>(null);
   readonly visitSending = signal(false);
