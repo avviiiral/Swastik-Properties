@@ -187,3 +187,32 @@ a{color:inherit}img{max-width:100%}
   .home-page .hero-enter,.home-page .hero-art{animation:none!important}
   .home-page .hero-photo,.home-page .featured-card .actual-property-photo{transition:none!important}
 }
+
+
+/* Shared reveal treatment for About, Properties, Blog and Contact pages. */
+.site-shell main.sp-motion-ready .sp-scroll-reveal,
+.site-shell main.sp-motion-ready section:not(.home-page section),
+.site-shell main.sp-motion-ready article:not(.home-page article),
+.site-shell main.sp-motion-ready figure:not(.home-page figure),
+.site-shell main.sp-motion-ready [data-scroll-reveal]{
+  opacity:0;
+  transform:translate3d(0,22px,0);
+  transition:opacity .68s cubic-bezier(.2,.7,.2,1),transform .68s cubic-bezier(.2,.7,.2,1);
+}
+.site-shell main.sp-motion-ready .sp-in-view{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+.site-shell main.sp-motion-ready section:nth-of-type(2),
+.site-shell main.sp-motion-ready article:nth-of-type(2){transition-delay:80ms}
+.site-shell main.sp-motion-ready section:nth-of-type(3),
+.site-shell main.sp-motion-ready article:nth-of-type(3){transition-delay:150ms}
+@media(prefers-reduced-motion:reduce){
+  .site-shell main.sp-motion-ready .sp-scroll-reveal,
+  .site-shell main.sp-motion-ready section:not(.home-page section),
+  .site-shell main.sp-motion-ready article:not(.home-page article),
+  .site-shell main.sp-motion-ready figure:not(.home-page figure),
+  .site-shell main.sp-motion-ready [data-scroll-reveal]{
+    opacity:1!important;transform:none!important;transition:none!important
+  }
+}
