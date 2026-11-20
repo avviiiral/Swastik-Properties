@@ -189,30 +189,22 @@ a{color:inherit}img{max-width:100%}
 }
 
 
-/* Shared reveal treatment for About, Properties, Blog and Contact pages. */
+/* Shared public-page motion: content remains visible even if an observer is unavailable. */
 .site-shell main.sp-motion-ready .sp-scroll-reveal,
 .site-shell main.sp-motion-ready section:not(.home-page section),
 .site-shell main.sp-motion-ready article:not(.home-page article),
 .site-shell main.sp-motion-ready figure:not(.home-page figure),
 .site-shell main.sp-motion-ready [data-scroll-reveal]{
-  opacity:0;
-  transform:translate3d(0,22px,0);
-  transition:opacity .68s cubic-bezier(.2,.7,.2,1),transform .68s cubic-bezier(.2,.7,.2,1);
+  opacity:1;
+  transform:none;
 }
 .site-shell main.sp-motion-ready .sp-in-view{
-  opacity:1;
-  transform:translate3d(0,0,0);
+  animation:swastik-public-enter .58s cubic-bezier(.2,.7,.2,1) both;
 }
-.site-shell main.sp-motion-ready section:nth-of-type(2),
-.site-shell main.sp-motion-ready article:nth-of-type(2){transition-delay:80ms}
-.site-shell main.sp-motion-ready section:nth-of-type(3),
-.site-shell main.sp-motion-ready article:nth-of-type(3){transition-delay:150ms}
+@keyframes swastik-public-enter{
+  from{opacity:.72;transform:translate3d(0,14px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
 @media(prefers-reduced-motion:reduce){
-  .site-shell main.sp-motion-ready .sp-scroll-reveal,
-  .site-shell main.sp-motion-ready section:not(.home-page section),
-  .site-shell main.sp-motion-ready article:not(.home-page article),
-  .site-shell main.sp-motion-ready figure:not(.home-page figure),
-  .site-shell main.sp-motion-ready [data-scroll-reveal]{
-    opacity:1!important;transform:none!important;transition:none!important
-  }
+  .site-shell main.sp-motion-ready .sp-in-view{animation:none!important}
 }
