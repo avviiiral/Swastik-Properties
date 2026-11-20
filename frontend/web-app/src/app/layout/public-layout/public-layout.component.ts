@@ -90,6 +90,11 @@ export class PublicLayoutComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.revealObserver?.disconnect();
-    this.revealMutationObserver?.disconnect();\n    if(isPlatformBrowser(this.platformId)){window.removeEventListener('scroll',this.updateScrollProgress);window.removeEventListener('resize',this.updateScrollProgress);if(this.scrollFrame)cancelAnimationFrame(this.scrollFrame);}
+    this.revealMutationObserver?.disconnect();
+    if (isPlatformBrowser(this.platformId)) {
+      window.removeEventListener('scroll', this.updateScrollProgress);
+      window.removeEventListener('resize', this.updateScrollProgress);
+      if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame);
+    }
   }
 }
