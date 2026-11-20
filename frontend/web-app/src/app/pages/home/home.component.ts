@@ -122,12 +122,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     root.classList.add('reveal-ready');
     this.revealObserver = new IntersectionObserver((entries) => {
       for (const entry of entries) {
-        if (entry.isIntersecting) {
-          (entry.target as HTMLElement).classList.add('is-visible');
-          this.revealObserver?.unobserve(entry.target);
-        }
+        // Toggle the reveal state in both directions so the animation replays
+        // every time the element re-enters the viewport.
+        (entry.target as HTMLElement).classList.toggle('is-visible', entry.isIntersecting);
       }
-    }, { threshold: 0.12, rootMargin: '0px 0px -48px 0px' });
+    }, { threshold: 0.01, rootMargin: '0px 0px -5% 0px' });
 
     const observeRevealTargets = () => {
       root.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)').forEach((element) => {
