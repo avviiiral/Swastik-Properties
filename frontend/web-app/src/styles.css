@@ -6,12 +6,12 @@
   --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;--space-16:64px;--space-20:80px;
   --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-xl:24px;--radius-pill:999px;
   --shadow-sm:0 2px 8px rgba(20,43,38,.06);--shadow-md:0 10px 28px rgba(20,43,38,.09);--shadow-lg:0 22px 60px rgba(20,43,38,.14);
-  --font-display:'Cormorant Garamond',Georgia,serif;--font-body:'DM Sans',sans-serif;
+  --font-display:'Dancing Script',cursive;--font-body:'DM Sans',sans-serif;
   --text-xs:11px;--text-sm:13px;--text-base:15px;--text-lg:18px;--text-xl:22px;--text-2xl:30px;--text-3xl:40px;--text-4xl:clamp(42px,6vw,76px);
   --ease-standard:cubic-bezier(.2,.7,.2,1);--duration-fast:150ms;--duration-normal:240ms;
 }
 *{box-sizing:border-box}html{min-width:320px;scroll-behavior:smooth}body{min-width:320px;min-height:100vh;margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body)}button,input,select,textarea{font:inherit}button,a{-webkit-tap-highlight-color:transparent}:focus-visible{outline:3px solid rgba(196,155,98,.72);outline-offset:3px}::selection{color:#fff;background:var(--green-700)}
-h1,h2,h3,.display-heading{font-family:var(--font-display);font-weight:500;letter-spacing:-.025em;color:var(--green-950)}
+h1,h2,h3,h4,h5,h6,.display-heading{font-family:var(--font-display)!important;font-weight:500;letter-spacing:-.025em;color:var(--green-950)}
 a{color:inherit}img{max-width:100%}
 .form-control{width:100%;min-height:44px;padding:11px 13px;border:1px solid #dce3de;border-radius:var(--radius-md);background:#fff;color:#1f2c2a;font-size:13px}.form-control:focus{outline:none;border-color:#839f8d;box-shadow:0 0 0 3px rgba(65,112,87,.12)}textarea.form-control{resize:vertical;min-height:88px}.field-error{color:var(--danger);font-size:12px;margin-top:5px}
 .alert{border:1px solid transparent;border-radius:var(--radius-md);padding:11px 13px;font-size:13px;line-height:1.5}.alert.error{color:#8b302b;background:#fff0ef;border-color:#f5d5d2}.alert.success{color:#1f6744;background:#edf8f1;border-color:#d2ebda}
