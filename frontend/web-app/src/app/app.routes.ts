@@ -6,7 +6,7 @@ import { AdminLayoutComponent } from './admin/layout/admin-layout.component';
 import { PublicLayoutComponent } from './layout/public-layout/public-layout.component';
 import { HomeComponent } from './pages/home/home.component';
 import { PropertyDetailComponent } from './pages/property-detail/property-detail.component';
-import { PropertyListComponent } from './pages/properties/property-list.component';
+import { PropertyMarketplaceComponent } from './pages/properties/property-marketplace.component';
 import { AboutComponent } from './pages/about/about.component';
 import { BlogListComponent } from './pages/blog/blog-list.component';
 import { BlogDetailComponent } from './pages/blog/blog-detail.component';
@@ -17,7 +17,7 @@ import { ThankYouComponent } from './pages/thank-you/thank-you.component';
 export const appRoutes: Routes = [
   { path: '', component: PublicLayoutComponent, children: [
     { path: '', pathMatch: 'full', component: HomeComponent, title: 'Swastik Properties | Find your place in Maharashtra' },
-    { path: 'properties', component: PropertyListComponent, title: 'Explore Properties | Swastik Properties' },
+    { path: 'properties', component: PropertyMarketplaceComponent, title: 'Buy, Rent & Lease Properties | Swastik Properties' },
     { path: 'properties/:slug', component: PropertyDetailComponent },
     { path: 'about', component: AboutComponent, title: 'About | Swastik Properties' },
     { path: 'blog', component: BlogListComponent, title: 'Journal | Swastik Properties' },
