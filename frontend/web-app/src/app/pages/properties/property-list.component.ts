@@ -136,7 +136,7 @@ export class PropertyListComponent implements OnInit {
       error: () => {this.error.set(true);this.loading.set(false);}
     });
   }
-  reset(): void {this.search='';this.category='';this.listingType='';this.minArea='';this.maxArea='';this.ordering='-created_at';this.advisorQuery='';this.showFavorites.set(false);this.load(1);}
+  reset(): void {this.search='';this.category='';this.listingType='';this.minArea='';this.maxArea='';this.ordering='-created_at';this.advisorQuery='';this.showFavorites.set(false);this.filtersOpen.set(false);this.load(1);}
   toggleFavorite(id:number):void{this.publicState.toggleFavorite(id);if(this.showFavorites())this.load(1);}
   toggleCompare(property:Property):void{const current=this.compareIds();if(current.includes(property.id)){this.compareIds.set(current.filter(value=>value!==property.id));this.compareItems.set(this.compareItems().filter(value=>value.id!==property.id));return;}if(current.length<3){this.compareIds.set([...current,property.id]);this.compareItems.set([...this.compareItems(),property]);}}
   isCompared(id:number):boolean{return this.compareIds().includes(id);}
