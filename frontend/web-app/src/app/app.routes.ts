@@ -11,6 +11,8 @@ import { AboutComponent } from './pages/about/about.component';
 import { BlogListComponent } from './pages/blog/blog-list.component';
 import { BlogDetailComponent } from './pages/blog/blog-detail.component';
 import { ContactComponent } from './pages/contact/contact.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { ThankYouComponent } from './pages/thank-you/thank-you.component';
 
 export const appRoutes: Routes = [
   { path: '', component: PublicLayoutComponent, children: [
@@ -21,6 +23,7 @@ export const appRoutes: Routes = [
     { path: 'blog', component: BlogListComponent, title: 'Journal | Swastik Properties' },
     { path: 'blog/:slug', component: BlogDetailComponent },
     { path: 'contact', component: ContactComponent, title: 'Contact | Swastik Properties' },
+    { path: 'thank-you', component: ThankYouComponent, title: 'Thank You | Swastik Properties' },
   ]},
   { path: 'admin/login', component: LoginComponent, title: 'Workspace Sign In | Swastik Properties' },
   { path: 'agent/login', component: LoginComponent, title: 'Agent Sign In | Swastik Properties' },
@@ -37,5 +40,7 @@ export const appRoutes: Routes = [
     { path: 'blog/:id', loadComponent: () => import('./admin/features/blog/blog-editor.component').then(m => m.BlogEditorComponent), data: { roles: ['EDITOR', 'SUPER_ADMIN'] } },
     { path: 'users', loadComponent: () => import('./admin/features/users/users.component').then(m => m.UsersComponent), data: { roles: ['ADMIN', 'SUPER_ADMIN'] }, title: 'User Management | Swastik Properties' },
   ]},
-  { path: '**', redirectTo: '' },
+  { path: '**', component: PublicLayoutComponent, children: [
+    { path: '', component: NotFoundComponent, title: 'Page Not Found | Swastik Properties' },
+  ] },
 ];
