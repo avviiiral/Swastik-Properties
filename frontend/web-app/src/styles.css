@@ -678,3 +678,109 @@ html{scroll-padding-top:96px}
 @media(prefers-reduced-motion:reduce){
  .home-page .area-guide-card>img,.home-page .featured-card,.list-page .property-card,.detail-content .gallery-image img{transition:none!important}
 }
+
+/* Quiet Luxury palette — Alabaster, Obsidian & Champagne */
+:root{
+  color-scheme:light;
+  --green-950:#141413;--green-900:#141413;--green-800:#292824;--green-700:#575550;--green-600:#756f65;--green-100:#EFECE6;--green-50:#F9F8F6;
+  --gold-700:#967746;--gold-600:#B59461;--gold-500:#B59461;--gold-100:#EFECE6;--cream:#F9F8F6;--surface:#fff;
+  --ink:#141413;--muted:#575550;--line:#dedad2;--danger:#a83f37;--success:#26734d;
+  --shadow-sm:0 2px 8px rgba(20,20,19,.045);--shadow-md:0 10px 28px rgba(20,20,19,.075);--shadow-lg:0 22px 60px rgba(20,20,19,.12);
+}
+body{background:#F9F8F6;color:#141413}
+h1,h2,h3,h4,h5,h6,.display-heading{color:#141413}
+:focus-visible{outline-color:rgba(150,119,70,.78)}
+::selection{color:#fff;background:#967746}
+.form-control{border-color:#dedad2;background:#fff;color:#141413}
+.form-control:focus{border-color:#B59461;box-shadow:0 0 0 3px rgba(181,148,97,.16)}
+.btn-primary{background:#141413;color:#F9F8F6}
+.btn-primary:hover:not(:disabled){background:#292824}
+.btn-secondary{color:#141413;border-color:#dedad2}
+.btn-secondary:hover:not(:disabled){background:#EFECE6;border-color:#c9c1b4}
+.property-gallery .gallery-image{background:#EFECE6}
+/* Shared public chrome */
+.site-header,.site-header.scrolled{background:#141413!important;border-color:rgba(181,148,97,.24)!important}
+.site-header.scrolled{box-shadow:0 8px 26px rgba(20,20,19,.16)!important}
+.site-header .brand,.site-header .desktop-nav a,.site-header .mobile-nav a{color:#F9F8F6!important}
+.site-header .brand-copy small{color:#c8bda9!important}
+.site-header .brand-symbol-image{background:#F9F8F6!important}
+.site-header .desktop-nav a:after{background:#B59461!important}
+.site-header .desktop-nav a:hover,.site-header .desktop-nav a.active{color:#D8BD91!important}
+.site-header .header-cta{background:#B59461!important;color:#141413!important}
+.site-header .header-cta:hover{background:#967746!important;color:#fff!important}
+.site-header .menu-toggle{border-color:rgba(249,248,246,.3)!important}
+.site-header .menu-toggle span{background:#F9F8F6!important}
+.site-header .mobile-nav{background:#141413!important;border-color:rgba(181,148,97,.2)!important}
+/* Homepage */
+.home-page{color:#141413}
+.home-page .hero,.home-page .closing{background:#141413!important;color:#F9F8F6}
+.home-page .eyebrow,.home-page .section-index{color:#B59461}
+.home-page .eyebrow span{background:#B59461}
+.home-page h1,.home-page .closing h2{color:#F9F8F6}
+.home-page h1 em,.home-page h2 em{color:#D8BD91}
+.home-page .hero-description{color:#d0ccc4}
+.home-page .hero-search{background:#F9F8F6;color:#141413}
+.home-page .hero-search label{border-color:#dedad2}
+.home-page .hero-search label span,.home-page .card-info small{color:#967746}
+.home-page .hero-search input,.home-page .hero-search select{border-color:#dedad2;background:#fff;color:#141413}
+.home-page .hero-search select:focus-visible,.home-page .hero-search input:focus-visible{border-color:#B59461;box-shadow:0 0 0 3px rgba(181,148,97,.18)}
+.home-page .hero-search button{background:#B59461;color:#141413}
+.home-page .hero-search button:hover{background:#967746}
+.home-page .hero-search button b,.home-page .symbol,.home-page .category-bottom b{color:#141413}
+.home-page .hero-art{border-color:rgba(181,148,97,.3);background:#292824;box-shadow:24px 24px 0 rgba(181,148,97,.14)!important}
+.home-page .hero-photo-shade{background:linear-gradient(180deg,rgba(20,20,19,.04) 35%,rgba(20,20,19,.78) 100%)}
+.home-page .hero-photo-caption span{color:#D8BD91}
+.home-page .hero-bottom{border-color:rgba(239,236,230,.18);color:#c4beb3}
+.home-page .intro-grid p,.home-page .section-heading>p{color:#69655e}
+.home-page .intro-grid h2,.home-page h2{color:#141413}
+.home-page .intro-grid h2 em{color:#967746}
+.home-page .underlined{border-color:#B59461;color:#292824}
+.home-page .underlined span{color:#967746}
+.home-page .categories{background:#EFECE6}
+.home-page .category-card,.home-page .category-card:nth-child(2),.home-page .category-card:nth-child(3){background:#292824;color:#F9F8F6}
+.home-page .category-card:nth-child(2){background:#3a3832}
+.home-page .category-card:nth-child(3){background:#575550}
+.home-page .category-card h3{color:#F9F8F6}
+.home-page .category-card p,.home-page .category-bottom{color:#dedad2}
+.home-page .featured-card{border-color:#e2ded6;background:#fff}
+.home-page .featured-card:hover{box-shadow:0 15px 32px rgba(20,20,19,.10)}
+.home-page .property-visual,.home-page .property-visual.warm,.home-page .property-visual.sage{background:linear-gradient(145deg,#e5e0d7,#c9c1b4)}
+.home-page .property-visual>div{color:rgba(20,20,19,.72)}
+.home-page .property-visual>div span{color:#967746}
+.home-page .visual-cat,.home-page .visual-ref{color:#575550}
+.home-page .card-info h3{color:#141413}
+.home-page .card-info p,.home-page .card-info>div span{color:#777168}
+.home-page .card-info strong{color:#292824}
+.home-page .loading-box{border-color:#dedad2;background:#EFECE6;color:#575550}
+.home-page .button-light{background:#B59461;color:#141413}
+.home-page .button-light span{color:#141413}
+/* Destination cards, location map, listing/detail surfaces and enquiry UI */
+.area-guide-card,.featured-card,.property-card,.listing-card,.property-detail-card,.detail-card,.spec-card,.property-spec,.filter-bar,.filters-panel,.toolbar,.pagination,.detail-section,.property-info,.enquiry-card,.contact-card{
+  border-color:#dedad2;
+}
+.area-guide-card,.spec-card,.property-spec,.filter-bar,.filters-panel,.toolbar,.loading-box,.map-intro,.map-placeholder,.voices-empty,.faq-list details{
+  background-color:#EFECE6;
+}
+.area-guide-copy span,.area-guide-copy b,.map-intro .section-index{color:#967746}
+.area-guide-copy strong,.map-intro h3,.voices-empty strong{color:#141413}
+.area-guide-copy a,.area-guide-copy button,.map-place-pills button.active{color:#967746}
+.map-place-pills button.active{border-color:#B59461;background:#F9F8F6}
+.property-card a,.listing-card a,.property-detail-card a{color:#141413}
+.property-card button,.listing-card button,.property-detail-card button{accent-color:#B59461}
+.price,.property-price,.price-highlight{color:#967746}
+.badge,.status-badge,.property-tag{background:#EFECE6;color:#575550;border-color:#dedad2}
+footer,.site-footer,.public-footer{background:#141413!important;color:#F9F8F6!important}
+footer h2,footer h3,.site-footer h2,.site-footer h3,.public-footer h2,.public-footer h3{color:#F9F8F6!important}
+footer p,footer a,.site-footer p,.site-footer a,.public-footer p,.public-footer a{color:#d0ccc4}
+footer a:hover,.site-footer a:hover,.public-footer a:hover{color:#D8BD91}
+.confirmation-backdrop{background:rgba(20,20,19,.68)}
+.confirmation-dialog{border-color:rgba(181,148,97,.3);background:#F9F8F6}
+.confirmation-icon{border-color:#e3d7c3;background:#EFECE6;color:#967746}
+.confirmation-eyebrow{color:#967746}
+.confirmation-dialog h2{color:#141413}
+.confirmation-dialog p{color:#575550}
+.confirmation-actions{border-color:#dedad2}
+.confirmation-cancel{border-color:#dedad2;color:#575550}
+.confirmation-accept{border-color:#141413;background:#141413;color:#F9F8F6}
+.confirmation-accept:hover{border-color:#292824;background:#292824}
+@media(prefers-reduced-motion:reduce){.home-page .featured-card,.home-page .category-card{transition:none}}
