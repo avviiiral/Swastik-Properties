@@ -1,44 +1,60 @@
-# Swastik Properties — Backend Architecture
+# Swastik Properties — Application Architecture
 
-## Architecture style
+## System shape
 
-The backend is a modular Django monolith exposing REST APIs to one Angular SSR frontend. The same Angular application serves both the public property website and protected Admin workspace from one origin and one frontend process. Each Django application owns a business domain while sharing one relational database.
+A modular Django monolith exposes REST APIs to one Angular 22 SSR application. The same Angular application serves public pages and protected Admin routes; there is no separate Admin SPA. Both domains use the same relational database and configured media storage.
 
-## Frontend application
+## Frontend
 
-- Active application: `frontend/web-app`.
-- Public routes: `/`, `/properties`, `/properties/:slug`.
-- Admin routes: `/admin/login`, `/admin/properties`.
-- Public routes are server-rendered; Admin routes use client rendering because Admin authentication currently uses browser session storage.
-- The public property API client bypasses the Admin JWT interceptor. This prevents a signed-in administrator's token from widening public catalogue responses beyond PUBLISHED properties.
-- Public pages are organized under `src/app/pages`, shared layout/services/models are separated, and Admin pages live under `src/app/admin/features`.
-- There is no second Admin SPA workspace; public and Admin routes are part of the same Angular application.
+- Active workspace: `frontend/web-app`.
+- Public routes include Home, About, Contact, Blog, marketplace, property detail, Thank You and branded not-found pages.
+- `/properties` is routed to `PropertyMarketplaceComponent`.
+- Admin routes are part of the same Angular router.
+- Public routes are SSR-capable. Admin routes are client-rendered because the current authentication flow uses browser session storage.
+- Public property API requests bypass Admin authorization headers so a signed-in Admin does not accidentally broaden anonymous catalogue behavior.
+- Shared visual tokens and cross-route styles live in `src/styles.css`.
 
-## Applications
+## Marketplace flow
 
-| App | Responsibility |
+1. User chooses Buy, Rent or Lease.
+2. Angular maps the selected mode to the supported backend listing type (Buy → `SALE`).
+3. Search/category/area/sort criteria are sent through the existing property API service.
+4. Results are rendered from published API records; no invented price or property attributes are added.
+5. Saved listings and comparison (maximum three) use browser-side public property state.
+6. Visit/callback actions navigate to the selected property's detail page and relevant form anchor.
+7. The map panel previews the selected listing's address; it is not a geocoded multi-result map.
+
+## Backend domain boundaries
+
+| Django app | Responsibility |
 |---|---|
-| accounts | User identity, authentication and roles |
-| properties | Property inventory, attributes, lifecycle and images |
-| locations | States, cities, localities and other reusable location data |
-| agents | Agent profiles and property assignments |
-| submissions | Website forms, submitted data, attachments and administrator review/export |
-| common | Shared abstract models, constants and reusable utilities |
-| site_content | Structured public website content for Home, About, Blog and Contact |
+| accounts | User identity, JWT authentication and roles |
+| properties | Property inventory, publication/availability lifecycle, brochures and images |
+| locations | State, district, city and locality reference data |
+| agents | Agent-domain support |
+| submissions | Public form intake, lead review/export, assignment and activity history |
+| blog | Public published articles and editorial management |
+| common | Shared abstract models and utilities |
 
-## Public website content architecture
+There is no implemented Site Content domain/API in the shipped architecture described here. Public page copy remains in Angular; Blog article data is served by the Blog API.
 
-A dedicated Site Content domain stores bounded structured content for Home, About, Blog and Contact. ADMIN and SUPER_ADMIN use authenticated management APIs; public routes use read-only APIs that expose published content. This is not a drag-and-drop page builder: only approved fields and repeatable structures are editable. Rich text is sanitized, media uploads are validated, and updates retain editor/timestamp audit metadata. Property inventory remains separate and contains no price or budget fields.
+## Lead/CRM data flow
 
-## Access principles
+- Public visitors submit forms without an account.
+- Django validates and stores submissions, including consent metadata for new submissions.
+- Admins review leads, update status/notes and export permitted records.
+- CRM backend foundation supports optional agent assignment and an activity timeline.
+- Agent API querysets are scoped to leads assigned to the authenticated agent.
+- An Angular agent workspace and integrated assignment controls remain planned.
 
-- Super Admin: complete system administration.
-- Admin: property, agent, submission and public website content administration.
-- Agent: restricted agent/property functions.
-- Submission records and downloads are restricted to administrators.
-- Public website content editing is restricted to ADMIN and SUPER_ADMIN.
-- The backend is the enforcement point; frontend hiding is not authorization.
+## Authorization
 
-## Content management boundary
+Django is the security boundary. Frontend guards and hidden controls improve UX but do not replace backend permission checks. Public endpoints expose published content/listings only. Admin-only lead data and exports are not available to agents or anonymous users.
 
-The application includes a scoped Site Content editor, not a general-purpose CMS. ADMIN and SUPER_ADMIN can edit structured content for Home, About, Blog and Contact. Property inventory, lead submissions and user management remain separate domain workflows. Arbitrary page creation, template editing, script/CSS injection and unrestricted page-builder functionality are excluded.
+## Data integrity and privacy
+
+- PostgreSQL is the production target; SQLite is the local development fallback.
+- Schema changes are committed as Django migrations.
+- Uploaded brochures/images require validation and configured media lifecycle handling.
+- Credentials, tokens and private customer data must not be committed.
+- No price/budget fields are part of the property or public lead contract.

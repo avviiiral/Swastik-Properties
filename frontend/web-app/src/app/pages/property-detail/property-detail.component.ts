@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Property } from '../../core/models/property.models';
 import { PropertyApi } from '../../core/services/property-api.service';
@@ -57,8 +57,8 @@ import { PublicPropertyState } from '../../core/services/public-property-state.s
               <a class="contact-action" [href]="'tel:' + contact().contact_number"><span>Call us</span><b>↗</b></a>
               <a class="contact-action" [href]="emailUrl(property()!)"><span>Email</span><b>↗</b></a>
             </div>
-            <form class="visit-form" (ngSubmit)="submitVisit()"><span class="aside-label">PLAN A VISIT</span><label>Your name<input type="text" name="visitName" [(ngModel)]="visitName" autocomplete="name" required minlength="2"></label><label>Phone number<input type="tel" name="visitPhone" [(ngModel)]="visitPhone" autocomplete="tel" required minlength="10"></label><label>Email address<input type="email" name="visitEmail" [(ngModel)]="visitEmail" autocomplete="email" required></label><label>Preferred date<input type="date" name="visitDate" [(ngModel)]="visitDate" [min]="today" required></label><label>Preferred time<select name="visitTime" [(ngModel)]="visitTime" required><option value="">Choose a time</option><option value="Morning">Morning</option><option value="Afternoon">Afternoon</option><option value="Evening">Evening</option></select></label><label class="visit-consent"><input type="checkbox" name="visitConsent" [(ngModel)]="visitConsent" required> I agree to be contacted about this visit request.</label><button type="submit" [disabled]="visitSending()">{{visitSending() ? 'Sending…' : 'Request a site visit'}} ↗</button>@if(visitFeedback()){<p class="visit-feedback" role="status">{{visitFeedback()}}</p>}</form>
-            <form class="enquiry-form" (ngSubmit)="submitEnquiry(enquiryFormElement)" #enquiryForm="ngForm" #enquiryFormElement>
+            <form class="visit-form" id="property-visit-form" (ngSubmit)="submitVisit()"><span class="aside-label">PLAN A VISIT</span><label>Your name<input type="text" name="visitName" [(ngModel)]="visitName" autocomplete="name" required minlength="2"></label><label>Phone number<input type="tel" name="visitPhone" [(ngModel)]="visitPhone" autocomplete="tel" required minlength="10"></label><label>Email address<input type="email" name="visitEmail" [(ngModel)]="visitEmail" autocomplete="email" required></label><label>Preferred date<input type="date" name="visitDate" [(ngModel)]="visitDate" [min]="today" required></label><label>Preferred time<select name="visitTime" [(ngModel)]="visitTime" required><option value="">Choose a time</option><option value="Morning">Morning</option><option value="Afternoon">Afternoon</option><option value="Evening">Evening</option></select></label><label class="visit-consent"><input type="checkbox" name="visitConsent" [(ngModel)]="visitConsent" required> I agree to be contacted about this visit request.</label><button type="submit" [disabled]="visitSending()">{{visitSending() ? 'Sending…' : 'Request a site visit'}} ↗</button>@if(visitFeedback()){<p class="visit-feedback" role="status">{{visitFeedback()}}</p>}</form>
+            <form class="enquiry-form" id="property-enquiry-form" (ngSubmit)="submitEnquiry(enquiryFormElement)" #enquiryForm="ngForm" #enquiryFormElement>
               <label>Your name<input type="text" name="enquiryName" [(ngModel)]="enquiryName" required minlength="2" maxlength="120" autocomplete="name" placeholder="Full name"></label>
               <label>Email address<input type="email" name="enquiryEmail" [(ngModel)]="enquiryEmail" required maxlength="254" autocomplete="email" placeholder="you@example.com"></label>
               <label>Phone number<input type="tel" name="enquiryPhone" [(ngModel)]="enquiryPhone" required minlength="10" maxlength="20" autocomplete="tel" placeholder="+91"></label>
@@ -74,6 +74,7 @@ import { PublicPropertyState } from '../../core/services/public-property-state.s
           <a class="back" routerLink="/properties">← Back to all properties</a>
         </aside>
       </section>
+      <div class="mobile-property-actions" aria-label="Property contact shortcuts"><a class="mobile-whatsapp" [href]="whatsappUrl(property()!)" target="_blank" rel="noopener noreferrer">WhatsApp</a><a class="mobile-enquire" href="#property-enquiry-form">Enquire now <span>↗</span></a></div>
       @if(related().length){<section class="related-section wrap"><div class="kicker">EXPLORE A LITTLE FURTHER</div><h2>Similar opportunities</h2><div class="related-grid">@for(p of related();track p.id){<a [routerLink]="['/properties',p.slug]"><div class="related-image">@if(p.images.length){<img [src]="p.images[0].image_url" [alt]="p.images[0].alt_text || p.name">}@else{<span>SWASTIK / PROPERTY</span>}</div><small>{{p.category}} · {{p.listing_type}}</small><strong>{{p.name}}</strong><span>{{location(p)}} · {{area(p)}}</span></a>}</div></section>}
       @if(lightboxIndex() !== null){<div class="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Property image gallery"><button class="lightbox-close" type="button" (click)="closeGallery()" aria-label="Close gallery">×</button><button type="button" class="lightbox-prev" (click)="moveGallery(-1)" aria-label="Previous image">‹</button><figure><img [src]="galleryImages()[lightboxIndex()!]!.image_url" [alt]="galleryImages()[lightboxIndex()!]!.alt_text || property()!.name"><figcaption>{{lightboxIndex()! + 1}} / {{galleryImages().length}} · {{galleryImages()[lightboxIndex()!]!.caption}}</figcaption></figure><button type="button" class="lightbox-next" (click)="moveGallery(1)" aria-label="Next image">›</button></div>}
     }
@@ -102,6 +103,7 @@ import { PublicPropertyState } from '../../core/services/public-property-state.s
 export class PropertyDetailComponent implements OnInit {
   private readonly api = inject(PropertyApi);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly seo = inject(SiteSeo);
   private readonly enquiryApi = inject(PropertyEnquiryApi);
@@ -164,7 +166,7 @@ export class PropertyDetailComponent implements OnInit {
   openGallery(index:number):void{this.lightboxIndex.set(index);}
   closeGallery():void{this.lightboxIndex.set(null);}
   moveGallery(direction:number):void{const length=this.galleryImages().length;if(!length)return;const current=this.lightboxIndex()??0;this.lightboxIndex.set((current+direction+length)%length);}
-  submitVisit():void{const p=this.property();if(!p||!this.visitName.trim()||!this.visitPhone.trim()||!this.visitEmail.trim()||!this.visitDate||!this.visitTime||!this.visitConsent||this.visitSending())return;this.visitSending.set(true);this.visitFeedback.set('');this.enquiryApi.submitLead({enquiry_type:'PROPERTY_ENQUIRY',property_slug:p.slug,name:this.visitName.trim(),email:this.visitEmail.trim(),phone:this.visitPhone.trim(),message:'Site visit request for '+p.name+'. Preferred date: '+this.visitDate+' ('+this.visitTime+'). Please contact me to confirm.',details:{property_reference:p.property_reference,visit_date:this.visitDate,visit_time:this.visitTime},source_path:'/properties/'+p.slug,consent:true,website:''}).subscribe({next:()=>{this.visitSending.set(false);this.visitFeedback.set('Your visit request has been sent. Our team will contact you to confirm.');this.visitName='';this.visitPhone='';this.visitEmail='';this.visitDate='';this.visitTime='';this.visitConsent=false;},error:()=>{this.visitSending.set(false);this.visitFeedback.set('We could not send the request. Please contact us on WhatsApp.');}});}
+  submitVisit():void{const p=this.property();if(!p||!this.visitName.trim()||!this.visitPhone.trim()||!this.visitEmail.trim()||!this.visitDate||!this.visitTime||!this.visitConsent||this.visitSending())return;this.visitSending.set(true);this.visitFeedback.set('');this.enquiryApi.submitLead({enquiry_type:'PROPERTY_ENQUIRY',property_slug:p.slug,name:this.visitName.trim(),email:this.visitEmail.trim(),phone:this.visitPhone.trim(),message:'Site visit request for '+p.name+'. Preferred date: '+this.visitDate+' ('+this.visitTime+'). Please contact me to confirm.',details:{property_reference:p.property_reference,visit_date:this.visitDate,visit_time:this.visitTime},source_path:'/properties/'+p.slug,consent:true,website:''}).subscribe({next:()=>{this.visitSending.set(false);this.router.navigate(['/thank-you'],{queryParams:{request:'site-visit'}});this.visitName='';this.visitPhone='';this.visitEmail='';this.visitDate='';this.visitTime='';this.visitConsent=false;},error:()=>{this.visitSending.set(false);this.visitFeedback.set('We could not send the request. Please contact us on WhatsApp.');}});}
   whatsappUrl(p: Property): string {
     const message = `Hello, I am interested in ${p.name} (Reference: ${p.property_reference}). Please share more details.`;
     return 'https://wa.me/' + this.contact().whatsapp_number.replace(/\D/g, '') + '?text=' + encodeURIComponent(message);
@@ -210,6 +212,7 @@ export class PropertyDetailComponent implements OnInit {
       next: () => {
         this.enquirySending.set(false);
         this.enquirySuccess.set(true);
+        this.router.navigate(['/thank-you'],{queryParams:{request:'property-enquiry'}});
         formElement.reset();
         this.enquiryName = '';
         this.enquiryEmail = '';

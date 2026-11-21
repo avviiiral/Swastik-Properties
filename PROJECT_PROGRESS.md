@@ -1,52 +1,95 @@
 # Swastik Properties — Project Progress
 
-## Existing platform baseline
-- Django 5.2 + DRF backend with JWT login, rotation and blacklist.
-- SUPER_ADMIN, ADMIN, EDITOR and AGENT role boundaries.
-- Maharashtra location hierarchy and public read APIs.
-- Property inventory, approval/publication workflow, brochure uploads and image galleries.
-- One Angular 22 SSR application serves public and protected Admin routes.
+## Verified platform baseline
 
-## New work — feature/property-lead-management
-- [x] Add one public Contact page with six guided form types: general enquiry, property enquiry, buy requirement, rent requirement, sell property and list property.
-- [x] Store all new form submissions in the existing lead table; preserve historical property enquiries and the original property enquiry API.
-- [x] Capture contact consent timestamp; validate contact details and type-specific location inputs. Price and budget fields are excluded.
-- [x] Add anonymous submission throttling and a honeypot field for basic spam screening.
-- [x] Add Admin-only lead inbox with form-type/status/search filters, pagination, private notes and status progression.
-- [x] Add filter-aware CSV export including structured requirement details and consent timestamp; protect CSV cells from spreadsheet formula injection.
-- [x] Add direct call/email/WhatsApp follow-up links and Admin navigation to the full lead inbox.
-- [x] Add public property catalogue locality/city/district search and sort options; no price filters or price sorting.
-- [x] Update API, database, admin workspace and setup documentation.
-- [ ] Run backend and frontend GitHub Actions checks and resolve any failures.
-- [ ] Verify migration and SSR build against the deployment database.
-- [ ] Browser-check public forms, mobile/desktop layouts, admin lead updates and CSV downloads.
+- Django 5.2 + Django REST Framework backend with JWT login, refresh rotation and blacklist.
+- SUPER_ADMIN, ADMIN, EDITOR and AGENT role model.
+- Property inventory with publication/availability workflow, brochure uploads, image galleries and normalized location references.
+- Public six-form lead intake, consent timestamp, anonymous throttling and honeypot screening.
+- Admin lead inbox with filters, status progression, private notes and CSV export.
+- Blog public read APIs and Admin/Super Admin article management.
+- One Angular 22 SSR application serves public pages and protected Admin routes.
 
-## Local verification commands
-Backend (from `backend`):
+## Public website and visual system
+
+- [x] Public homepage, About, Contact, Blog, property detail, branded 404 and Thank You routes.
+- [x] Public form success destinations use `/thank-you`.
+- [x] Shared Quiet Luxury palette and typography normalized across public routes in `frontend/web-app/src/styles.css`.
+- [x] Shared public header, page hero bands, content surfaces, cards, forms, buttons and footer aligned to the same design system.
+- [x] Homepage discovery destinations derive from actual published property records rather than a hardcoded city list.
+
+## Unified Buy / Rent / Lease marketplace
+
+- [x] Route `/properties` uses the dedicated `PropertyMarketplaceComponent`.
+- [x] Buy maps to API listing type `SALE`; Rent and Lease map to their matching listing types.
+- [x] Search, category, minimum/maximum area, sorting, active filter chips and reset use existing API filters.
+- [x] Saved listings use the existing `PublicPropertyState` service.
+- [x] Compare up to three listings using fields actually returned by the API.
+- [x] Responsive filter sheet and mobile filter/map controls.
+- [x] Visit and callback actions navigate to property detail enquiry forms.
+- [x] Selected listing has an address-based Google Maps preview.
+- [ ] Replace address preview with synchronized multi-property map only after reliable geocoding/coordinates are available.
+- [ ] Add richer financial/property filters only after the backend exposes validated fields and business rules.
+- [ ] Browser QA across desktop and mobile viewports.
+
+## CRM backend foundation — feature/all-in-one-platform
+
+- [x] Nullable lead assignment fields: assigned agent, assigning user and assignment timestamp.
+- [x] Lead activity records for notes, status changes and assignments.
+- [x] Admin-only assignment/unassignment endpoint; eligible assignees are active AGENT accounts.
+- [x] Agent list/detail/activity API support scoped to leads assigned to the authenticated agent.
+- [x] Regression tests for cross-agent isolation, status updates, activity notes and assignment permissions.
+- [ ] Angular agent workspace and Admin assignment controls.
+- [ ] Follow-up tasks, reminders, site visits and conversion/loss outcomes.
+- [ ] Run and review complete backend CI and frontend CI for the latest documentation-aligned head.
+
+## Database migration operations
+
+Migration `submissions.0004_lead_assignment_and_activity` adds lead assignment fields, the assignment/status index and LeadActivity. It is already represented in source control. A local SQLite error such as `no such column: submissions_propertyenquiry.assigned_to_id` indicates that the local database has not applied the existing migration; run `python manage.py showmigrations submissions` and `python manage.py migrate`. Do not generate a duplicate migration for this condition.
+
+## Known marketplace/API limitations
+
+- Current property API does not provide price, EMI, bedrooms, bathrooms, deposit, furnishing, lock-in, lease escalation or parking fields.
+- The marketplace does not invent those values; pricing is represented as “Contact for pricing”.
+- The map is an address preview for the selected property, not a synchronized map of all result pins.
+- Favourites/comparison remain browser-side and are not a customer portal.
+
+## Verification status
+
+- Latest previously inspected branch head before this documentation update: `3dc5f7656fd432cc5ecc752a678a22a72363ea1f`.
+- Theme normalization was committed; browser visual regression was not performed.
+- Marketplace CI runs were previously observed running; do not treat them as passed without checking the current workflow run results.
+- Local developer database migrations have not been run by this repository update.
+- Run the commands below after pulling the branch.
+
+## Local verification
+
+Backend:
+
 ```powershell
-python manage.py makemigrations --check --dry-run
+cd backend
 python manage.py check
-python manage.py migrate --noinput
-python manage.py test apps.submissions apps.properties
+python manage.py makemigrations --check --dry-run
+python manage.py showmigrations
+python manage.py migrate
+python manage.py test
 ```
 
-Frontend (from `frontend/web-app`):
+Frontend:
+
 ```powershell
+cd frontend/web-app
 npm.cmd install
 npm.cmd run build
 ```
 
-## Next phase — Admin-managed public website content (planned; not yet implemented)
-- [ ] Add a Site Content workspace for Home, About, Blog and Contact.
-- [ ] Persist structured editable copy, headings, calls to action, service areas, statistics, team profiles and contact display settings in the database.
-- [ ] Add authenticated ADMIN/SUPER_ADMIN management APIs and public read-only APIs.
-- [ ] Validate structured content, sanitize rich text, validate links and image uploads, and retain safe fallbacks.
-- [ ] Add preview, save feedback, audit timestamps and permission tests.
-- [ ] Replace hard-coded public-page copy and About-page TODO placeholders only when verified business information is supplied.
-- [ ] Keep property inventory separate; never add price or budget fields.
-- [ ] Apply the shared deep-green, warm-ivory and champagne-gold palette with accessible contrast.
+Browser QA should cover public navigation, Buy/Rent/Lease filters, saved/compare state, property details, enquiry/site-visit submission, responsive layouts and Admin permission boundaries.
 
-## Deferred recommendations
-- Add property-specific subtypes and fields after the business confirms the exact data to capture.
-- Consider authenticated agent assignment only if the operating policy changes; customer submissions remain Admin-only in the current scope.
-- Configure production PostgreSQL, persistent media storage, HTTPS, CSP, backups and monitoring before launch.
+## Next phase — planned, not implemented
+
+- Angular agent workspace and Admin assignment controls.
+- CRM follow-up tasks, reminders, site visits and lifecycle outcomes.
+- Customer portal with server-synchronized saved listings and enquiry history.
+- Additional property attributes only after business approval and API/schema implementation.
+- Admin-managed public Site Content CMS. No `/admin/site-content` route or database-backed Site Content API is currently documented as shipped.
+- Notifications, analytics/Power BI and production-readiness hardening.

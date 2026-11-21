@@ -32,6 +32,8 @@ export interface BusinessContactSettings {
   updated_at?: string;
 }
 
+export interface AssignableAgent { id: number; username: string; email: string; first_name: string; last_name: string; role: 'AGENT'; is_active: boolean; }
+
 export interface PropertyEnquiryRecord {
   id: number;
   enquiry_type: LeadType;
@@ -46,6 +48,8 @@ export interface PropertyEnquiryRecord {
   source_path: string;
   status: LeadStatus;
   admin_notes: string;
+  assigned_to?: number | null;
+  assigned_at?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -116,6 +120,16 @@ export class PropertyEnquiryApi {
     return this.http.patch<PropertyEnquiryRecord>(
       this.base + '/submissions/property-enquiries/' + id + '/',
       payload
+    );
+  }
+
+  listAssignableAgents() {
+    return this.http.get<{results: AssignableAgent[]}>(this.base + '/auth/users/');
+  }
+
+  assignAdminEnquiry(id: number, assigned_to: number | null) {
+    return this.http.patch<{id: number; assigned_to: number | null; assigned_agent: string | null; assigned_at: string | null}>(
+      this.base + '/submissions/property-enquiries/' + id + '/assignment/', {assigned_to}
     );
   }
 

@@ -40,12 +40,12 @@ class PropertyEnquiryAdminSerializer(serializers.ModelSerializer):
             "id", "enquiry_type", "enquiry_type_label", "property_name",
             "property_reference", "name", "email", "phone", "message",
             "details", "source_path", "consented_at", "status", "admin_notes",
-            "created_at", "updated_at",
+            "assigned_to", "assigned_at", "created_at", "updated_at",
         )
         read_only_fields = (
             "id", "enquiry_type", "enquiry_type_label", "property_name",
             "property_reference", "name", "email", "phone", "message",
-            "details", "source_path", "consented_at", "created_at", "updated_at",
+            "details", "source_path", "consented_at", "assigned_to", "assigned_at", "created_at", "updated_at",
         )
 
 
