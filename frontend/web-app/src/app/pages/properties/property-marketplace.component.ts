@@ -140,7 +140,7 @@ type SearchMode = 'BUY' | 'RENT' | 'LEASE';
           <button type="button" class="reset-sheet" (click)="resetFilters();filtersExpanded.set(false)">Reset all</button>
         </div>
       }
-    </main>
+    </section>
   `,
   styles: [`
     :host{display:block;color:var(--brand-text);font-family:var(--brand-font-body)}
