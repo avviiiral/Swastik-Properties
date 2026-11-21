@@ -21,7 +21,8 @@ import { PropertyApi } from '../../core/services/property-api.service';
     <section class="list-page wrap">
       <div class="toolbar">
         <div><div class="section-index">DISCOVER / ALL PROPERTIES</div><h2>Available properties</h2><p class="toolbar-note">Filter the collection, save favourites or compare up to three opportunities.</p></div>
-        <div class="filters">
+        <button type="button" class="mobile-filter-toggle" [attr.aria-expanded]="filtersOpen()" (click)="filtersOpen.set(!filtersOpen())"><span>Refine search</span><b>{{filtersOpen() ? '−' : '+'}}</b></button>
+        <div class="filters" [class.mobile-open]="filtersOpen()">
           <input aria-label="Search properties" name="search" [(ngModel)]="search" (keyup.enter)="load(1)" placeholder="Search by name or location">
           <select aria-label="Property category" name="category" [(ngModel)]="category" (ngModelChange)="load(1)">
             <option value="">All categories</option><option value="RESIDENTIAL">Residential</option><option value="COMMERCIAL">Commercial</option><option value="LAND">Land &amp; plots</option>
@@ -35,7 +36,7 @@ import { PropertyApi } from '../../core/services/property-api.service';
             <option value="-created_at">Newest first</option><option value="name">Name: A to Z</option><option value="-area_value">Largest area</option><option value="area_value">Smallest area</option>
           </select>
           <button type="button" class="reset" (click)="reset()">Reset</button>
-          <button type="button" class="search-btn" (click)="load(1)">Search</button>
+          <button type="button" class="search-btn" (click)="filtersOpen.set(false);load(1)">Apply filters</button>
         </div>
       </div>
       <section class="discovery-tools" aria-label="Property discovery tools">
@@ -49,8 +50,8 @@ import { PropertyApi } from '../../core/services/property-api.service';
       @else if (error()) { <div class="state-box"><strong>We could not load the listings.</strong><p>Check your connection and try again.</p><button class="action" (click)="load()">Try again</button></div> }
       @else if (!items().length) { <div class="state-box"><strong>Nothing in this view just yet.</strong><p>Try a different search or remove one of the filters.</p><button class="action" (click)="reset()">Clear filters</button></div> }
       @else {
-        <div class="result-line"><span>Showing <b>{{(page()-1)*pageSize+1}}–{{(page()-1)*pageSize+items().length}}</b> of {{count()}}</span><span>Latest additions</span></div>
-        <div class="property-grid">
+        <div class="result-line"><span>Showing <b>{{(page()-1)*pageSize+1}}–{{(page()-1)*pageSize+items().length}}</b> of {{count()}}</span><div class="result-actions"><span>Latest additions</span><div class="view-switch" role="group" aria-label="Property layout"><button type="button" [class.active]="viewMode()==='grid'" [attr.aria-pressed]="viewMode()==='grid'" (click)="viewMode.set('grid')" aria-label="Grid view">▦</button><button type="button" [class.active]="viewMode()==='list'" [attr.aria-pressed]="viewMode()==='list'" (click)="viewMode.set('list')" aria-label="List view">☷</button></div></div></div>
+        <div class="property-grid" [class.list-view]="viewMode()==='list'">
           @for (p of items();track p.id;let i=$index) {
             <article class="property-card"><a class="property-card-link" [routerLink]="['/properties',p.slug]">
               <div class="visual" [class.warm]="i%3===1" [class.sage]="i%3===2">
@@ -108,6 +109,8 @@ export class PropertyListComponent implements OnInit {
   readonly mapMode = signal(false);
   readonly mapPropertyId = signal<number | null>(null);
   readonly showFavorites = signal(false);
+  readonly filtersOpen = signal(false);
+  readonly viewMode = signal<'grid'|'list'>('grid');
   advisorQuery = '';
   search = '';
   category = '';
