@@ -35,7 +35,7 @@ Optional demo editorial data (DEBUG only; all samples are DRAFT and labelled DEM
 ```powershell
 python manage.py seed_demo_blog
 ```
-Routine public website content is edited by ADMIN and SUPER_ADMIN in the Site Content workspace. Do not create EDITOR accounts for this workflow.
+The Site Content CMS is planned but is not yet available. Public website copy remains maintained in the Angular application until the CMS workstream is delivered.
 
 ### Unified Angular app
 In a second terminal:
@@ -60,10 +60,10 @@ Open http://localhost:4200. The development proxy forwards /api and /media to Dj
 | /admin | Admin dashboard | Admin, Super Admin |
 | /admin/site-content | Manage public website content (Home, About, Blog, Contact) | Admin, Super Admin |
 | /admin/properties | Property management | Admin, Super Admin |
-| /admin/blog | Blog management (content editing consolidated under Site Content) | Admin, Super Admin |
+| /admin/blog | Blog management | Editor, Super Admin |
 | /admin/users | User management | Admin, Super Admin |
 
-After login, ADMIN and SUPER_ADMIN land on /admin. AGENT accounts retain their existing restricted access and cannot enter the workspace. ADMIN and SUPER_ADMIN manage Home, About, Blog and Contact content from Site Content.
+After login, ADMIN and SUPER_ADMIN land on /admin. AGENT accounts do not currently have an interactive agent workspace; assigned-lead API support is being added incrementally. EDITOR access is limited to blog management.
 
 Build the SSR application:
 ```powershell
@@ -91,15 +91,7 @@ Public Blog:
 - GET /api/v1/blog/posts/ (search, category, pagination)
 - GET /api/v1/blog/posts/{slug}/
 
-Site content management (ADMIN/SUPER_ADMIN):
-- GET /api/v1/site-content/ — list editable sections.
-- GET /api/v1/site-content/{section}/ — retrieve Home, About, Blog or Contact content.
-- PATCH /api/v1/site-content/{section}/ — update validated structured content.
-
-Public site content:
-- GET /api/v1/public/site-content/{section}/ — public read-only published content.
-
-Blog article management (ADMIN/SUPER_ADMIN):
+CMS endpoints are not yet implemented. See [the delivery roadmap](docs/ALL_IN_ONE_PLATFORM_ROADMAP.md).\n\nBlog article management (ADMIN/SUPER_ADMIN):
 - GET/POST /api/v1/blog/manage/posts/
 - GET/PATCH/PUT/DELETE /api/v1/blog/manage/posts/{id}/
 - POST /api/v1/blog/manage/posts/{id}/publish/
@@ -130,6 +122,6 @@ Location APIs:
 | User management | All roles | EDITOR + AGENT | No | No |
 | Permanent user deletion | Yes | No | No | No |
 
-The Admin Site Content area is a bounded editor for Home, About, Blog and Contact, not a general-purpose page builder. Public visitors receive read-only published content. Property pages contain no price or budget fields.
+The CMS is a planned bounded editor, not yet implemented. Property pages and lead intake intentionally contain no price or budget fields.
 
 Swagger UI: /api/docs/; OpenAPI schema: /api/schema/.
