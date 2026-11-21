@@ -952,3 +952,41 @@ button{accent-color:var(--ql-champagne)}
 .admin-shell button[type=submit]:hover{background:#292824!important}
 .admin-shell .active,.admin-shell .selected{border-color:var(--ql-champagne)!important}
 @media(prefers-reduced-motion:reduce){.property-card,.featured,.card,.offer-grid a{transition:none!important}}
+
+/* Explicit component-host coverage for standalone journal routes and admin pages */
+sp-blog-list .hero{background:var(--ql-obsidian)!important;color:var(--ql-alabaster)!important}
+sp-blog-list .hero h1{color:var(--ql-alabaster)!important}
+sp-blog-list .hero h1 em{color:#D8BD91!important}
+sp-blog-list .hero p{color:#d0ccc4!important}
+sp-blog-list .hero>div>span,sp-blog-list .toolbar small,sp-blog-list .featured small,sp-blog-list .card small{color:var(--ql-champagne)!important}
+sp-blog-list .listing{background:var(--ql-alabaster)!important}
+sp-blog-list .toolbar h2,sp-blog-list .featured h2,sp-blog-list .card h3{color:var(--ql-obsidian)!important}
+sp-blog-list .featured{background:var(--ql-stone)!important;border-color:#dedad2!important;color:var(--ql-obsidian)!important}
+sp-blog-list .featured p,sp-blog-list .card p{color:var(--ql-charcoal)!important}
+sp-blog-list .card{background:#fff!important;border-color:#dedad2!important;color:var(--ql-obsidian)!important}
+sp-blog-list .featured span,sp-blog-list .card span,sp-blog-list .hero a,sp-blog-list .hero a b{color:#D8BD91!important}
+sp-blog-list .filters input,sp-blog-list .filters select{background:#fff!important;border-color:#dedad2!important;color:var(--ql-obsidian)!important}
+sp-blog-list .filters button,sp-blog-list .pagination button{background:var(--ql-obsidian)!important;color:#fff!important}
+sp-blog-list .empty{background:var(--ql-stone)!important;color:var(--ql-charcoal)!important}
+sp-blog-detail .article{background:var(--ql-alabaster)!important}
+sp-blog-detail .article h1,sp-blog-detail .article .body h1,sp-blog-detail .article .body h2,
+sp-blog-detail .article .body h3,sp-blog-detail .article .body h4{color:var(--ql-obsidian)!important}
+sp-blog-detail .article .meta,sp-blog-detail .article .back,sp-blog-detail .article .share a{color:var(--ql-bronze)!important}
+sp-blog-detail .article .excerpt,sp-blog-detail .article .byline{color:var(--ql-charcoal)!important}
+sp-blog-detail .article .body{color:#393832!important}
+sp-blog-detail .article .body blockquote{border-left-color:var(--ql-champagne)!important;color:var(--ql-charcoal)!important}
+sp-blog-detail .cta{background:var(--ql-obsidian)!important}
+sp-blog-detail .cta h2{color:var(--ql-alabaster)!important}
+sp-blog-detail .cta a{color:#D8BD91!important}
+.admin-shell h1,.admin-shell h2,.admin-shell h3,.admin-shell h4,.admin-shell strong{color:var(--ql-obsidian)!important}
+.admin-shell p,.admin-shell small,.admin-shell label,.admin-shell td{color:var(--ql-charcoal)!important}
+.admin-shell th{background:var(--ql-stone)!important;color:var(--ql-charcoal)!important}
+.admin-shell a{color:var(--ql-bronze)!important}
+.admin-shell .side-nav a,.admin-shell .sidebar a{color:rgba(249,248,246,.76)!important}
+.admin-shell .side-nav a:hover,.admin-shell .side-nav a.active{color:var(--ql-alabaster)!important}
+.admin-shell .sidebar .brand-text strong,.admin-shell .sidebar .sidebar-note strong{color:var(--ql-alabaster)!important}
+.admin-shell button,.admin-shell .btn{border-color:#dedad2}
+.admin-shell .btn-primary,.admin-shell button.primary,.admin-shell .primary-action,
+.admin-shell button[type=submit]{background:var(--ql-obsidian)!important;color:#fff!important;border-color:var(--ql-obsidian)!important}
+.admin-shell .btn-primary:hover,.admin-shell button.primary:hover,.admin-shell .primary-action:hover,
+.admin-shell button[type=submit]:hover{background:#292824!important}
