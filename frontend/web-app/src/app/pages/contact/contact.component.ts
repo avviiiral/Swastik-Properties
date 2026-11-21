@@ -197,6 +197,7 @@ export class ContactComponent implements OnInit {
       next: () => {
         this.sending.set(false);
         this.success.set(true);
+        this.router.navigate(['/thank-you']);
         this.name = '';
         this.email = '';
         this.phone = '';
