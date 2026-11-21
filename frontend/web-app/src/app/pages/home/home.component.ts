@@ -88,7 +88,7 @@ import { PublicPropertyState } from '../../core/services/public-property-state.s
         </div>
       </div>
     </section>
-    <section class="area-guides section-wrap" id="area-guides" data-reveal="fade-up"><div class="section-index">06 / EXPLORE BY LOCATION</div><div class="editorial-heading"><h2>Start with a <em>place.</em></h2><p>Explore Maharashtra's key property markets. Search results always come from published listings; availability depends on the current catalogue.</p></div><div class="area-guide-grid">@for(city of areaGuides;track city.name){<a [routerLink]="['/properties']" [queryParams]="{search:city.name}"><span>{{city.region}}</span><strong>{{city.name}}</strong><b>Explore listings ↗</b></a>}</div></section>
+    <section class="area-guides section-wrap" id="area-guides" data-reveal="fade-up"><div class="section-index">06 / EXPLORE BY LOCATION</div><div class="editorial-heading"><h2>Start with a <em>place.</em></h2><p>Explore places drawn from our published property listings. Each location is shown only when it exists in the live catalogue.</p></div>@if(placesLoading()){<div class="loading-box">Finding places from published listings…</div>}@else if(placesError()){<div class="loading-box">Places could not be loaded right now. Please try again shortly.</div>}@else if(!areaGuides().length){<div class="loading-box">Places will appear here as properties are published.</div>}@else{<div class="area-guide-grid">@for(city of areaGuides();track city.name){<a [routerLink]="['/properties']" [queryParams]="{search:city.name}"><span>{{city.region}}</span><strong>{{city.name}}</strong><b>{{city.count}} {{city.count===1?'published listing':'published listings'}} · Explore ↗</b></a>}</div>}</section>
     <section class="client-voices" data-reveal="fade-up"><div class="section-wrap"><div class="section-index">07 / CLIENT EXPERIENCES</div><div class="editorial-heading"><h2>Trust is built through <em>experience.</em></h2><p>We publish client feedback only when it is genuine and approved for sharing. We do not use anonymous or invented testimonials.</p></div><div class="voices-empty"><span>SWASTIK PROPERTIES</span><strong>Have you worked with our team?</strong><p>We welcome your feedback and permission to share your experience with future property seekers.</p><a routerLink="/contact">Share your experience ↗</a></div></div></section>
     <section class="public-faq section-wrap" data-reveal="fade-up"><div class="section-index">08 / COMMON QUESTIONS</div><div class="editorial-heading"><h2>A few things worth <em>knowing.</em></h2><p>Clear answers to help you take the next step with confidence.</p></div><div class="faq-list"><details><summary>How do I enquire about a property?</summary><p>Open a property listing and use its enquiry form, WhatsApp option or callback details. Include the property reference so our team can identify the listing.</p></details><details><summary>Can I arrange a site visit?</summary><p>Yes. Use the site-visit request on an individual property page. Our team will contact you to coordinate and confirm a suitable time.</p></details><details><summary>Are property prices shown on the website?</summary><p>No. Public listings do not display prices. Contact our team for information relevant to a specific property.</p></details><details><summary>How can I verify property documents and approvals?</summary><p>Request the relevant documents from the seller or developer and consult an appropriately qualified property or legal professional before making a decision.</p></details><details><summary>Can I save properties and compare them?</summary><p>Yes. Save listings to your wishlist on this device and compare up to three properties from the property discovery page.</p></details></div></section>
     @if(publicState.recentlyViewed().length){<section class="recently-viewed section-wrap" data-reveal="fade-up"><div class="section-index">09 / PICK UP WHERE YOU LEFT OFF</div><h2>Recently viewed</h2><div class="recent-links">@for(slug of publicState.recentlyViewed();track slug){<a [routerLink]="['/properties',slug]">{{slug.replaceAll('-',' ')}} <span>↗</span></a>}</div></section>}
@@ -102,7 +102,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly seo = inject(SiteSeo);
   readonly publicState = inject(PublicPropertyState);
-  readonly areaGuides = [{name:'Pune',region:'WESTERN MAHARASHTRA'},{name:'Mumbai',region:'KONKAN'},{name:'Nagpur',region:'VIDARBHA'},{name:'Nashik',region:'NORTH MAHARASHTRA'},{name:'Thane',region:'KONKAN'},{name:'Kolhapur',region:'SOUTHERN MAHARASHTRA'}];
+  readonly areaGuides = signal<Array<{name:string;region:string;count:number}>>([]);
+  readonly placesLoading = signal(true);
+  readonly placesError = signal(false);
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly platformId = inject(PLATFORM_ID);
   private revealObserver?: IntersectionObserver;
@@ -155,9 +157,33 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.seo.set('Swastik Properties | Find your place in Maharashtra','Explore residential, commercial and land property listings across Maharashtra.');
     this.api.list({page:1}).subscribe({
-      next: response => {this.featured.set(response.results.slice(0,3));this.loading.set(false);},
-      error: () => {this.error.set(true);this.loading.set(false);}
+      next: response => {this.featured.set(response.results.slice(0,3));this.loading.set(false);this.collectPlaces(response.results,response.next,2);},
+      error: () => {this.error.set(true);this.loading.set(false);this.placesError.set(true);this.placesLoading.set(false);}
     });
+  }
+
+  private collectPlaces(properties: Property[], nextUrl: string | null, page: number): void {
+    if (nextUrl) {
+      this.api.list({page}).subscribe({
+        next: response => this.collectPlaces([...properties,...response.results],response.next,page+1),
+        error: () => {this.placesError.set(true);this.placesLoading.set(false);}
+      });
+      return;
+    }
+    const places = new Map<string,{name:string;region:string;count:number}>();
+    for (const property of properties) {
+      const name = (property.locality_name || property.location_name || property.city_name || property.district_name || '').trim();
+      if (!name) continue;
+      const key = name.toLocaleLowerCase();
+      const region = [property.city_name,property.district_name,property.state_name]
+        .filter((value,index,all): value is string => !!value && value.toLocaleLowerCase() !== name.toLocaleLowerCase() && all.indexOf(value)===index)
+        .join(' · ') || 'PUBLISHED PROPERTY LOCATION';
+      const existing = places.get(key);
+      if (existing) existing.count += 1;
+      else places.set(key,{name,region,count:1});
+    }
+    this.areaGuides.set([...places.values()].sort((a,b)=>b.count-a.count || a.name.localeCompare(b.name)));
+    this.placesLoading.set(false);
   }
 
   explore(): void {
