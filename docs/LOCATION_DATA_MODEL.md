@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Provide normalized geographic reference data for Maharashtra first, while allowing further states and markets without changing the Property table structure.
+Provide normalized geographic reference data, seeded for Maharashtra first, while allowing additional states and markets without hardcoded frontend locality lists.
 
 ## Hierarchy
 
@@ -11,82 +11,42 @@ erDiagram
     STATE ||--o{ DISTRICT : contains
     DISTRICT ||--o{ CITY : contains
     CITY ||--o{ LOCALITY : contains
-
-    STATE {
-        bigint id PK
-        varchar name UK
-        varchar slug UK
-        boolean is_active
-        datetime created_at
-        datetime updated_at
-    }
-    DISTRICT {
-        bigint id PK
-        bigint state_id FK
-        varchar name
-        varchar slug
-        boolean is_active
-        datetime created_at
-        datetime updated_at
-    }
-    CITY {
-        bigint id PK
-        bigint district_id FK
-        varchar name
-        varchar slug
-        boolean is_active
-        datetime created_at
-        datetime updated_at
-    }
-    LOCALITY {
-        bigint id PK
-        bigint city_id FK
-        varchar name
-        varchar slug
-        boolean is_active
-        datetime created_at
-        datetime updated_at
-    }
 ```
 
-## Data integrity
+State contains districts, district contains cities, and city contains localities. Property records may reference the appropriate normalized location row.
 
-- State name and slug are unique.
-- District name and slug are unique within a state.
-- City name and slug are unique within a district.
-- Locality name and slug are unique within a city.
-- Parent foreign keys use `PROTECT` to prevent deleting a parent with dependent records.
-- Deactivation is represented by `is_active=false`; inactive records and descendants are excluded from public lookup responses.
+## Integrity and lifecycle
+
+- Names/slugs and parent-scoped uniqueness are enforced by the locations models/migrations.
+- Parent relationships protect dependent records from accidental deletion where configured.
+- Deactivation uses `is_active=false`; inactive records are excluded from public lookups according to queryset rules.
 - Slugs are generated from names when not explicitly supplied.
 
-## Initial Maharashtra seed
+## Maharashtra seed
 
-The command `python manage.py seed_maharashtra_locations` creates Maharashtra and its 36 districts. It is safe to run repeatedly and does not create duplicate records.
+Run from `backend`:
 
-The district names use the current Government of Maharashtra/NIC district directory:
-- https://maharashtra.s3waas.gov.in/
-- https://igod.gov.in/index.php/sg/MH/E042/organizations
+```powershell
+python manage.py seed_maharashtra_locations
+```
 
-Cities and localities are not exhaustively preloaded. Super Admins add them through Django Admin as the business begins listing properties in those markets.
+The command seeds Maharashtra and its district reference data and is designed to be safely rerunnable. Cities and localities are added as the business begins listing in those markets; they are not assumed to be exhaustive.
 
 ## Public API
 
-All endpoints are anonymous GET-only lookups. POST, PUT, PATCH and DELETE are not exposed.
+All location lookup endpoints are anonymous GET lookups:
 
-| Endpoint | Filters |
+| Endpoint | Filter |
 |---|---|
-| `GET /api/v1/locations/states/` | search, ordering, page |
-| `GET /api/v1/locations/districts/?state={id}` | state, search, ordering, page |
-| `GET /api/v1/locations/cities/?district={id}` | district, state, search, ordering, page |
-| `GET /api/v1/locations/localities/?city={id}` | city, district, state, search, ordering, page |
+| `GET /api/v1/locations/states/` | Search/order/page |
+| `GET /api/v1/locations/districts/?state={id}` | State, search/order/page |
+| `GET /api/v1/locations/cities/?district={id}` | District and supported parent filters |
+| `GET /api/v1/locations/localities/?city={id}` | City and supported parent filters |
 
-Responses expose parent IDs and names for frontend cascading selects. Pagination follows the global DRF configuration.
+Responses expose identifiers and parent context for cascading selectors. Exact pagination and optional query parameters are defined by the current DRF filters and OpenAPI schema.
 
-## Operational workflow
+## Frontend usage
 
-1. Run the seed command to create Maharashtra and its districts.
-2. Super Admin adds the relevant cities.
-3. Super Admin adds localities under each city.
-4. Public website and dashboard load the hierarchy from APIs.
-5. Property records reference normalized location rows, not hardcoded text lists.
-6. The About page may show a curated service-area list editable through Site Content; it is separate from normalized geographic master data.
+- Marketplace destinations and property results must be derived from API-backed property records.
+- Do not maintain a separate hardcoded city/locality catalogue in Angular.
+- Curated marketing service areas, if introduced, are content data and must not be confused with the normalized location master.

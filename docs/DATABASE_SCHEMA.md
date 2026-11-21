@@ -1,72 +1,56 @@
-# Swastik Properties — Database Schema
+# Swastik Properties — Database Schema Notes
+
+This document describes the implemented domain structures at a functional level. Django models and committed migrations are authoritative for exact field types, constraints and relationships.
 
 ## User
 
-| Field | Type | Purpose |
-|---|---|---|
-| id | BigAutoField | Primary key |
-| email | EmailField unique | Authentication identifier |
-| username | CharField unique | Django-compatible account identifier |
-| role | CharField | SUPER_ADMIN, ADMIN, EDITOR, AGENT |
-| is_active | Boolean | Account activation |
-| is_staff / is_superuser | Boolean | Django admin access / superuser |
+The custom user model inherits Django's AbstractUser and includes email-based authentication plus role values used by the application: SUPER_ADMIN, ADMIN, EDITOR and AGENT. Passwords use Django hashing/validators; API serializers must never expose password hashes.
 
-The custom user inherits Django AbstractUser. Email is the login identifier; Django password hashing and password validators are retained. User API serializers never expose password hashes.
+## Property and media
 
-## SiteContentSection
+The Property model stores supported listing information, category, location references, brochure, publication state, availability state, creator/approver metadata and timestamps. PropertyImage records support the property gallery and primary-image selection.
 
-A bounded database-backed content record for each public section.
+The current property contract intentionally excludes price, currency, EMI, budget, bedrooms, bathrooms, deposit, furnishing, lock-in, lease escalation and parking fields unless a later approved migration explicitly introduces them. The marketplace must render only data returned by the API.
 
-| Field | Type | Purpose |
-|---|---|---|
-| id | BigAutoField | Primary key |
-| section | CharField, unique | `home`, `about`, `blog`, `contact` |
-| content | JSONField | Validated section-specific structured content; no executable templates or arbitrary CSS/JS |
-| status | Choice | DRAFT, PUBLISHED |
-| updated_by_id | FK User, SET_NULL | Admin/Super Admin who last changed the content |
-| created_at / updated_at | DateTime | Audit timestamps |
-
-Use versioned section schemas and server-side validation. Public APIs expose only published/approved fields; Admin APIs expose editable data to ADMIN/SUPER_ADMIN. Repeatable About values, process steps, service areas, statistics and team profiles are bounded structured arrays. Rich text is sanitized and image assets use validated media references.
-
-## BlogPost
-
-| Field | Type | Purpose |
-|---|---|---|
-| id | BigAutoField | Primary key |
-| title | CharField(220) | Article title |
-| slug | SlugField(240), unique | Public article route; auto-generated from title if omitted |
-| excerpt | Text(500) | Listing/SEO summary |
-| content | Text | Rich text HTML, sanitised with nh3 on save |
-| cover_image | ImageField, nullable | Validated JPG/JPEG/PNG/WEBP, max 8 MB |
-| category | CharField(100) | Editorial category |
-| tags | JSONField | List of tags |
-| status | Choice | DRAFT, PUBLISHED, ARCHIVED |
-| published_at | DateTime, nullable | Set on publish; cleared on unpublish |
-| author_id | FK User, PROTECT | Author/editor |
-| seo_title | CharField(220) | Optional SEO title |
-| seo_description | CharField(320) | Optional SEO description |
-| reading_time | PositiveSmallInteger | Computed at approximately 220 words/minute |
-| created_at / updated_at | DateTime | Audit timestamps |
-
-BlogPost has an index on (status, published_at) and default order newest published first. Public APIs query PUBLISHED posts only. Deleting a post removes its cover file after the database transaction commits.
-
-## Property
-
-The Property model remains in apps.properties. Its category, listing, location, brochure, publication_status, availability_status, created_by/approved_by and timestamps are retained. Property/API/UI schemas must not include price, currency, budget, expected amount or cost fields. PropertyImage remains related to Property and retains its image cleanup behaviour.
+Property media lifecycle includes validated brochure and image uploads and cleanup when associated records are removed, according to the model/service implementation.
 
 ## Location hierarchy
 
-State → District → City → Locality → optional Property locality.
+State → District → City → Locality → optional Property locality. Foreign-key behavior and uniqueness constraints are defined in the locations app migrations/models.
 
-## Content model implementation note
+## BlogPost
 
-The `SiteContentSection` schema above is the proposed target for the planned Site Content feature; it is not yet implemented in the current database. Add a migration only after the section payload schemas and media lifecycle are finalized.
+BlogPost stores editorial content such as title, slug, excerpt, body, cover image, category/tags, publication status, publication timestamp, author and SEO metadata. Public querysets expose published posts only. Exact validators, sanitization and upload limits are defined in the Blog model/serializer/validator code.
 
-## Role access rules
+## PropertyEnquiry / lead
 
-- SUPER_ADMIN: full system access.
-- ADMIN: property management and EDITOR/AGENT user management; no Blog authoring or privileged-account access.
-- ADMIN: property, public site content, leads and permitted user management.
-- EDITOR: no Site Content access by default; any legacy Blog permission must be handled explicitly during role migration.
-- AGENT: unchanged agent access.
-- Public Blog reads published posts only; public Property reads published properties only.
+The submissions domain retains public enquiry records and supports the six public form types. New records can include contact-consent metadata; historical records remain compatible with nullable newer fields.
+
+CRM assignment fields include:
+- `assigned_to`: nullable relation to the assigned agent.
+- `assigned_by`: nullable relation to the user who made the assignment.
+- `assigned_at`: nullable assignment timestamp.
+
+LeadActivity records provide an activity timeline for supported lead events such as notes, status changes and assignment changes. The migration `0004_lead_assignment_and_activity` adds the assignment fields, an assignment/status index and LeadActivity. Existing leads remain valid and can remain unassigned.
+
+## Migration operations
+
+The source-controlled migration is not automatically applied to an existing local database. If runtime logs report `no such column: submissions_propertyenquiry.assigned_to_id`, the likely issue is a database whose migration state is behind the current model code.
+
+From `backend`:
+
+```powershell
+python manage.py showmigrations submissions
+python manage.py migrate
+python manage.py showmigrations submissions
+```
+
+Confirm migration `0004_lead_assignment_and_activity` is marked applied. Back up valuable local SQLite data before migration. Do not delete the database or generate a duplicate migration to address a pending migration.
+
+## Site Content status
+
+There is no implemented SiteContentSection model/migration in the shipped branch state documented here. Home/About/Contact public copy is frontend-maintained. Do not treat older proposed SiteContentSection schema descriptions as implemented database facts.
+
+## Privacy and access
+
+Role checks and queryset scoping are enforced in Django. Admin-only submissions, notes and exports must not be exposed to public users or agents. Never connect public clients directly to the production database.

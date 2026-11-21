@@ -1,109 +1,110 @@
-# Swastik Properties — All-in-One Platform Delivery Plan
+# Swastik Properties — All-in-One Platform Roadmap
 
 ## Objective
 
-Extend the existing Angular 22 SSR + Django 5.2 / Django REST Framework application into an integrated real-estate operating platform. This roadmap is the source of truth for phased delivery and verification.
+Evolve the existing Angular 22 SSR + Django 5.2 / Django REST Framework application into a reliable real-estate operating platform without replacing its frontend, backend or existing business workflows.
 
-## Architecture constraints
+## Non-negotiable constraints
 
-- Preserve the current Angular application and Django project; do not introduce a replacement frontend/backend.
-- Keep PostgreSQL as the production target and SQLite as the local fallback.
-- Preserve existing public URLs, API contracts, enquiries, property references, images and brochures.
-- The current business constraint is **no property price or customer budget fields**. Do not add them to property data, customer preferences, search filters, lead details or analytics.
-- Continue accepting anonymous public enquiries; account creation must not be a prerequisite for contact.
-- Enforce every role and object-ownership boundary in Django. Angular route guards are a UX layer, not the security boundary.
-- AI recommendations and generated content must be grounded in real records and require human approval before publication.
-- Keep credentials, tokens, private customer data and production configuration outside Git.
+- Preserve existing public URLs, API contracts, enquiries, property references, images and brochures unless a versioned change is explicitly approved.
+- No property price, currency, customer budget or expected-amount fields are to be introduced into property data, forms, filters, lead details or analytics.
+- Public enquiries remain available to guests; account creation is not required.
+- Django enforces authorization and object ownership. Angular guards are only a UX layer.
+- AI output must be grounded in real records, clearly advisory and human-approved before publication or customer communication.
+- Keep credentials, tokens, customer PII and production configuration outside Git.
 
-## Existing baseline (verified by repository source inspection)
+## Delivered baseline
 
-- Public pages: home, property catalogue/detail, about, contact and blog.
-- Property inventory with publication/availability workflow, brochure and image gallery.
-- Public six-form lead intake, consent timestamp, anonymous throttling and honeypot.
-- Admin lead inbox with status/notes, filters and CSV export.
-- JWT authentication and SUPER_ADMIN, ADMIN, EDITOR and AGENT roles.
-- Admin property, lead, user and blog areas.
-- Local-storage favourites/recently viewed/compare (where implemented).
-- Site Content CMS is **not implemented in the current URL config or Angular route table**. README and PROJECT_PROGRESS currently disagree; documentation must be reconciled after implementation.
+- Public Home, About, Contact, Blog, property marketplace and property detail pages.
+- Shared Quiet Luxury design system applied through the global stylesheet.
+- Unified Buy / Rent / Lease marketplace at `/properties`, using existing published-property API data.
+- Search, category, area bounds, sort, filter chips/reset, saved listings and comparison up to three records.
+- Responsive filter controls and selected-listing address map preview.
+- Property visit/callback actions linked to property detail forms.
+- Property inventory, publication/availability workflow, PDF brochure and photo gallery.
+- Six public lead form types, consent capture, anonymous throttling and honeypot.
+- Admin lead inbox, status/notes, filters and CSV export.
+- JWT roles: SUPER_ADMIN, ADMIN, EDITOR and AGENT.
+- CRM backend foundation: nullable lead assignment, activity history and agent-scoped API support.
+- Blog public read and Admin/Super Admin article management.
 
-## Workstreams and acceptance criteria
+## Current marketplace contract and limitations
 
-### 0. Baseline stabilization
-- [ ] Run Django system checks, migration consistency, migrations and all existing backend tests.
+Buy is translated to the existing API listing type `SALE`; Rent and Lease use the corresponding listing types. Filters are restricted to fields currently supported by the API. Saved/compare state is browser-side. The map is an address-based preview of the selected listing, not a multi-pin synchronized geographic search.
+
+The API does not currently expose price, EMI, bedrooms, bathrooms, deposits, furnishing, lock-in, lease escalation or parking terms. The UI must not infer or fabricate these fields. Add such filters only after business-approved model fields, validation, migrations, serializers, query filters and tests are implemented.
+
+## Workstreams
+
+### 0. Stabilization and release verification
+- [ ] Run backend system checks, migration consistency checks, migrations and full tests.
 - [ ] Run Angular production SSR build.
-- [ ] Review current CI failures and resolve them without weakening checks.
-- [ ] Establish regression tests for existing public submissions, catalogue and role boundaries.
+- [ ] Review CI runs for the exact release commit; do not infer pass status from an earlier commit.
+- [ ] Browser-test public routes, marketplace modes, forms and responsive breakpoints.
+- [ ] Verify PostgreSQL deployment migrations and media persistence.
 
-### 1. Property information and media
-- [ ] Add only business-approved, category-specific attributes (for example bedrooms, bathrooms, furnishing, parking, amenities, construction/possession state).
-- [ ] Validate units, ranges and category applicability.
-- [ ] Support additional media/document types with file size, extension and content validation.
-- [ ] Preserve publication approval, availability, references and brochure links.
-- [ ] Keep price and budget data absent.
+### 1. Marketplace data and discovery
+- [x] Unified Buy / Rent / Lease route and mode-aware API listing type.
+- [x] Search, category, area bounds and sort using supported API fields.
+- [x] Saved listings and up-to-three comparison in browser state.
+- [x] Property detail visit and callback navigation.
+- [ ] Introduce reliable geocoding and synchronized map/feed only after coordinates are consistently available.
+- [ ] Add business-approved listing attributes and filters only after API/schema work.
+- [ ] Consider server-synchronized saved searches/favourites as part of customer identity work.
 
-### 2. CMS
-- [ ] Bounded sections: Home, About, Services, Blog landing, Contact, FAQs and location guides.
-- [ ] Structured content validation, safe rich-text sanitization and validated external links/media.
-- [ ] Draft/publish, preview, revisions, timestamps and audit history.
-- [ ] Admin/Super Admin write APIs and public read-only published APIs.
-- [ ] Angular CMS screens and public rendering backed by verified saved content.
-- [ ] Seed only verified business facts; do not invent team, awards, statistics or service claims.
+### 2. CRM and agent workspace
+- [x] Lead assignment fields and assignment/activity migration.
+- [x] Admin assignment/unassignment API and active-agent eligibility.
+- [x] Agent-scoped lead list/detail/activity API foundation.
+- [ ] Angular agent workspace and Admin assignment UI.
+- [ ] Follow-up tasks, reminders, call/meeting records and site visits.
+- [ ] Conversion/loss outcomes, reasons and safe duplicate handling.
+- [ ] Permission tests for every agent-owned object and admin-only action.
 
-### 3. CRM and agent workspace
-- [ ] Evolve the existing PropertyEnquiry/lead record without losing historical enquiries.
-- [ ] Agent assignment and reassignment, lead stages, source, priority and permitted inventory links.
-- [ ] Activity timeline for calls, messages, meetings, notes and status transitions.
-- [ ] Follow-up tasks, reminders and site visits.
-- [ ] Conversion/loss outcome and reason; duplicate detection with safe merge controls.
-- [ ] Agent APIs return only leads assigned to the authenticated agent; admin endpoints remain scoped to admins.
-- [ ] Angular agent dashboard, lead queue, follow-up calendar and site visits.
-- [ ] Automated tests prove an agent cannot read/update another agent's leads.
+### 3. Customer portal
+- [ ] Customer identity/profile and consent-aware preferences.
+- [ ] Server-synced favourites, enquiry history and site visits.
+- [ ] Querysets scoped to the authenticated customer with cross-customer isolation tests.
+- [ ] Keep guest enquiry workflows operational.
 
-### 4. Customer portal
-- [ ] Customer identity/profile/preferences and consent-aware communication settings.
-- [ ] Server-synced favourites, enquiry history and appointments/site visits.
-- [ ] Customer data endpoints scope queries to the authenticated customer.
-- [ ] Tests prove one customer cannot access another customer's records.
-- [ ] Keep guest enquiries working.
+### 4. Public content management
+- [ ] Define bounded structured sections and versioned schemas.
+- [ ] Implement Django models, migrations, admin write APIs and public read-only published APIs.
+- [ ] Implement an Angular Admin editor and connect public pages to verified persisted content.
+- [ ] Sanitize rich text and validate URLs, images and repeatable collections.
+- [ ] Add audit metadata, preview, revision and permission tests.
+- [ ] Do not claim a Site Content CMS is shipped until route, APIs, migrations and UI are present and tested.
 
 ### 5. Search and AI
-- [ ] Improve structured filters and metadata quality first.
-- [ ] Natural-language parsing must produce auditable structured filters.
-- [ ] Recommendations rank published/available inventory only and include match explanations.
-- [ ] Semantic retrieval/embeddings are optional and only added after infrastructure and evaluation are ready.
-- [ ] AI lead scoring is advisory; no automatic rejection, closure or customer communication.
-- [ ] AI content assistance produces drafts only; a human publishes.
-- [ ] Never generate fictitious inventory or infer missing listing facts.
+- [ ] Improve listing metadata and structured filters before adding semantic search.
+- [ ] Parse natural language into auditable structured filters.
+- [ ] Rank only published/available inventory and explain matches using stored facts.
+- [ ] Keep AI lead scoring advisory; never automatically reject or close leads.
+- [ ] AI content assistance creates drafts only; a human publishes.
 
 ### 6. Notifications and automation
-- [ ] Background queue for email/WhatsApp/SMS (only configured providers).
-- [ ] Consent and opt-out enforcement, approved templates, idempotency keys, delivery logs and retry/backoff.
-- [ ] Events: new enquiry, assignment, overdue follow-up, site visit, publication and status change.
-- [ ] No credentials or provider secrets committed to Git.
+- [ ] Configure approved email/WhatsApp/SMS providers and background processing.
+- [ ] Enforce consent/opt-out, idempotency, retry/backoff and delivery audit logs.
+- [ ] Support events for new leads, assignments, due follow-ups, site visits and publication.
+- [ ] Store provider secrets outside source control.
 
 ### 7. Analytics / Power BI
-- [ ] Define lead, property, customer and agent KPIs precisely.
-- [ ] Secure aggregated reporting endpoints or a controlled reporting replica/export.
-- [ ] Reconcile aggregate totals with source records and document refresh cadence.
+- [ ] Define lead, inventory, agent and conversion metrics.
+- [ ] Provide secured aggregate endpoints or controlled reporting exports.
+- [ ] Reconcile aggregate values to source records and document refresh cadence.
 - [ ] Never expose the production database directly to public clients or Power BI consumers.
 
 ### 8. Production readiness
-- [ ] PostgreSQL migration and deployment verification.
-- [ ] Persistent object storage for media and documented lifecycle/backup policy.
-- [ ] HTTPS, security headers/CSP, secret management, least-privilege service accounts.
-- [ ] Automated backup and restore test, monitoring, error reporting and incident runbook.
-- [ ] Responsive browser QA for public and role-specific workspaces.
+- [ ] PostgreSQL migration/deployment verification.
+- [ ] Persistent object storage, backups and restore testing.
+- [ ] HTTPS, CSP/security headers, secrets management and least privilege.
+- [ ] Monitoring, error reporting and incident runbook.
+- [ ] Responsive and accessibility QA for public and role-specific workspaces.
 
 ## Completion gate
 
-A workstream is complete only when:
-1. API and UI are integrated.
-2. migrations are checked and reversible where feasible;
-3. tests include positive and negative permission cases;
-4. relevant CI builds pass;
-5. docs and API schema match actual routes and fields;
-6. no price/budget fields, fake business facts or unverified AI claims are introduced.
+A workstream is complete only when API and UI are integrated, migrations are checked, positive and negative permission tests pass, relevant CI passes for the exact commit, documentation matches the shipped routes/fields, and no unsupported property facts or commercial values are invented.
 
 ## Verification record
 
-Record exact commit SHA, commands, outcomes, CI run URLs, browser coverage and known limitations here before asking the owner for a consolidated review.
+Record the exact commit SHA, commands, CI run URLs, browser coverage and known limitations before release approval.

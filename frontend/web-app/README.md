@@ -1,25 +1,46 @@
 # Swastik Properties — Unified Angular Frontend
 
-One Angular SSR application serves both the public website and the protected Admin workspace. Start this application once; visitors use the public routes and administrators use the `/admin` routes on the same origin.
+One Angular 22 SSR application serves the public website and protected Admin workspace. Start the frontend once; public routes and `/admin` routes share the same origin and build.
 
 ## Public experience
 
-- Responsive public homepage with Residential, Commercial and Land entry points.
-- Property catalogue with search, category and listing-purpose filters.
-- Paginated property results and individual property detail pages.
-- Property photographs and primary-image gallery from the backend property record, plus brochure and Google Maps links.
-- Server-side rendering and dynamic property titles/descriptions.
-- Public property requests bypass Admin authorization headers and receive only published catalogue data.
+- Responsive homepage with Residential, Commercial and Land discovery entry points.
+- Unified property marketplace at `/properties` with Buy, Rent and Lease modes.
+- Search, category, min/max area, sorting, filter chips and reset using existing API-supported fields.
+- Mode-aware listing cards, browser-side saved properties and compare (up to three listings).
+- Selected-property address map preview; not a synchronized geospatial map with pins for every result.
+- Property detail pages with photographs, brochure/location links and enquiry/site-visit forms.
+- About, Contact, Blog, Thank You and branded not-found pages.
+- Public property requests use the public API path and return published listings only.
+
+## Marketplace data contract
+
+Buy maps to the API listing type `SALE`; Rent and Lease use their corresponding listing types. Current API data does not include price, EMI, bedrooms, bathrooms, deposits, furnishing, lock-in, lease escalation or parking terms. The UI does not fabricate these values and displays “Contact for pricing” as appropriate.
+
+Saved listings and compare state use the existing browser-side `PublicPropertyState` service; they are not synchronized to a customer account.
+
+Visit and callback actions navigate to the property detail page and its enquiry/site-visit form anchors.
+
+## Visual system
+
+The public site uses the Quiet Luxury palette:
+- Warm Alabaster `#F9F8F6`
+- Soft Stone `#EFECE6`
+- Deep Obsidian `#141413`
+- Warm Charcoal `#575550`
+- Brushed Champagne `#B59461`
+- Burnished Bronze `#967746`
+
+Global tokens and cross-route typography, navigation, hero bands, cards, forms and footer styling are maintained in `src/styles.css`.
 
 ## Admin experience
 
 - Admin/Super Admin sign-in at `/admin/login`.
-- Protected property management at `/admin/properties`.
-- Existing property inventory, search, category filter and pagination.
-- Create/edit properties, upload/replace PDF brochures, upload multiple JPG/PNG/WEBP property photographs, select a primary photo, remove photos, publish/unpublish, change availability and permanently delete properties.
-- JWT access-token handling, refresh-token rotation and logout revocation.
-- Agent accounts are denied access to the Admin workspace.
-- Planned scoped Site Content editor for Home, About, Blog and Contact, restricted to Admin and Super Admin. This is not a general-purpose CMS or page builder.
+- Protected property management, lead inbox, Blog management and user management routes according to current route/role configuration.
+- Property CRUD, brochure/gallery uploads, publication and availability controls.
+- Lead review, filters, private notes, status updates and CSV export.
+- CRM backend assignment/activity support exists; a complete Angular agent workspace and assignment controls are not yet delivered.
+- No `/admin/site-content` CMS route is currently shipped.
 
 ## Routes
 
@@ -28,14 +49,14 @@ One Angular SSR application serves both the public website and the protected Adm
 | `/` | Public |
 | `/properties` | Public |
 | `/properties/:slug` | Public |
-| `/admin/login` | Public sign-in screen |
-| `/admin` | Admin / Super Admin; redirects to properties |
-| `/admin/properties` | Admin / Super Admin |
-| `/admin/site-content` | Admin / Super Admin (planned) |
+| `/about`, `/contact`, `/blog`, `/blog/:slug` | Public |
+| `/thank-you`, `/404` | Public |
+| `/admin/login` | Public sign-in |
+| `/admin/**` | Role-guarded; Django APIs enforce permissions |
 
-## Local development (Windows PowerShell)
+## Local development — Windows PowerShell
 
-Start Django in one terminal:
+Backend terminal:
 
 ```powershell
 cd backend
@@ -43,7 +64,7 @@ cd backend
 python manage.py runserver
 ```
 
-Start the unified frontend once in another terminal:
+Frontend terminal:
 
 ```powershell
 cd frontend/web-app
@@ -53,7 +74,7 @@ npm.cmd start
 
 Open http://localhost:4200. The development proxy forwards `/api` and `/media` to Django at http://127.0.0.1:8000.
 
-## Production SSR
+## SSR build and production
 
 ```powershell
 npm.cmd run build
@@ -62,42 +83,28 @@ $env:PORT = "4000"
 npm.cmd run serve:ssr
 ```
 
-Set `BACKEND_API_URL` to the backend API base URL in the deployment environment. Configure the reverse proxy/CDN to route API and media requests appropriately.
-
-The Admin routes are client-rendered so browser session storage is never accessed during server rendering. Public routes remain server-rendered.
+Admin routes are client-rendered because browser session storage is used for authentication. Public routes remain SSR-capable. Configure reverse-proxy routing, HTTPS and persistent media storage in the deployment environment.
 
 ## API dependencies
 
 - `GET /api/v1/properties/`
 - `GET /api/v1/properties/{slug}/`
-- `POST /api/v1/auth/login/`
-- `POST /api/v1/auth/token/refresh/`
-- `POST /api/v1/auth/logout/`
-- Planned: `/api/v1/site-content/` and `/api/v1/site-content/{section}/` for authenticated Admin content management.
-- Planned: `/api/v1/public/site-content/{section}/` for public read-only content.
-- Admin property CRUD endpoints under `/api/v1/properties/`
+- `POST /api/v1/submissions/leads/` and the related Admin lead endpoints
+- Public Blog endpoints under `/api/v1/blog/posts/`
+- Authentication endpoints under `/api/v1/auth/`
 
-The public property API returns published properties only. Customer enquiry forms are connected to the submissions API. Site Content APIs are planned; do not assume Home/About/Blog/Contact are database-backed until implementation and verification are complete. Property price and budget fields are prohibited.
-
+See the repository-level API specification and generated OpenAPI schema for exact query parameters and payload fields.
 
 ## Source structure
 
-- `src/app/pages/home` — public homepage.
-- `src/app/pages/about` — public About page.
-- `src/app/pages/contact` — public contact and lead forms.
-- Planned: `src/app/admin/features/site-content` — structured content editor for Home, About, Blog and Contact.
-- `src/app/pages/properties` — searchable property catalogue.
-- `src/app/pages/property-detail` — individual property details and photo gallery.
-- `src/app/layout/public-layout` — public header, navigation and contact footer.
-- `src/app/admin/features/auth` — Admin sign-in page.
-- `src/app/admin/features/properties` — Admin property management page.
-- `src/app/core/services` and `src/app/core/models` — shared API services and data contracts.
+- `src/app/pages/home` — homepage.
+- `src/app/pages/about` — About page.
+- `src/app/pages/contact` — public lead forms.
+- `src/app/pages/properties` — catalogue and marketplace.
+- `src/app/pages/property-detail` — property detail and enquiry forms.
+- `src/app/pages/blog` — Blog list/detail.
+- `src/app/layout/public-layout` — shared public header/footer.
+- `src/app/admin` — protected Admin features.
+- `src/app/core/services` and `src/app/core/models` — API clients and shared contracts.
 
-Both public and Admin routes use this single Angular workspace and one development server.
-
-## Swastik Properties contact details
-
-The public footer displays the supplied business contact details for Sangram Pawar, Director:
-- Phone: +91 9403129403
-- Email: sangramspawar@gmail.com
-- Office: Plot No. 72, Sector F 1, N-4, CIDCO, Chh. Sambhajinagar.
+The backend and generated OpenAPI schema remain authoritative when a documentation summary differs from implementation.

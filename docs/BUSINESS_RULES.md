@@ -1,36 +1,41 @@
 # Swastik Properties — Business Rules
 
-## Roles and permissions
+## Roles
 
 | Capability | SUPER_ADMIN | ADMIN | EDITOR | AGENT |
 |---|---:|---:|---:|---:|
-| Create/edit/delete/publish properties and images | Yes | Yes | No | Existing Agent rules unchanged |
-| Create/edit/delete/publish Blog posts and edit public website sections | Yes | Yes | No | No |
+| Property administration | Yes | Yes | No | Only explicitly permitted agent scope |
+| Blog management | Yes | Yes | No unless separately granted by API policy | No |
+| Lead inbox, notes and export | Yes | Yes | No | No |
+| Assign/unassign leads | Yes | Yes | No | No |
+| View assigned leads through agent APIs | Yes | Admin scope | No | Own assigned leads only |
 | Manage ADMIN accounts | Yes | No | No | No |
-| Manage EDITOR and AGENT accounts | Yes | Yes | No | No |
-| Manage SUPER_ADMIN accounts | Yes | No | No | No |
-| Permanently delete user accounts | Yes | No | No | No |
+| Manage EDITOR/AGENT accounts | Yes | Yes | No | No |
+| Permanently delete users | Yes | No | No | No |
 
-- SUPER_ADMIN is the system superuser and has full access.
-- ADMIN manages property inventory, publication, property photos, public website content and EDITOR/AGENT users. ADMIN cannot manage Admin/Super Admin accounts.
-- EDITOR does not receive Site Content permissions by default. EDITOR cannot access property management or user administration.
-- AGENT behaviour and permitted agent workflows remain unchanged.
-- Users cannot change their own role or deactivate/delete themselves through user management.
-- ADMIN cannot create/promote accounts to ADMIN or SUPER_ADMIN.
-- User deactivation is the default removal action; permanent deletion is Super Admin only.
-- The last active SUPER_ADMIN cannot be demoted or deactivated.
+- SUPER_ADMIN has full system administration rights.
+- ADMIN manages property inventory, leads, permitted users and Blog editorial records.
+- EDITOR has no assumed access to Admin workspace, property or lead management unless an explicit backend permission grants it.
+- AGENT must be scoped to assigned leads in agent APIs and cannot access the Admin lead inbox/export.
+- Django permissions and querysets are authoritative; Angular guards are not security controls.
+- Users cannot elevate their own role or bypass account deactivation restrictions.
+- ADMIN cannot manage ADMIN or SUPER_ADMIN accounts.
+- The last active SUPER_ADMIN must remain protected from deactivation/removal.
 
-## Properties
+## Property inventory and marketplace
 
-- Property prices are not collected, stored, managed, accepted or displayed anywhere in the property catalogue, Admin interface, APIs or public website. Public property discovery uses location, category, listing purpose, availability and area instead.
+- Property price, currency, EMI and customer budget values are not collected, stored, accepted or displayed.
+- Buy maps to the existing `SALE` listing type; Rent and Lease use their corresponding listing types.
+- Public discovery is based on supported fields such as location, category, listing type, availability and area.
+- Do not display bedrooms, bathrooms, deposits, furnishing, lock-in, escalation or parking unless those fields are added to and returned by the backend.
+- Public users see published properties only.
+- Admin publication/availability actions follow backend validation and permissions.
+- Saved properties and compare state are browser-side in the current marketplace, not a server-backed customer account feature.
+- Map preview is address-based for the selected listing; do not describe it as full multi-pin geospatial search.
 
-- Administrators can add, update and permanently delete properties.
-- Property publication and agent-assignment rules are encoded in the property domain.
-- Deletion accounts for dependent images and related records; it must not leave orphaned media files.
+## Public forms and submissions
 
-## Forms and submissions
-
-The website will support these agreed form categories:
+Supported public form categories:
 1. General Enquiry
 2. Property Enquiry
 3. Buy Requirement
@@ -38,23 +43,20 @@ The website will support these agreed form categories:
 5. Sell Property
 6. Property Listing
 
-- All agreed forms must be captured by the backend.
-- All form submissions must be downloadable by administrators.
-- New website submissions record the visitor's explicit contact consent timestamp. Legacy submissions remain available with a null consent timestamp.
-- Administrators manage NEW, CONTACTED, QUALIFIED, CLOSED and SPAM statuses and can store private follow-up notes.
-- Agents cannot read, update or export any customer submissions.
-- Buy/rent forms require a preferred location; sell/list forms require the property location. No price, budget, expected amount or cost fields are collected, accepted or displayed.
-- Public intake endpoints must validate submitted data and attachments.
-- Only administrators may access submission records and downloadable exports.
-- Agents must not access customer submissions or exports.
+- Guests can submit forms; account creation is not required.
+- New submissions record explicit contact-consent timestamp.
+- Historical records remain readable when optional newer fields are null.
+- Buy/rent requirements capture location preferences; sell/list forms capture property location as validated by the form schema.
+- Do not add price, budget, expected amount or cost inputs.
+- Public intake validates data and applies configured throttling/honeypot controls.
+- Only ADMIN/SUPER_ADMIN can use the Admin lead inbox and export.
+- Internal notes are not public.
+- Agent assignment is optional; existing unassigned leads remain valid.
+- Agent-facing APIs must scope records to the authenticated agent's assigned leads.
 
-## Scoped website content editing
+## Visual and content integrity
 
-- ADMIN and SUPER_ADMIN can edit structured public content for Home, About, Blog and Contact.
-- Public visitors can read published content only; public APIs are read-only.
-- The editor exposes approved fields and repeatable records, not arbitrary templates, scripts, stylesheets or unrestricted HTML.
-- About-page company history, service areas, statistics and team biographies must be verified by the business; do not invent values.
-- Blog articles retain draft/published/archived lifecycle rules and are managed by ADMIN/SUPER_ADMIN.
-- Rich text is sanitized server-side; uploaded images are validated.
-- Content updates retain `updated_at` and `updated_by` audit metadata.
-- This scoped editor does not change property CRUD, lead workflows or the no-price/no-budget rule.
+- Public pages use the shared Quiet Luxury palette and typography.
+- Do not invent company history, team biographies, awards, service areas, property facts or listing commercial terms.
+- The Site Content CMS is not shipped; Home/About/Contact copy is currently maintained in the Angular frontend.
+- Blog articles follow the backend's draft/published/archived rules; only published posts are public.
