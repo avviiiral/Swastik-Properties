@@ -26,3 +26,11 @@ export const workspaceGuard: CanActivateFn = () => {
   if (auth.hasRole('ADMIN', 'SUPER_ADMIN')) return router.createUrlTree(['/admin/overview']);
   return router.createUrlTree(['/admin/forbidden']);
 };
+
+
+export const agentGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (!auth.user() || !auth.accessToken) return router.createUrlTree(['/agent/login']);
+  return auth.hasRole('AGENT') ? true : router.createUrlTree(['/admin/forbidden']);
+};
