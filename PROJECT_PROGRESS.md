@@ -17,7 +17,7 @@
 - [x] Add direct call/email/WhatsApp follow-up links and Admin navigation to the full lead inbox.
 - [x] Add public property catalogue locality/city/district search and sort options; no price filters or price sorting.
 - [x] Update API, database, admin workspace and setup documentation.
-- [ ] Run backend and frontend GitHub Actions checks and resolve any failures.
+- [ ] Run frontend SSR build and browser QA; backend GitHub Actions is running for the CRM API changes.
 - [ ] Verify migration and SSR build against the deployment database.
 - [ ] Browser-check public forms, mobile/desktop layouts, admin lead updates and CSV downloads.
 
@@ -36,7 +36,7 @@ npm.cmd install
 npm.cmd run build
 ```
 
-## Next phase — Admin-managed public website content (planned; not yet implemented)
+## CRM foundation — feature/all-in-one-platform (in progress)\n- [x] Extend existing enquiry records with nullable agent assignment, assigning user and assignment timestamp; existing lead rows remain valid and unassigned.\n- [x] Add lead activity timeline records for notes, status changes and assignments.\n- [x] Add admin-only assignment/unassignment endpoint; only active AGENT accounts can be selected.\n- [x] Add agent list/detail/activity APIs with querysets scoped to the authenticated agent's assigned leads.\n- [x] Add regression tests for cross-agent isolation, status updates, activity notes and admin assignment permissions.\n- [ ] Add Angular agent workspace and integrate assignment controls in the Admin lead inbox.\n- [ ] Expand CRM lifecycle, follow-up tasks, site visits and conversion/loss outcomes.\n- [ ] Run all backend tests and inspect CI results for this commit.\n\n## Next phase — Admin-managed public website content (planned; not yet implemented)
 - [ ] Add a Site Content workspace for Home, About, Blog and Contact.
 - [ ] Persist structured editable copy, headings, calls to action, service areas, statistics, team profiles and contact display settings in the database.
 - [ ] Add authenticated ADMIN/SUPER_ADMIN management APIs and public read-only APIs.
@@ -48,5 +48,5 @@ npm.cmd run build
 
 ## Deferred recommendations
 - Add property-specific subtypes and fields after the business confirms the exact data to capture.
-- Consider authenticated agent assignment only if the operating policy changes; customer submissions remain Admin-only in the current scope.
+- Customer portal, AI search, notifications, analytics/Power BI and production-readiness work remain future roadmap items.
 - Configure production PostgreSQL, persistent media storage, HTTPS, CSP, backups and monitoring before launch.
