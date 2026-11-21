@@ -57,6 +57,7 @@ class AgentLeadDetailView(APIView):
 
 class AgentLeadActivityListCreateView(generics.ListCreateAPIView):
     permission_classes = (IsAgent,)
+    pagination_class = None
     serializer_class = LeadActivitySerializer
 
     def get_lead(self):
@@ -78,6 +79,8 @@ class AdminLeadAssignmentView(APIView):
     permission_classes = (IsAdminOrSuperAdmin,)
 
     def patch(self, request, pk):
+        if "assigned_to" not in request.data:
+            return Response({"assigned_to": "This field is required; use null to unassign."}, status=400)
         lead = get_object_or_404(PropertyEnquiry, pk=pk)
         old_agent = lead.assigned_to
         serializer = LeadAssignmentSerializer(lead, data=request.data, partial=True)
