@@ -32,7 +32,7 @@ export interface BusinessContactSettings {
   updated_at?: string;
 }
 
-export interface PropertyEnquiryRecord {
+export interface AssignableAgent { id: number; username: string; email: string; first_name: string; last_name: string; role: 'AGENT'; is_active: boolean; }\n\nexport interface PropertyEnquiryRecord {
   id: number;
   enquiry_type: LeadType;
   enquiry_type_label: string;
@@ -119,7 +119,7 @@ export class PropertyEnquiryApi {
     );
   }
 
-  exportAdminEnquiries(filters: LeadFilters = {}) {
+  listAssignableAgents() {\n    return this.http.get<{results: AssignableAgent[]}>(this.base + '/auth/users/');\n  }\n\n  assignAdminEnquiry(id: number, assigned_to: number | null) {\n    return this.http.patch<{id: number; assigned_to: number | null; assigned_agent: string | null; assigned_at: string | null}>(\n      this.base + '/submissions/property-enquiries/' + id + '/assignment/', {assigned_to}\n    );\n  }\n\n  exportAdminEnquiries(filters: LeadFilters = {}) {
     let params = new HttpParams();
     if (filters.enquiry_type) params = params.set('enquiry_type', filters.enquiry_type);
     if (filters.status) params = params.set('status', filters.status);
