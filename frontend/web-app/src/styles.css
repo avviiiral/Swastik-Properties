@@ -570,3 +570,111 @@ html{scroll-padding-top:96px}
   .property-grid.list-view .property-card-link{display:block}
   .property-grid.list-view .card-tools{grid-row:auto;grid-column:auto;justify-content:flex-start;border-top:0}
 }
+
+
+/* Premium editorial pass — homepage, listing cards, gallery, and destination map. */
+.home-page .hero{position:relative;background:radial-gradient(ellipse at 12% 22%,rgba(196,155,98,.12),transparent 38%),linear-gradient(125deg,#102a24 0%,#1b3a33 55%,#29483d 100%)}
+.home-page .hero:after{position:absolute;inset:0;z-index:-1;content:"";opacity:.16;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(90deg,#000,transparent 75%)}
+.home-page .hero-inner{min-height:650px;grid-template-columns:1fr 1.02fr;gap:clamp(28px,5vw,76px);padding:62px 0}
+.home-page .hero-copy{position:relative;z-index:2}
+.home-page .hero h1{max-width:620px;font-family:'Manrope',sans-serif;font-size:clamp(52px,6.4vw,82px);font-weight:600;line-height:.99;letter-spacing:-.075em}
+.home-page .hero h1 em{color:#d6b477}
+.home-page .hero-description{max-width:430px;font-size:14px;line-height:1.95}
+.home-page .hero-art{min-height:510px;border:1px solid rgba(226,199,157,.35);box-shadow:22px 24px 0 rgba(196,155,98,.12),0 34px 70px rgba(8,25,18,.28)}
+.home-page .hero-photo{object-position:center 48%;filter:saturate(.82)}
+.home-page .hero-photo-shade{background:linear-gradient(180deg,rgba(14,31,26,.02) 15%,rgba(14,31,26,.72) 100%),linear-gradient(90deg,rgba(14,31,26,.12),transparent 65%)}
+.home-page .hero-photo-caption{right:30px;bottom:34px;left:30px}
+.home-page .hero-search{box-shadow:0 18px 40px rgba(0,0,0,.14);border:1px solid rgba(255,255,255,.48);border-radius:5px}
+.home-page .hero-search button{padding:0 18px;transition:background .2s,transform .2s}
+.home-page .hero-search button:hover{background:#315c4d;transform:translateY(-1px)}
+.home-page .featured-card{overflow:hidden;border-color:#e1e6df;border-radius:7px;box-shadow:0 8px 26px rgba(25,55,46,.045)}
+.home-page .property-visual{height:245px}
+.home-page .property-visual:after{position:absolute;inset:50% 0 0;content:"";background:linear-gradient(transparent,rgba(13,34,27,.26));pointer-events:none}
+.home-page .card-info{padding:21px 21px 20px}
+.home-page .card-info h3{font-size:18px;letter-spacing:-.025em}
+.home-page .featured-card:hover{transform:translateY(-7px);box-shadow:0 22px 42px rgba(25,55,46,.14)}
+.home-page .area-guide-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.home-page .area-guide-card{position:relative;min-height:230px;overflow:hidden;border:1px solid #dfe5dc;background:#e6e9e1}
+.home-page .area-guide-card>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.home-page .area-guide-card:after{position:absolute;inset:0;content:"";background:linear-gradient(180deg,rgba(14,31,26,.05) 10%,rgba(14,31,26,.82) 100%)}
+.home-page .area-guide-card:hover>img{transform:scale(1.055)}
+.home-page .area-guide-card .area-guide-copy{position:absolute;z-index:1;right:0;bottom:0;left:0;padding:20px;color:#fff;display:grid;gap:8px}
+.home-page .area-guide-copy>span{color:#e4c58f;font-size:8px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
+.home-page .area-guide-copy>strong{font:600 29px 'Manrope',sans-serif;letter-spacing:-.045em}
+.home-page .area-guide-copy>b{color:#e2e9e3;font-size:10px;font-weight:600}
+.home-page .area-guide-copy>div{display:flex;gap:17px;align-items:center;padding-top:11px;border-top:1px solid rgba(255,255,255,.25)}
+.home-page .area-guide-copy a,.home-page .area-guide-copy button{padding:0;border:0;background:none;color:#fff;text-decoration:none;font-size:10px;font-weight:800;cursor:pointer}
+.home-page .area-guide-copy button{color:#e4c58f}
+.home-page .maharashtra-map{display:grid;grid-template-columns:minmax(270px,.8fr) minmax(0,1.2fr);min-height:360px;margin-top:28px;border:1px solid #dfe5dc;background:#f4f3ed;box-shadow:0 14px 38px rgba(25,55,46,.06)}
+.home-page .map-intro{padding:30px;display:flex;flex-direction:column;align-items:flex-start}
+.home-page .map-intro h3{margin:12px 0 8px;color:#1b3a33;font:600 27px 'Manrope',sans-serif;letter-spacing:-.045em}
+.home-page .map-intro>p{margin:0;color:#718077;font-size:11px;line-height:1.8}
+.home-page .map-place-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px}
+.home-page .map-place-pills button{min-height:34px;padding:0 10px;border:1px solid #d9e0d7;background:#fff;color:#40564a;font-size:10px;cursor:pointer;transition:background .18s,border-color .18s,color .18s}
+.home-page .map-place-pills button span{margin-left:5px;color:#a17c50;font-weight:800}
+.home-page .map-place-pills button.active{border-color:#1b3a33;background:#1b3a33;color:#fff}
+.home-page .map-place-pills button.active span{color:#e5c48c}
+.home-page .maharashtra-map iframe{width:100%;min-height:360px;border:0;background:#e7ebe4}
+.home-page .map-placeholder{min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse,#e3e9df,#d2dbd2);color:#315244}
+.home-page .map-placeholder span{font-size:9px;font-weight:800;letter-spacing:.2em}
+.home-page .map-placeholder strong{margin-top:13px;font:600 24px 'Manrope',sans-serif}
+.home-page .map-placeholder p{color:#718077;font-size:11px}
+.list-page .property-grid{gap:20px}
+.list-page .property-card{overflow:hidden;border:1px solid #e2e7e0;border-radius:8px;box-shadow:0 7px 24px rgba(25,55,46,.045);transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s,border-color .28s}
+.list-page .property-card:hover{transform:translateY(-6px);border-color:#c8d2c8;box-shadow:0 20px 42px rgba(25,55,46,.13)}
+.list-page .visual{height:235px;background:#e4e9e2}
+.list-page .visual:before{z-index:1;pointer-events:none}
+.list-page .visual small{z-index:2;left:16px;bottom:15px;border-radius:2px}
+.list-page .card-body{padding:20px}
+.list-page .card-body h3{font-size:18px;letter-spacing:-.035em}
+.list-page .card-bottom{padding-top:15px}
+.list-page .card-tools{padding:12px 18px 16px;border-top:1px solid #edf0eb}
+.list-page .card-tools button,.list-page .card-tools a{min-height:32px;padding:0 10px;border:1px solid #dfe6de;border-radius:3px;background:#fafbf8;color:#52665a;text-decoration:none;font-size:10px;font-weight:700}
+.list-page .card-tools button.saved,.list-page .card-tools button.selected{border-color:#25493f;background:#eaf0eb;color:#25493f}
+.detail-content .property-gallery{grid-auto-rows:minmax(150px,210px);gap:12px}
+.detail-content .gallery-image{border-radius:6px}
+.detail-content .gallery-image.gallery-primary{grid-row:span 2}
+.detail-content .gallery-image img{transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .4s}
+.detail-content .gallery-image:hover img{transform:scale(1.045);filter:saturate(1.06)}
+.detail-content .gallery-image figcaption{font-size:11px;letter-spacing:.01em}
+.detail-hero{background:radial-gradient(ellipse at 85% 10%,rgba(196,155,98,.14),transparent 36%),linear-gradient(125deg,#102a24,#1b3a33 68%,#29483d)}
+.detail-hero .wrap{padding-top:34px;padding-bottom:56px}
+.detail-content{gap:54px}
+.detail-content .aside{top:96px}
+.related-section .related-grid>a{box-shadow:0 7px 24px rgba(25,55,46,.045)}
+@media(max-width:900px){
+ .home-page .hero-inner{min-height:0;grid-template-columns:1fr .92fr;gap:24px;padding:48px 0}
+ .home-page .hero-art{min-height:420px}
+ .home-page .property-visual{height:205px}
+ .home-page .maharashtra-map{grid-template-columns:1fr}
+ .home-page .map-intro{padding:24px}
+ .home-page .maharashtra-map iframe,.home-page .map-placeholder{min-height:300px}
+ .list-page .visual{height:205px}
+}
+@media(max-width:680px){
+ .home-page .hero-inner{grid-template-columns:1fr;padding:44px 0 24px}
+ .home-page .hero h1{font-size:clamp(48px,13vw,66px)}
+ .home-page .hero-art{min-height:350px;margin:5px 0 12px;box-shadow:10px 12px 0 rgba(196,155,98,.12),0 24px 45px rgba(8,25,18,.2)}
+ .home-page .area-guide-grid{grid-template-columns:1fr 1fr;gap:9px}
+ .home-page .area-guide-card{min-height:185px}
+ .home-page .area-guide-card .area-guide-copy{padding:13px}
+ .home-page .area-guide-copy>strong{font-size:22px}
+ .home-page .area-guide-copy>div{gap:10px;flex-wrap:wrap}
+ .home-page .maharashtra-map{margin-top:17px}
+ .home-page .map-intro{padding:19px}
+ .home-page .maharashtra-map iframe,.home-page .map-placeholder{min-height:250px}
+ .list-page .property-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .list-page .visual{height:155px}
+ .list-page .card-body{padding:13px}
+ .list-page .card-body h3{font-size:14px}
+ .list-page .card-bottom{align-items:flex-start;flex-direction:column;gap:6px}
+ .list-page .card-tools{display:flex;gap:6px;flex-wrap:wrap;padding:9px}
+ .detail-content .property-gallery{grid-auto-rows:120px}
+}
+@media(max-width:390px){
+ .home-page .area-guide-grid,.list-page .property-grid{grid-template-columns:1fr}
+ .home-page .area-guide-card{min-height:205px}
+}
+@media(prefers-reduced-motion:reduce){
+ .home-page .area-guide-card>img,.home-page .featured-card,.list-page .property-card,.detail-content .gallery-image img{transition:none!important}
+}
