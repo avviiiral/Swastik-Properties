@@ -44,10 +44,7 @@ td{padding:14px 13px;border-top:1px solid #edf0ed;color:#5e6a63;font-size:11px;v
 .text-action{margin-left:9px;padding:4px 0;border:0;color:#466b59;background:transparent;font-size:10px;font-weight:700;}
 .text-action:hover{text-decoration:underline;}
 .delete-action{color:#b64d45;}
-.loading-state,.empty-state{display:grid;justify-items:center;padding:52px 20px;color:#89948d;font-size:12px;}
-.empty-icon{display:grid;place-items:center;width:45px;height:45px;border-radius:14px;color:#9a763e;background:#fbf2e3;font-size:24px;}
-.empty-state h3{margin:14px 0 5px;color:#34443d;font-family:'Manrope',sans-serif;font-size:15px;}
-.empty-state p{max-width:340px;margin:0 0 17px;color:#8a958e;font-size:11px;line-height:1.7;text-align:center;}
+
 .pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 22px;border-top:1px solid #edf0ed;color:#8c9790;font-size:10px;}
 .pagination-actions{display:flex;align-items:center;gap:9px;color:#66736b;}
 .editor-card{padding:22px;box-shadow:var(--shadow);}

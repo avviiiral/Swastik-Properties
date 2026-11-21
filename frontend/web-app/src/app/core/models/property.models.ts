@@ -30,6 +30,8 @@ export interface Property {
   location_url: string;
   brochure_url: string | null;
   images: PropertyImage[];
+  /** Optional public video URL; populated only when the API provides a verified media URL. */
+  video_url?: string | null;
   publication_status: string;
   availability_status: string;
 }

@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { SWASTIK_CONTACT } from '../../core/config/business-contact';
 
 @Component({
@@ -9,6 +10,7 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
   changeDetection:ChangeDetectionStrategy.OnPush,
   template:`
     <div class="site-shell">
+      <div class="site-scroll-progress" aria-hidden="true"><span></span></div>
       <header class="site-header" [class.scrolled]="scrolled()">
         <div class="header-inner">
           <a class="brand" routerLink="/" aria-label="Swastik Properties home"><img class="brand-symbol-image" src="/assets/brand/swastik-symbol.png" alt=""><span class="brand-copy"><strong>SWASTIK</strong><small>PROPERTIES</small></span></a>
@@ -37,16 +39,75 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
     </div>`,
   styles:[`
     :host{display:block}.site-shell{min-height:100vh;display:flex;flex-direction:column}main{flex:1}.site-header{position:sticky;top:0;z-index:20;background:rgba(250,250,247,.95);border-bottom:1px solid rgba(30,59,51,.08);backdrop-filter:blur(16px);transition:background .2s,box-shadow .2s}.site-header.scrolled{background:rgba(250,250,247,.98);box-shadow:0 5px 20px rgba(20,43,38,.06)}
-    .header-inner{width:min(1220px,calc(100% - 56px));height:78px;margin:auto;display:flex;align-items:center;gap:28px}.brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:#1b3932}.brand-symbol-image{display:block;width:42px;height:42px;flex:0 0 auto;object-fit:contain;padding:3px;border-radius:9px;background:#f5f0e6}.brand-copy{display:grid;gap:1px;line-height:1}.brand-copy strong{font:800 15px/1 'DM Sans',sans-serif;letter-spacing:.17em}.brand-copy small{font:600 8px/1.5 'DM Sans',sans-serif;letter-spacing:.32em;color:#8a928b}
+    .header-inner{width:min(1220px,calc(100% - 56px));height:78px;margin:auto;display:flex;align-items:center;gap:28px}.brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:#1b3932}.brand-symbol-image{display:block;width:42px;height:42px;flex:0 0 auto;object-fit:contain;padding:3px;border-radius:9px;background:#f5f0e6}.brand-copy{display:grid;gap:1px;line-height:1}.brand-copy strong{font:800 15px/1 'Montserrat',sans-serif;letter-spacing:.17em}.brand-copy small{font:600 8px/1.5 'Montserrat',sans-serif;letter-spacing:.32em;color:#8a928b}
     .desktop-nav{display:flex;align-items:center;gap:30px;margin-left:auto}.desktop-nav a{position:relative;color:#64716b;text-decoration:none;font-size:12px;font-weight:600;transition:color .15s}.desktop-nav a:after{position:absolute;bottom:-9px;left:0;right:100%;height:1px;background:#c49b62;content:'';transition:right .2s}.desktop-nav a:hover,.desktop-nav a.active{color:#193c34}.desktop-nav a.active:after,.desktop-nav a:hover:after{right:0}
     .header-cta{min-height:42px;padding:0 16px;display:inline-flex;align-items:center;gap:13px;border-radius:4px;background:#1d4037;color:#fff;text-decoration:none;font-size:12px;font-weight:700}.header-cta:hover{background:#2e594d}.header-cta span{font-size:15px}.menu-toggle,.mobile-nav{display:none}
     .site-footer{margin-top:80px;background:#18362f;color:#e6ece7}.footer-main{width:min(1220px,calc(100% - 56px));margin:auto;padding:58px 0 48px;display:grid;grid-template-columns:1.1fr .7fr .7fr 1.15fr;gap:38px}.brand-light{color:#fff}.brand-light .brand-copy small{color:#a6b5ad}.footer-brand p,.footer-contact p{max-width:310px;color:#aebdb4;font-size:13px;line-height:1.8}.footer-links,.footer-contact{display:flex;flex-direction:column;align-items:flex-start;gap:13px}.footer-label{display:block;margin-bottom:5px;color:#c59a61;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}.footer-links a,.footer-contact a{color:#dce5de;text-decoration:none;font-size:12px}.footer-links a:hover,.footer-contact a:hover{color:#fff}.footer-links .admin-link{color:#91a69a;font-size:10px}.footer-contact strong{color:#f3f3ed;font-size:12px}.footer-contact strong small{color:#aebdb4;font-size:10px;font-weight:500}.footer-bottom{width:min(1220px,calc(100% - 56px));min-height:54px;margin:auto;border-top:1px solid rgba(230,236,231,.13);display:flex;justify-content:space-between;align-items:center;color:#9baca3;font-size:11px}
     @media(max-width:800px){.header-inner{width:calc(100% - 34px);height:68px;gap:12px}.desktop-nav{display:none}.header-cta{margin-left:auto;min-height:39px;padding:0 11px;font-size:11px}.menu-toggle{display:flex;flex-direction:column;justify-content:center;gap:5px;width:40px;height:40px;border:1px solid #dfe5dd;background:transparent;border-radius:5px}.menu-toggle span{display:block;width:17px;height:1px;margin:auto;background:#1b3a33}.mobile-nav{display:grid;gap:0;padding:6px 20px 18px;background:#fafaf7;border-top:1px solid #e7ebe5}.mobile-nav a{padding:12px 0;border-bottom:1px solid #e7ebe5;text-decoration:none;font-size:14px;color:#29463d}.footer-main{width:calc(100% - 38px);padding:42px 0 34px;grid-template-columns:1fr 1fr;gap:32px 24px}.footer-brand,.footer-contact{grid-column:1/-1}.footer-bottom{width:calc(100% - 38px);gap:10px;flex-wrap:wrap;padding:15px 0}}
   `]
 })
-export class PublicLayoutComponent {
+export class PublicLayoutComponent implements AfterViewInit, OnDestroy {
   readonly year=new Date().getFullYear();readonly contact=SWASTIK_CONTACT;
   readonly menuOpen=signal(false);readonly scrolled=signal(false);
   private readonly platformId=inject(PLATFORM_ID);
-  constructor(){if(isPlatformBrowser(this.platformId)){const update=()=>this.scrolled.set(window.scrollY>12);update();window.addEventListener('scroll',update,{passive:true});}}
+  private readonly router=inject(Router);
+  private scrollFrame=0;
+  private readonly updateScrollProgress=()=>{
+    if(!isPlatformBrowser(this.platformId))return;
+    if(this.scrollFrame)cancelAnimationFrame(this.scrollFrame);
+    this.scrollFrame=requestAnimationFrame(()=>{
+      const root=document.documentElement;
+      const range=root.scrollHeight-window.innerHeight;
+      const progress=range>0?Math.min(1,Math.max(0,window.scrollY/range)):0;
+      root.style.setProperty('--scroll-progress',String(progress));
+    });
+  };
+  private revealObserver?: IntersectionObserver;
+  private revealMutationObserver?: MutationObserver;
+  constructor(){if(isPlatformBrowser(this.platformId)){const update=()=>this.scrolled.set(window.scrollY>12);update();this.updateScrollProgress();window.addEventListener('scroll',update,{passive:true});window.addEventListener('scroll',this.updateScrollProgress,{passive:true});window.addEventListener('resize',this.updateScrollProgress,{passive:true});this.router.events.pipe(filter((event):event is NavigationEnd=>event instanceof NavigationEnd)).subscribe(()=>{this.menuOpen.set(false);requestAnimationFrame(()=>{const main=document.querySelector<HTMLElement>('.site-shell main');main?.classList.remove('route-changing');void main?.offsetWidth;main?.classList.add('route-changing');window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});this.updateScrollProgress();});});}}
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId) || !('IntersectionObserver' in window)) return;
+    const main = document.querySelector<HTMLElement>('.site-shell main');
+    if (!main) return;
+
+    main.classList.add('sp-motion-ready');
+    this.revealObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        // Reverse the reveal state when the element leaves the viewport.
+        // Keeping it observed makes the entrance animation replay on every return.
+        entry.target.classList.toggle('sp-in-view', entry.isIntersecting);
+      }
+    }, { threshold: 0.01, rootMargin: '0px 0px -8% 0px' });
+
+    const observePageContent = () => {
+      const targets = main.querySelectorAll<HTMLElement>([
+        'section', 'article', 'figure', '[data-scroll-reveal]',
+        '.property-card', '.card', '.featured', '.offer-grid > a',
+        '.value-grid > article', '.type-card', '.detail-section',
+        '.contact-content > *', '.toolbar', '.pagination'
+      ].join(','));
+
+      targets.forEach((element) => {
+        // The homepage has its own reveal observer and timing.
+        if (element.closest('.home-page')) return;
+        element.classList.add('sp-motion-target');
+        if (!element.classList.contains('sp-in-view')) this.revealObserver?.observe(element);
+      });
+    };
+
+    observePageContent();
+    this.revealMutationObserver = new MutationObserver(observePageContent);
+    this.revealMutationObserver.observe(main, { childList: true, subtree: true });
+  }
+
+  ngOnDestroy(): void {
+    this.revealObserver?.disconnect();
+    this.revealMutationObserver?.disconnect();
+    if (isPlatformBrowser(this.platformId)) {
+      window.removeEventListener('scroll', this.updateScrollProgress);
+      window.removeEventListener('resize', this.updateScrollProgress);
+      if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame);
+    }
+  }
 }
