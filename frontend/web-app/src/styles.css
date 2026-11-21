@@ -400,3 +400,164 @@ a{color:inherit}img{max-width:100%}
   .site-shell main .type-card{transform:none!important;transition:none!important}
   .site-shell main .sp-motion-target.sp-in-view{animation:none}
 }
+
+
+/* Swastik public UI system — consistent controls, discovery and mobile ergonomics. */
+:root{
+  --sp-brand:#18372f;
+  --sp-brand-strong:#102a23;
+  --sp-accent:#c49b62;
+  --sp-accent-soft:#f3ecdf;
+  --sp-canvas:#fafaf7;
+  --sp-surface:#fff;
+  --sp-text:#263a32;
+  --sp-muted:#718077;
+  --sp-border:#e2e8e1;
+  --sp-radius:4px;
+  --sp-radius-card:10px;
+  --sp-shadow-card:0 10px 28px rgba(20,43,38,.08);
+  --sp-shadow-float:0 22px 55px rgba(20,43,38,.16);
+  --sp-focus:0 0 0 3px rgba(196,155,98,.3);
+}
+html{scroll-padding-top:96px}
+.site-shell :where(button,a,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--sp-accent);
+  outline-offset:3px;
+}
+.site-shell main :where(button,a){-webkit-tap-highlight-color:transparent}
+.site-shell main :where(input,select,textarea){
+  accent-color:var(--sp-brand);
+}
+.site-shell main :where(button:not(:disabled)){cursor:pointer}
+.site-shell main :where(button:disabled){cursor:not-allowed}
+.site-shell main :where(.property-card,.featured-card,.category-card,.contact-aside,.price-panel,.contact-panel){
+  border-radius:var(--sp-radius);
+}
+.site-shell main :where(.property-card,.featured-card,.category-card):focus-within{
+  box-shadow:var(--sp-shadow-card),var(--sp-focus);
+}
+
+/* Property discovery: balanced desktop grid, compact tablet grid and mobile filter drawer. */
+.mobile-filter-toggle{display:none}
+.result-actions{display:flex;align-items:center;gap:14px}
+.view-switch{display:flex;gap:3px;padding:3px;border:1px solid var(--sp-border);background:#fff}
+.view-switch button{width:34px;height:30px;border:0;background:transparent;color:#748178;font-size:17px}
+.view-switch button.active{background:var(--sp-brand);color:#fff}
+.property-grid.list-view{grid-template-columns:1fr;gap:12px}
+.property-grid.list-view .property-card{display:grid;grid-template-columns:minmax(220px,34%) minmax(0,1fr);align-items:stretch}
+.property-grid.list-view .property-card-link{display:grid;grid-template-columns:minmax(180px,38%) minmax(0,1fr);grid-row:1;grid-column:1/-1}
+.property-grid.list-view .visual{height:100%;min-height:205px}
+.property-grid.list-view .card-body{display:flex;flex-direction:column;justify-content:center;padding:22px 25px}
+.property-grid.list-view .card-bottom{margin-top:auto}
+.property-grid.list-view .card-tools{grid-column:2;grid-row:1;align-self:end;justify-content:flex-end;padding:0 18px 17px}
+.property-grid.list-view .card-tools a{margin-left:0}
+.list-page .property-card{border-radius:var(--sp-radius-card);overflow:hidden}
+.list-page .visual{isolation:isolate}
+.list-page .visual .actual-property-photo{transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.list-page .property-card:hover .actual-property-photo{transform:scale(1.045)}
+.list-page .filters input:focus-visible,.list-page .filters select:focus-visible,
+.list-page .advisor-input input:focus-visible{outline:0;border-color:var(--sp-accent);box-shadow:var(--sp-focus)}
+.list-page .search-btn,.list-page .action,.list-page .advisor-input button{border-radius:var(--sp-radius);transition:transform .18s,background .18s}
+.list-page .search-btn:hover,.list-page .action:hover,.list-page .advisor-input button:hover{transform:translateY(-1px);background:#2c5748}
+.list-page .pagination button{min-height:42px;padding:0 12px;border:1px solid var(--sp-border);background:#fff}
+.list-page .pagination button:not(:disabled):hover{border-color:var(--sp-accent);background:var(--sp-accent-soft)}
+.list-page .state-box{border-radius:var(--sp-radius-card)}
+
+/* Property detail: clearer gallery affordance and persistent mobile conversion actions. */
+.detail-content .property-gallery{gap:12px}
+.detail-content .gallery-image{border-radius:var(--sp-radius);background:#e7ebe4}
+.detail-content .gallery-image:focus-visible{outline:3px solid var(--sp-accent);outline-offset:3px}
+.detail-content .gallery-image img{transition:transform .65s cubic-bezier(.2,.7,.2,1)}
+.detail-content .gallery-image:hover img{transform:scale(1.035)}
+.detail-content .price-panel,.detail-content .contact-panel,.detail-content .address-panel{border-radius:var(--sp-radius-card);box-shadow:0 7px 24px rgba(20,43,38,.045)}
+.detail-content .aside{top:88px}
+.detail-content .contact-panel{scroll-margin-top:100px}
+.detail-content .enquiry-form input:focus-visible,.detail-content .enquiry-form textarea:focus-visible,
+.detail-content .visit-form input:focus-visible,.detail-content .visit-form select:focus-visible{outline:0;border-color:var(--sp-accent);box-shadow:var(--sp-focus)}
+.related-section .related-grid>a{overflow:hidden;border-radius:var(--sp-radius-card);transition:transform .25s,box-shadow .25s}
+.related-section .related-grid>a:hover{transform:translateY(-4px);box-shadow:var(--sp-shadow-card)}
+.related-section .related-image img{transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.related-section .related-grid>a:hover .related-image img{transform:scale(1.045)}
+.mobile-property-actions{display:none}
+
+/* Homepage: strengthen editorial rhythm without inventing listing content. */
+.home-page .hero{isolation:isolate}
+.home-page .hero-copy{transform:translateZ(18px)}
+.home-page .hero-art{border-radius:2px;overflow:hidden}
+.home-page .intro,.home-page .categories,.home-page .featured,.home-page .trust-section,
+.home-page .area-guides,.home-page .client-voices,.home-page .public-faq,.home-page .closing{
+  scroll-margin-top:94px;
+}
+.home-page .category-card,.home-page .featured-card{border-radius:var(--sp-radius-card);overflow:hidden}
+.home-page .trust-grid article{transition:transform .3s ease,background .3s ease}
+.home-page .trust-grid article:hover{transform:translateY(-4px)}
+.home-page .closing .button-light{transition:transform .2s,box-shadow .2s}
+.home-page .closing .button-light:hover{transform:translateY(-3px);box-shadow:0 12px 25px rgba(0,0,0,.16)}
+
+/* Responsive navigation and touch-first layouts. */
+@media(max-width:800px){
+  .site-header .header-inner{height:66px!important}
+  .site-header .brand-symbol-image{width:37px;height:37px}
+  .site-header .mobile-nav{padding:8px 19px 16px;box-shadow:0 16px 24px rgba(14,37,28,.12)}
+  .site-header .mobile-nav a{min-height:46px;display:flex;align-items:center;font-size:13px}
+  .site-header .mobile-nav a.active{color:var(--sp-brand);font-weight:800}
+  .site-header .mobile-nav a.active:after{content:'•';margin-left:auto;color:var(--sp-accent)}
+  .site-header .menu-toggle{width:42px;height:42px;border-radius:var(--sp-radius)}
+}
+@media(max-width:740px){
+  .list-page .toolbar{gap:16px}
+  .mobile-filter-toggle{width:100%;min-height:45px;margin:0 0 8px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--sp-border);background:#fff;color:var(--sp-brand);font-size:12px;font-weight:750}
+  .mobile-filter-toggle b{font-size:18px;color:#a17c50}
+  .list-page .filters{display:none;width:100%;padding:13px;border:1px solid var(--sp-border);background:#fff;box-shadow:var(--sp-shadow-card)}
+  .list-page .filters.mobile-open{display:grid}
+  .list-page .filters input,.list-page .filters select{min-height:43px;font-size:12px}
+  .list-page .filters .search-btn{min-height:44px;grid-column:1/-1;justify-self:stretch}
+  .list-page .filters .reset{min-height:38px;grid-column:1/-1}
+  .list-page .result-line{align-items:flex-start;gap:10px}
+  .list-page .result-actions{gap:8px}
+  .list-page .result-actions>span{display:none}
+  .list-page .property-grid.list-view .property-card{display:block}
+  .list-page .property-grid.list-view .property-card-link{display:block}
+  .list-page .property-grid.list-view .visual{height:190px;min-height:0}
+  .list-page .property-grid.list-view .card-body{display:block;padding:16px}
+  .list-page .property-grid.list-view .card-tools{display:flex;justify-content:flex-start;padding:0 15px 14px}
+  .list-page .discovery-tools{padding:16px}
+  .list-page .tool-heading{align-items:flex-start;flex-direction:column}
+  .list-page .tool-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .list-page .tool-actions button{min-height:42px}
+  .list-page .advisor-input{flex-direction:column}
+  .list-page .advisor-input button{min-height:43px}
+  .list-page .map-panel{grid-template-columns:1fr}
+  .list-page .map-panel iframe{min-height:230px}
+}
+@media(max-width:680px){
+  .detail-content{padding-bottom:90px!important}
+  .detail-content .property-gallery{grid-auto-rows:115px;gap:7px}
+  .detail-content .gallery-image.gallery-primary{grid-row:span 2}
+  .detail-content .aside{gap:10px}
+  .detail-content .contact-panel,.detail-content .price-panel,.detail-content .address-panel{padding:18px}
+  .detail-content .contact-actions{grid-template-columns:1fr 1fr 1fr}
+  .mobile-property-actions{
+    position:fixed;z-index:40;right:0;bottom:0;left:0;
+    display:grid;grid-template-columns:.85fr 1.15fr;gap:9px;
+    padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+    border-top:1px solid rgba(26,57,46,.12);background:rgba(250,250,247,.96);
+    box-shadow:0 -8px 28px rgba(20,43,38,.12);backdrop-filter:blur(14px)
+  }
+  .mobile-property-actions a{min-height:45px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--sp-brand);text-decoration:none;font-size:12px;font-weight:800}
+  .mobile-property-actions .mobile-whatsapp{background:#edf5ef;border-color:#cfe0d3;color:#236342}
+  .mobile-property-actions .mobile-enquire{background:var(--sp-brand);color:#fff}
+  .mobile-property-actions .mobile-enquire span{color:#d6b477}
+  .related-section{padding-top:44px!important}
+  .related-section .related-grid{grid-template-columns:1fr 1fr;gap:9px}
+  .related-section .related-image{height:125px}
+  .related-section .related-grid strong{font-size:12px}
+  .related-section .related-grid>a>span{font-size:9px}
+  .gallery-lightbox{padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+  .home-page .hero-search{border-radius:var(--sp-radius-card)!important;overflow:hidden}
+  .home-page .hero-search button{min-height:46px}
+}
+@media(prefers-reduced-motion:reduce){
+  .site-shell main :where(.property-card,.featured-card,.category-card,.related-grid>a,.related-image img,.hero-art),
+  .home-page .trust-grid article,.home-page .closing .button-light{transition:none!important;animation:none!important;transform:none!important}
+}
