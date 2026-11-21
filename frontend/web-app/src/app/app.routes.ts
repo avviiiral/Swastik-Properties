@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard, workspaceGuard } from './admin/core/admin.guard';
+import { adminGuard, agentGuard, workspaceGuard } from './admin/core/admin.guard';
 import { LoginComponent } from './admin/features/auth/login.component';
 import { PropertiesComponent as AdminPropertiesComponent } from './admin/features/properties/properties.component';
 import { AdminLayoutComponent } from './admin/layout/admin-layout.component';
@@ -22,7 +22,7 @@ export const appRoutes: Routes = [
     { path: 'blog/:slug', component: BlogDetailComponent },
     { path: 'contact', component: ContactComponent, title: 'Contact | Swastik Properties' },
   ]},
-  { path: 'admin/login', component: LoginComponent, title: 'Workspace Sign In | Swastik Properties' },
+  { path: 'admin/login', component: LoginComponent, title: 'Workspace Sign In | Swastik Properties' },\n  { path: 'agent/login', component: LoginComponent, title: 'Agent Sign In | Swastik Properties' },\n  { path: 'agent', pathMatch: 'full', canActivate: [agentGuard], loadComponent: () => import('./admin/features/agent/agent-leads.component').then(m => m.AgentLeadsComponent), title: 'My Assigned Enquiries | Swastik Properties' },
   { path: 'admin', pathMatch: 'full', canActivate: [workspaceGuard], component: LoginComponent },
   { path: 'admin/forbidden', loadComponent: () => import('./admin/features/forbidden/forbidden.component').then(m => m.ForbiddenComponent), title: 'Access Denied | Swastik Properties' },
   { path: 'admin', component: AdminLayoutComponent, canActivate: [adminGuard], children: [
