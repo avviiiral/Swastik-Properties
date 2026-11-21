@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Property } from '../../core/models/property.models';
 import { PropertyApi } from '../../core/services/property-api.service';
@@ -103,6 +103,7 @@ import { PublicPropertyState } from '../../core/services/public-property-state.s
 export class PropertyDetailComponent implements OnInit {
   private readonly api = inject(PropertyApi);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly seo = inject(SiteSeo);
   private readonly enquiryApi = inject(PropertyEnquiryApi);
@@ -165,7 +166,7 @@ export class PropertyDetailComponent implements OnInit {
   openGallery(index:number):void{this.lightboxIndex.set(index);}
   closeGallery():void{this.lightboxIndex.set(null);}
   moveGallery(direction:number):void{const length=this.galleryImages().length;if(!length)return;const current=this.lightboxIndex()??0;this.lightboxIndex.set((current+direction+length)%length);}
-  submitVisit():void{const p=this.property();if(!p||!this.visitName.trim()||!this.visitPhone.trim()||!this.visitEmail.trim()||!this.visitDate||!this.visitTime||!this.visitConsent||this.visitSending())return;this.visitSending.set(true);this.visitFeedback.set('');this.enquiryApi.submitLead({enquiry_type:'PROPERTY_ENQUIRY',property_slug:p.slug,name:this.visitName.trim(),email:this.visitEmail.trim(),phone:this.visitPhone.trim(),message:'Site visit request for '+p.name+'. Preferred date: '+this.visitDate+' ('+this.visitTime+'). Please contact me to confirm.',details:{property_reference:p.property_reference,visit_date:this.visitDate,visit_time:this.visitTime},source_path:'/properties/'+p.slug,consent:true,website:''}).subscribe({next:()=>{this.visitSending.set(false);this.visitFeedback.set('Your visit request has been sent. Our team will contact you to confirm.');this.visitName='';this.visitPhone='';this.visitEmail='';this.visitDate='';this.visitTime='';this.visitConsent=false;},error:()=>{this.visitSending.set(false);this.visitFeedback.set('We could not send the request. Please contact us on WhatsApp.');}});}
+  submitVisit():void{const p=this.property();if(!p||!this.visitName.trim()||!this.visitPhone.trim()||!this.visitEmail.trim()||!this.visitDate||!this.visitTime||!this.visitConsent||this.visitSending())return;this.visitSending.set(true);this.visitFeedback.set('');this.enquiryApi.submitLead({enquiry_type:'PROPERTY_ENQUIRY',property_slug:p.slug,name:this.visitName.trim(),email:this.visitEmail.trim(),phone:this.visitPhone.trim(),message:'Site visit request for '+p.name+'. Preferred date: '+this.visitDate+' ('+this.visitTime+'). Please contact me to confirm.',details:{property_reference:p.property_reference,visit_date:this.visitDate,visit_time:this.visitTime},source_path:'/properties/'+p.slug,consent:true,website:''}).subscribe({next:()=>{this.visitSending.set(false);this.router.navigate(['/thank-you'],{queryParams:{request:'site-visit'}});this.visitName='';this.visitPhone='';this.visitEmail='';this.visitDate='';this.visitTime='';this.visitConsent=false;},error:()=>{this.visitSending.set(false);this.visitFeedback.set('We could not send the request. Please contact us on WhatsApp.');}});}
   whatsappUrl(p: Property): string {
     const message = `Hello, I am interested in ${p.name} (Reference: ${p.property_reference}). Please share more details.`;
     return 'https://wa.me/' + this.contact().whatsapp_number.replace(/\D/g, '') + '?text=' + encodeURIComponent(message);
@@ -211,6 +212,7 @@ export class PropertyDetailComponent implements OnInit {
       next: () => {
         this.enquirySending.set(false);
         this.enquirySuccess.set(true);
+        this.router.navigate(['/thank-you'],{queryParams:{request:'property-enquiry'}});
         formElement.reset();
         this.enquiryName = '';
         this.enquiryEmail = '';
