@@ -291,3 +291,112 @@ a{color:inherit}img{max-width:100%}
  .home-page .voices-empty{padding:22px}
 }
 @media(prefers-reduced-motion:reduce){.home-page .area-guide-grid a{transition:none}}
+
+
+/* 3D depth + scroll-led public experience (presentation only). */
+.site-shell main{
+  perspective:1400px;
+  perspective-origin:50% 35%;
+}
+.site-shell main section[id],
+.site-shell main [id].section-wrap{scroll-margin-top:92px}
+.site-shell main .hero-inner,
+.site-shell main .contact-hero .wrap{transform-style:preserve-3d}
+.site-shell main .hero-art{
+  transform:perspective(1100px) rotateY(-2.2deg) rotateX(1deg);
+  transform-origin:center;
+  box-shadow:22px 24px 0 rgba(196,155,98,.16),0 34px 70px rgba(8,25,18,.22);
+  transition:transform .65s cubic-bezier(.2,.7,.2,1),box-shadow .65s ease;
+}
+.site-shell main .hero-art:hover{
+  transform:perspective(1100px) rotateY(0) rotateX(0) translate3d(0,-5px,18px);
+  box-shadow:14px 18px 0 rgba(196,155,98,.18),0 42px 85px rgba(8,25,18,.25);
+}
+.site-shell main .category-card,
+.site-shell main .featured-card,
+.site-shell main .property-card,
+.site-shell main .area-guide-grid a,
+.site-shell main .value-grid>article,
+.site-shell main .offer-grid>a,
+.site-shell main .type-card,
+.site-shell main .contact-aside{
+  transform-style:preserve-3d;
+  backface-visibility:hidden;
+  transition:transform .34s cubic-bezier(.2,.7,.2,1),box-shadow .34s ease,border-color .34s ease;
+}
+.site-shell main .category-card:hover,
+.site-shell main .featured-card:hover,
+.site-shell main .property-card:hover,
+.site-shell main .area-guide-grid a:hover,
+.site-shell main .value-grid>article:hover,
+.site-shell main .offer-grid>a:hover,
+.site-shell main .type-card:hover{
+  transform:perspective(900px) translate3d(0,-7px,14px) rotateX(1.2deg);
+  box-shadow:0 22px 42px rgba(20,43,38,.13);
+}
+.site-shell main .featured-card,
+.site-shell main .property-card,
+.site-shell main .category-card{isolation:isolate}
+.site-shell main .featured-card:focus-within,
+.site-shell main .property-card:focus-within,
+.site-shell main .category-card:focus-visible{
+  outline:2px solid #c49b62;outline-offset:4px;
+}
+.site-shell main .featured-card .card-info,
+.site-shell main .property-card .card-info,
+.site-shell main .category-card>*{
+  transform:translateZ(10px);
+}
+.site-shell main .hero-photo,
+.site-shell main figure img,
+.site-shell main .property-visual img,
+.site-shell main .cover img{
+  transform:translateZ(0) scale(1.001);
+  will-change:transform;
+}
+.site-shell main .hero-photo-caption,
+.site-shell main .hero-photo-index{
+  transform:translateZ(24px);
+}
+.site-shell main .section-heading,
+.site-shell main .editorial-heading{
+  scroll-margin-top:100px;
+}
+.site-shell main .sp-motion-target{
+  transform-style:preserve-3d;
+}
+.site-shell main .sp-motion-target.sp-in-view{
+  animation:sp-depth-settle .72s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes sp-depth-settle{
+  from{filter:blur(1.5px)}
+  to{filter:blur(0)}
+}
+.site-shell main a,
+.site-shell main button{
+  touch-action:manipulation;
+}
+.site-shell main :where(h1,h2,h3,[id]){
+  scroll-margin-top:96px;
+}
+@media(hover:none){
+  .site-shell main .hero-art{transform:none;box-shadow:0 20px 42px rgba(8,25,18,.16)}
+  .site-shell main .category-card,
+  .site-shell main .featured-card,
+  .site-shell main .property-card,
+  .site-shell main .area-guide-grid a,
+  .site-shell main .value-grid>article,
+  .site-shell main .offer-grid>a,
+  .site-shell main .type-card{transform:none!important;box-shadow:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .site-shell main .hero-art,
+  .site-shell main .category-card,
+  .site-shell main .featured-card,
+  .site-shell main .property-card,
+  .site-shell main .area-guide-grid a,
+  .site-shell main .value-grid>article,
+  .site-shell main .offer-grid>a,
+  .site-shell main .type-card{transform:none!important;transition:none!important}
+  .site-shell main .sp-motion-target.sp-in-view{animation:none}
+}
