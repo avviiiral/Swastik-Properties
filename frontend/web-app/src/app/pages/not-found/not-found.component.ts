@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <main class="status-page status-not-found">
+    <section class="status-page status-not-found">
       <div class="status-orbit" aria-hidden="true"><span>404</span></div>
       <div class="status-copy">
         <p class="status-eyebrow">SWASTIK PROPERTIES / PAGE NOT FOUND</p>
@@ -19,7 +19,7 @@ import { RouterLink } from '@angular/router';
         </div>
         <p class="status-reference">SWASTIK PROPERTIES · MAHARASHTRA</p>
       </div>
-    </main>
+    </section>
   `,
 })
 export class NotFoundComponent {}
