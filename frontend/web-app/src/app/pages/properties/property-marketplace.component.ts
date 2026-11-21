@@ -15,12 +15,12 @@ type SearchMode = 'BUY' | 'RENT' | 'LEASE';
   imports: [FormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <main class="marketplace">
+    <section class="marketplace">
       <section class="market-hero">
         <div class="market-wrap">
           <div class="eyebrow">SWASTIK PROPERTIES <span></span> PROPERTY MARKETPLACE</div>
           <div class="hero-heading">
-            <div><h1>Find a place to <em>move forward.</em></h1><p>Explore verified property opportunities across Maharashtra, with clear details and a direct line to our team.</p></div>
+            <div><h1>Find a place to <em>move forward.</em></h1><p>Explore published property opportunities across Maharashtra, with clear details and a direct line to our team.</p></div>
             <div class="trust-note"><span class="trust-mark">S.</span><div><strong>Considered property guidance</strong><small>Real listings. Clear information. Human support.</small></div></div>
           </div>
           <section class="search-panel" aria-label="Property search">
@@ -57,7 +57,7 @@ type SearchMode = 'BUY' | 'RENT' | 'LEASE';
             <button type="button" class="reset-link" (click)="resetFilters()">Reset all</button>
           </div>
           <div class="toolbar-actions">
-            <button type="button" [class.active]="savedOnly()" (click)="toggleSaved()">{{savedOnly() ? 'Showing saved' : 'Saved'} } <span>({{publicState.favorites().length}})</span></button>
+            <button type="button" [class.active]="savedOnly()" (click)="toggleSaved()">{{savedOnly() ? 'Showing saved' : 'Saved'}} <span>({{publicState.favorites().length}})</span></button>
             <button type="button" [class.active]="mapVisible()" (click)="mapVisible.set(!mapVisible())">{{mapVisible() ? 'Hide map' : 'Show map'}}</button>
             <label class="sort-control"><span>Sort</span><select [(ngModel)]="ordering" (ngModelChange)="applyFilters()" aria-label="Sort listings"><option value="-created_at">Newest</option><option value="name">Name</option><option value="-area_value">Largest area</option><option value="area_value">Smallest area</option></select></label>
           </div>
