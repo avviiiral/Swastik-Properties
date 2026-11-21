@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <main class="status-page status-thank-you">
+    <section class="status-page status-thank-you">
       <div class="status-mark" aria-hidden="true"><span>✓</span></div>
       <div class="status-copy">
         <p class="status-eyebrow">SWASTIK PROPERTIES / MESSAGE RECEIVED</p>
@@ -23,7 +23,7 @@ import { RouterLink } from '@angular/router';
         </div>
         <p class="status-reference">CLEAR INFORMATION. CONSIDERED PROPERTY CHOICES.</p>
       </div>
-    </main>
+    </section>
   `,
 })
 export class ThankYouComponent {}
