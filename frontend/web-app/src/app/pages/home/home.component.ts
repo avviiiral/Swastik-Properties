@@ -20,10 +20,17 @@ import { SWASTIK_CONTACT } from '../../core/config/business-contact';
           <div class="eyebrow"><span></span> SWASTIK PROPERTIES · MAHARASHTRA</div>
           <h1>Find your next<br>place with <em>clarity.</em></h1>
           <p class="hero-description">Explore published residential, commercial and land opportunities. Compare the details, ask informed questions and take the next step with a real conversation.</p>
-          <div class="hero-search">
+          <div class="hero-search-wrap">
+            <div class="home-mode-switch" role="group" aria-label="I want to">
+              <button type="button" [class.active]="mode==='BUY'" [attr.aria-pressed]="mode==='BUY'" (click)="mode='BUY'">Buy</button>
+              <button type="button" [class.active]="mode==='RENT'" [attr.aria-pressed]="mode==='RENT'" (click)="mode='RENT'">Rent</button>
+              <button type="button" [class.active]="mode==='LEASE'" [attr.aria-pressed]="mode==='LEASE'" (click)="mode='LEASE'">Lease</button>
+            </div>
+            <div class="hero-search">
             <label><span>PROPERTY TYPE</span><select name="category" [(ngModel)]="category"><option value="">All property types</option><option value="RESIDENTIAL">Residential</option><option value="COMMERCIAL">Commercial</option><option value="LAND">Land &amp; plots</option></select></label>
             <label><span>LOCATION OR KEYWORD</span><input name="search" [(ngModel)]="search" placeholder="City, project or locality"></label>
             <button type="button" (click)="explore()">Explore <b>↗</b></button>
+            </div>
           </div>
           <div class="hero-proof"><span>01</span><div><strong>Clarity before commitment</strong><small>Review listing information and ask what matters.</small></div></div>
           <div class="hero-footnote"><span></span> RESIDENTIAL · COMMERCIAL · LAND</div>
@@ -143,6 +150,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly error = signal(false);
   search = '';
   category = '';
+  mode: 'BUY' | 'RENT' | 'LEASE' = 'BUY';
 
   readonly categories = [
     {key:'RESIDENTIAL',number:'01',title:'Residential',description:'Homes, apartments and spaces to settle into.',symbol:'⌂'},
@@ -223,7 +231,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   explore(): void {
-    this.router.navigate(['/properties'], {queryParams:{search:this.search || null,category:this.category || null}});
+    this.router.navigate(['/properties'], {queryParams:{search:this.search || null,category:this.category || null,listing_type:this.mode === 'BUY' ? 'SALE' : this.mode}});
   }
   location(p: Property): string {
     return [p.location_name || p.locality_name,p.city_name,p.district_name,p.state_name]
